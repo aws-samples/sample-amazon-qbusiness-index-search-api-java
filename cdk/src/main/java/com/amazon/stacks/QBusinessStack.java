@@ -5,12 +5,15 @@ import java.util.Map;
 
 import software.amazon.awscdk.Fn;
 import software.amazon.awscdk.App;
+import software.amazon.awscdk.Aspects;
 import software.amazon.awscdk.CfnOutput;
 import software.amazon.awscdk.CfnOutputProps;
 import software.amazon.awscdk.Stack;
 import software.amazon.awscdk.StackProps;
 import software.constructs.Construct;
 import software.amazon.awscdk.CfnResource;
+import io.github.cdklabs.cdknag.AwsSolutionsChecks;
+import io.github.cdklabs.cdknag.NagSuppressions;
 
 public class QBusinessStack extends Stack {
     public QBusinessStack(final Construct scope, final String id) {
@@ -59,7 +62,13 @@ public class QBusinessStack extends Stack {
 
     public static void main(final String[] args) {
         App app = new App();
+        
+        // Apply AWS Solutions security checks to all constructs in the app
+        Aspects.of(app).add(new AwsSolutionsChecks());
+        
+        // Create the stack
         new QBusinessStack(app, "QBusinessStack");
+        
         app.synth();
     }
 }

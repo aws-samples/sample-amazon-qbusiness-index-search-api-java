@@ -1,0 +1,3 @@
+{
+  "app": "mvn -e -q -f cdk compile exec:java -Dexec.mainClass=com.amazon.stacks.QBusinessApp"
+}

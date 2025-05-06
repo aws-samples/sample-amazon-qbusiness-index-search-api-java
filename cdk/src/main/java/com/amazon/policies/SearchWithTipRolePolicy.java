@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import software.constructs.Construct;
+import software.amazon.awscdk.Stack;
 import software.amazon.awscdk.services.iam.PolicyDocument;
 import software.amazon.awscdk.services.iam.PolicyStatement;
 import software.amazon.awscdk.services.iam.Role;
@@ -29,14 +30,20 @@ public class SearchWithTipRolePolicy {
             String audience,
             String applicationId
     ) {
-        // extract host from issuer, e.g. "xam38kxyjk.execute-api.us-east-1.amazonaws.com"
-        String issuerHost = URI.create(issuerUrl).getHost();
+        // During CDK synthesis, we need to avoid parsing the token as a URI
+        // Use a placeholder value that will be replaced at synth time
+        String issuerHost = "execute-api.${AWS::Region}.amazonaws.com";
 
         // inline policy granting QBusiness search permission
+        // Create a specific resource ARN for the QBusiness application
+        String qbusinessAppArn = "arn:aws:qbusiness:" + Stack.of(scope).getRegion() + ":" + 
+                                  Stack.of(scope).getAccount() + ":application/" + applicationId;
+                                  
         PolicyStatement inlineStmt = PolicyStatement.Builder.create()
+                .sid("AllowQBusinessSearch")
                 .effect(Effect.ALLOW)
                 .actions(List.of("qbusiness:SearchRelevantContent"))
-                .resources(List.of("*"))
+                .resources(List.of(qbusinessAppArn))
                 .build();
 
         // Create the Role
@@ -44,7 +51,10 @@ public class SearchWithTipRolePolicy {
                 // only your OIDC provider can assume this role via WebIdentity
                 .assumedBy(new FederatedPrincipal(
                         oidcProviderArn,
-                        Map.of(issuerHost + ":aud", audience),
+                        Map.of(
+                            "StringEquals", 
+                            Map.of(issuerHost + ":aud", audience)
+                        ),
                         "sts:AssumeRoleWithWebIdentity"
                 ))
                 // attach the inline search policy
