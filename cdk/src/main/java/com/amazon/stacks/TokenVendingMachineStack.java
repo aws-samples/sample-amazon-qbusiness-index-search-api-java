@@ -13,6 +13,8 @@ import io.github.cdklabs.cdknag.NagSuppressions;
 import io.github.cdklabs.cdknag.NagPackSuppression;
 
 import software.amazon.awscdk.services.iam.OpenIdConnectProvider;
+import software.amazon.awscdk.services.iam.IOpenIdConnectProvider;
+import software.amazon.awscdk.services.apigateway.RestApi;
 import software.amazon.awscdk.CfnOutput;
 import software.amazon.awscdk.CfnOutputProps;
 
@@ -51,6 +53,11 @@ import java.util.List;
 import java.util.Map;
 
 public class TokenVendingMachineStack extends Stack {
+    // Private fields for L2 cross-stack references
+    private final IOpenIdConnectProvider oidcProvider;
+    private final RestApi api;
+    private final String audience = "qbusiness-audience";
+    
     public TokenVendingMachineStack(final Construct scope, final String id) {
         this(scope, id, null);
     }
@@ -99,7 +106,7 @@ public class TokenVendingMachineStack extends Stack {
                 .build();
         
         // Create the REST API first with logging options
-        RestApi api = RestApi.Builder.create(this, "TvmApi")
+        this.api = RestApi.Builder.create(this, "TvmApi")
                 .restApiName("TokenVendingMachineApi")
                 // Auto-deployment options with logging
                 .deployOptions(StageOptions.builder()
@@ -180,14 +187,14 @@ public class TokenVendingMachineStack extends Stack {
         String stageName = "prod"; // We specified this explicitly in deployOptions
         CfnWebACLAssociation.Builder.create(this, "TvmApiWafAssociation")
                 .resourceArn("arn:aws:apigateway:" + Stack.of(this).getRegion() + 
-                            "::/restapis/" + api.getRestApiId() + 
+                            "::/restapis/" + this.api.getRestApiId() + 
                             "/stages/" + stageName)
                 .webAclArn(wafAcl.getAttrArn())
                 .build();
                 
         // Add suppression for the WAF association (APIG3)
         NagSuppressions.addResourceSuppressions(
-            api.getDeploymentStage(), 
+            this.api.getDeploymentStage(), 
             List.of(
                 NagPackSuppression.builder()
                     .id("AwsSolutions-APIG3")
@@ -196,7 +203,7 @@ public class TokenVendingMachineStack extends Stack {
             )
         );
 
-        String issuerUrl = api.getUrl(); // e.g. https://xyz.execute-api.us-east-1.amazonaws.com/prod/
+        String issuerUrl = this.api.getUrl(); // e.g. https://xyz.execute-api.us-east-1.amazonaws.com/prod/
 
         // 4) TVM JAR asset - path adjusted to match the actual build location
         // This path must be relative to the project root directory
@@ -367,15 +374,15 @@ public class TokenVendingMachineStack extends Stack {
         // thumbprint of the TVM’s TLS cert
         List<String> thumbprints = List.of("9e99a48a9960b14926bb7f3b02e22da0afd8f4f");
 
-        OpenIdConnectProvider oidcProvider = OpenIdConnectProvider.Builder.create(this, "TvmIamOidcProvider")
+        this.oidcProvider = OpenIdConnectProvider.Builder.create(this, "TvmIamOidcProvider")
                 .url(issuer)                             // e.g. https://abc123.execute-api.us-east-1.amazonaws.com/prod
-                .clientIds(List.of("qbusiness-audience"))// must match the “aud” in your TVM tokens
+                .clientIds(List.of(this.audience))// must match the “aud” in your TVM tokens
                 .thumbprints(thumbprints)
                 .build();
 
         // export its ARN & audience for downstream stacks
         new CfnOutput(this, "TvmOidcProviderArn", CfnOutputProps.builder()
-                .value(oidcProvider.getOpenIdConnectProviderArn())
+                .value(this.oidcProvider.getOpenIdConnectProviderArn())
                 .description("IAM OIDC Provider ARN for the TVM")
                 .exportName("TvmOidcProviderArn")
                 .build());
@@ -399,6 +406,19 @@ public class TokenVendingMachineStack extends Stack {
                 .build());
     }
 
+    // Getter methods for cross-stack references
+    public IOpenIdConnectProvider getOidcProvider() {
+        return this.oidcProvider;
+    }
+    
+    public RestApi getApi() {
+        return this.api;
+    }
+    
+    public String getAudience() {
+        return this.audience;
+    }
+    
     public static void main(final String[] args) {
         App app = new App();
         

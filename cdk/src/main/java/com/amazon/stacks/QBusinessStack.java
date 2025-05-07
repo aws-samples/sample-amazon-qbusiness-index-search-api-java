@@ -12,21 +12,25 @@ import software.amazon.awscdk.Stack;
 import software.amazon.awscdk.StackProps;
 import software.constructs.Construct;
 import software.amazon.awscdk.CfnResource;
+import software.amazon.awscdk.services.iam.IOpenIdConnectProvider;
 import io.github.cdklabs.cdknag.AwsSolutionsChecks;
 import io.github.cdklabs.cdknag.NagSuppressions;
 
 public class QBusinessStack extends Stack {
-    public QBusinessStack(final Construct scope, final String id) {
-        this(scope, id, StackProps.builder().build());
+    private final CfnResource application;
+    private final CfnResource index;
+    
+    public QBusinessStack(final Construct scope, final String id, final IOpenIdConnectProvider oidcProvider) {
+        this(scope, id, oidcProvider, StackProps.builder().build());
     }
 
-    public QBusinessStack(final Construct scope, final String id, final StackProps props) {
+    public QBusinessStack(final Construct scope, final String id, final IOpenIdConnectProvider oidcProvider, final StackProps props) {
         super(scope, id, props);
 
         // (1) Create the Q Business application using generic CfnResource
-        String oidcArn = Fn.importValue("TvmOidcProviderArn");
+        String oidcArn = oidcProvider.getOpenIdConnectProviderArn();
         
-        CfnResource app = CfnResource.Builder.create(this, "QBusinessApp")
+        this.application = CfnResource.Builder.create(this, "QBusinessApp")
                 .type("AWS::QBusiness::Application")
                 .properties(Map.of(
                     "DisplayName", "MyApp",
@@ -37,10 +41,10 @@ public class QBusinessStack extends Stack {
                 .build();
                 
         // (2) Create the Retriever (Index) against that app
-        CfnResource index = CfnResource.Builder.create(this, "QBusinessIndex")
+        this.index = CfnResource.Builder.create(this, "QBusinessIndex")
                 .type("AWS::QBusiness::Index")
                 .properties(Map.of(
-                    "ApplicationId", app.getAtt("ApplicationId").toString(),
+                    "ApplicationId", this.application.getAtt("ApplicationId").toString(),
                     "DisplayName", "MyIndex"
                 ))
                 .build();
@@ -48,27 +52,24 @@ public class QBusinessStack extends Stack {
         // (3) Export the Application ID
         new CfnOutput(this, "QBusinessApplicationId", CfnOutputProps.builder()
                 .exportName("QBusinessApplicationId")
-                .value(app.getAtt("ApplicationId").toString())
+                .value(this.application.getAtt("ApplicationId").toString())
                 .description("The Amazon Q Business Application ID")
                 .build());
 
         // (4) Export the Retriever (Index) ID
         new CfnOutput(this, "QBusinessRetrieverId", CfnOutputProps.builder()
                 .exportName("QBusinessRetrieverId")
-                .value(index.getAtt("IndexId").toString())
+                .value(this.index.getAtt("IndexId").toString())
                 .description("The Amazon Q Business Retriever (Index) ID")
                 .build());
     }
-
-    public static void main(final String[] args) {
-        App app = new App();
-        
-        // Apply AWS Solutions security checks to all constructs in the app
-        Aspects.of(app).add(new AwsSolutionsChecks());
-        
-        // Create the stack
-        new QBusinessStack(app, "QBusinessStack");
-        
-        app.synth();
+    
+    // Getter methods for cross-stack references
+    public String getApplicationId() {
+        return this.application.getAtt("ApplicationId").toString();
+    }
+    
+    public String getRetrieverId() {
+        return this.index.getAtt("IndexId").toString();
     }
 }

@@ -3,13 +3,13 @@ package com.amazon.stacks;
 import com.amazon.policies.SearchWithTipRolePolicy;
 import software.amazon.awscdk.App;
 import software.amazon.awscdk.Aspects;
-import software.amazon.awscdk.Fn;
 import software.amazon.awscdk.RemovalPolicy;
 import software.amazon.awscdk.Stack;
 import software.amazon.awscdk.StackProps;
 import software.amazon.awscdk.CfnOutput;
 import software.amazon.awscdk.CfnOutputProps;
 import software.constructs.Construct;
+import software.amazon.awscdk.services.iam.IOpenIdConnectProvider;
 import io.github.cdklabs.cdknag.AwsSolutionsChecks;
 import io.github.cdklabs.cdknag.NagSuppressions;
 import io.github.cdklabs.cdknag.NagPackSuppression;
@@ -46,27 +46,26 @@ import java.util.List;
 import java.util.Map;
 
 public class SearchStack extends Stack {
-    public SearchStack(final Construct scope, final String id) {
-        this(scope, id, null);
+    public SearchStack(final Construct scope, final String id, final IOpenIdConnectProvider oidcProvider, 
+                     final String tvmApiUrl, final String tvmAudience, final String applicationId, final String retrieverId) {
+        this(scope, id, oidcProvider, tvmApiUrl, tvmAudience, applicationId, retrieverId, null);
     }
 
-    public SearchStack(final Construct scope, final String id, final StackProps props) {
+    public SearchStack(final Construct scope, final String id, final IOpenIdConnectProvider oidcProvider,
+                     final String tvmApiUrl, final String tvmAudience, final String applicationId, final String retrieverId,
+                     final StackProps props) {
         super(scope, id, props);
 
         //
-        // 1) Import the TVM & QBusiness outputs you exported earlier
+        // 1) Use the parameters from upstream stacks
         //
-        String tvmOidcProviderArn = Fn.importValue("TvmOidcProviderArn");
-        String tvmIssuerUrl       = Fn.importValue("TvmIssuerUrl");
-        String tvmAudience        = Fn.importValue("TvmAudience");
-
-        String tvmApiUrl     = Fn.importValue("TvmApiUrl");
+        String tvmOidcProviderArn = oidcProvider.getOpenIdConnectProviderArn();
+        String tvmIssuerUrl       = tvmApiUrl.replaceAll("/+$", ""); // strip trailing slash if present
+        
+        // Get token endpoint from TVM API URL
         String tokenEndpoint = tvmApiUrl.endsWith("/")
                 ? tvmApiUrl + "token"
                 : tvmApiUrl + "/token";
-
-        String applicationId = Fn.importValue("QBusApplicationId");
-        String retrieverId   = Fn.importValue("QBusRetrieverId");
 
         //
         // 2) Create the STS‐assumable role with your principal tag + SearchRelevantContent policy
@@ -283,15 +282,5 @@ public class SearchStack extends Stack {
                 .exportName("SearchApiUrl")
                 .value(api.getUrl() + "search")
                 .build());
-    }
-
-    public static void main(final String[] args) {
-        App app = new App();
-        
-        // Apply AWS Solutions security checks to all constructs in the app
-        Aspects.of(app).add(new AwsSolutionsChecks());
-        
-        new SearchStack(app, "SearchStack");
-        app.synth();
     }
 }

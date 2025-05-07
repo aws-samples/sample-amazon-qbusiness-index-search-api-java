@@ -15,14 +15,18 @@ public class QBusinessApp {
         Aspects.of(app).add(new AwsSolutionsChecks());
 
         // Create the Token Vending Machine stack first (since others depend on it)
-        new TokenVendingMachineStack(app, "TokenVendingMachineStack");
+        TokenVendingMachineStack tvmStack = new TokenVendingMachineStack(app, "TokenVendingMachineStack");
         
-        // Create the QBusiness stack (which imports values from TokenVendingMachine)
-        new QBusinessStack(app, "QBusinessStack");
+        // Create the QBusiness stack with a reference to the OIDC provider from the TVM stack
+        QBusinessStack qbusStack = new QBusinessStack(app, "QBusinessStack", tvmStack.getOidcProvider());
         
-        // Create the Search stack last
-        // Note: This stack depends on both the QBusiness and TokenVendingMachine stacks
-        new SearchStack(app, "SearchStack");
+        // Create the Search stack last with references from both upstream stacks
+        SearchStack searchStack = new SearchStack(app, "SearchStack", 
+                tvmStack.getOidcProvider(),
+                tvmStack.getApi().getUrl(),
+                tvmStack.getAudience(),
+                qbusStack.getApplicationId(),
+                qbusStack.getRetrieverId());
         
         app.synth();
     }
