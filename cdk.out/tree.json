@@ -1,0 +1,3458 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "children": {
+      "TokenVendingMachineStack": {
+        "id": "TokenVendingMachineStack",
+        "path": "TokenVendingMachineStack",
+        "children": {
+          "TvmSigningKey": {
+            "id": "TvmSigningKey",
+            "path": "TokenVendingMachineStack/TvmSigningKey",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "TokenVendingMachineStack/TvmSigningKey/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::KMS::Key",
+                  "aws:cdk:cloudformation:props": {
+                    "keyPolicy": {
+                      "Statement": [
+                        {
+                          "Action": "kms:*",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "AWS": {
+                              "Fn::Join": [
+                                "",
+                                [
+                                  "arn:",
+                                  {
+                                    "Ref": "AWS::Partition"
+                                  },
+                                  ":iam::",
+                                  {
+                                    "Ref": "AWS::AccountId"
+                                  },
+                                  ":root"
+                                ]
+                              ]
+                            }
+                          },
+                          "Resource": "*"
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    },
+                    "keySpec": "RSA_2048",
+                    "keyUsage": "SIGN_VERIFY"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_kms.CfnKey",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_kms.Key",
+              "version": "2.131.0"
+            }
+          },
+          "TvmKeySecret": {
+            "id": "TvmKeySecret",
+            "path": "TokenVendingMachineStack/TvmKeySecret",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "TokenVendingMachineStack/TvmKeySecret/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::SecretsManager::Secret",
+                  "aws:cdk:cloudformation:props": {
+                    "generateSecretString": {
+                      "generateStringKey": "secret",
+                      "secretStringTemplate": {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "{\"keyId\":\"",
+                            {
+                              "Ref": "TvmSigningKeyC38F9A74"
+                            },
+                            "\"}"
+                          ]
+                        ]
+                      }
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_secretsmanager.CfnSecret",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_secretsmanager.Secret",
+              "version": "2.131.0"
+            }
+          },
+          "TvmSigningKeyAlias": {
+            "id": "TvmSigningKeyAlias",
+            "path": "TokenVendingMachineStack/TvmSigningKeyAlias",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "TokenVendingMachineStack/TvmSigningKeyAlias/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::KMS::Alias",
+                  "aws:cdk:cloudformation:props": {
+                    "aliasName": "alias/tvm-token-signing",
+                    "targetKeyId": {
+                      "Fn::GetAtt": [
+                        "TvmSigningKeyC38F9A74",
+                        "Arn"
+                      ]
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_kms.CfnAlias",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_kms.Alias",
+              "version": "2.131.0"
+            }
+          },
+          "TvmLambdaExecRole": {
+            "id": "TvmLambdaExecRole",
+            "path": "TokenVendingMachineStack/TvmLambdaExecRole",
+            "children": {
+              "ImportTvmLambdaExecRole": {
+                "id": "ImportTvmLambdaExecRole",
+                "path": "TokenVendingMachineStack/TvmLambdaExecRole/ImportTvmLambdaExecRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.131.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "TokenVendingMachineStack/TvmLambdaExecRole/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                  "aws:cdk:cloudformation:props": {
+                    "assumeRolePolicyDocument": {
+                      "Statement": [
+                        {
+                          "Action": "sts:AssumeRole",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "Service": "lambda.amazonaws.com"
+                          }
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    },
+                    "managedPolicyArns": [
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                          ]
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                  "version": "2.131.0"
+                }
+              },
+              "DefaultPolicy": {
+                "id": "DefaultPolicy",
+                "path": "TokenVendingMachineStack/TvmLambdaExecRole/DefaultPolicy",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "TokenVendingMachineStack/TvmLambdaExecRole/DefaultPolicy/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                      "aws:cdk:cloudformation:props": {
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": [
+                                "kms:Sign",
+                                "kms:GetPublicKey",
+                                "kms:DescribeKey"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": {
+                                "Fn::GetAtt": [
+                                  "TvmSigningKeyC38F9A74",
+                                  "Arn"
+                                ]
+                              }
+                            },
+                            {
+                              "Action": [
+                                "secretsmanager:GetSecretValue",
+                                "secretsmanager:DescribeSecret"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": {
+                                "Ref": "TvmKeySecretE13F1521"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "policyName": "TvmLambdaExecRoleDefaultPolicy75C8D8DD",
+                        "roles": [
+                          {
+                            "Ref": "TvmLambdaExecRoleC50FF80B"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                      "version": "2.131.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Policy",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_iam.Role",
+              "version": "2.131.0"
+            }
+          },
+          "TvmApiAccessLogs": {
+            "id": "TvmApiAccessLogs",
+            "path": "TokenVendingMachineStack/TvmApiAccessLogs",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "TokenVendingMachineStack/TvmApiAccessLogs/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Logs::LogGroup",
+                  "aws:cdk:cloudformation:props": {
+                    "logGroupName": "/aws/apigateway/TokenVendingMachineApi-access-logs",
+                    "retentionInDays": 30
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_logs.CfnLogGroup",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_logs.LogGroup",
+              "version": "2.131.0"
+            }
+          },
+          "TvmApiWafAcl": {
+            "id": "TvmApiWafAcl",
+            "path": "TokenVendingMachineStack/TvmApiWafAcl",
+            "attributes": {
+              "aws:cdk:cloudformation:type": "AWS::WAFv2::WebACL",
+              "aws:cdk:cloudformation:props": {
+                "defaultAction": {
+                  "allow": {}
+                },
+                "name": "TvmApiWafAcl",
+                "rules": [
+                  {
+                    "name": "RateLimitRule",
+                    "priority": 1,
+                    "statement": {
+                      "rateBasedStatement": {
+                        "aggregateKeyType": "IP",
+                        "limit": 1000
+                      }
+                    },
+                    "visibilityConfig": {
+                      "cloudWatchMetricsEnabled": true,
+                      "metricName": "RateLimitRule",
+                      "sampledRequestsEnabled": true
+                    },
+                    "action": {
+                      "block": {}
+                    }
+                  }
+                ],
+                "scope": "REGIONAL",
+                "visibilityConfig": {
+                  "cloudWatchMetricsEnabled": true,
+                  "metricName": "TvmApiWafAcl",
+                  "sampledRequestsEnabled": true
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_wafv2.CfnWebACL",
+              "version": "2.131.0"
+            }
+          },
+          "TvmApi": {
+            "id": "TvmApi",
+            "path": "TokenVendingMachineStack/TvmApi",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "TokenVendingMachineStack/TvmApi/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::RestApi",
+                  "aws:cdk:cloudformation:props": {
+                    "name": "TokenVendingMachineApi"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.CfnRestApi",
+                  "version": "2.131.0"
+                }
+              },
+              "CloudWatchRole": {
+                "id": "CloudWatchRole",
+                "path": "TokenVendingMachineStack/TvmApi/CloudWatchRole",
+                "children": {
+                  "ImportCloudWatchRole": {
+                    "id": "ImportCloudWatchRole",
+                    "path": "TokenVendingMachineStack/TvmApi/CloudWatchRole/ImportCloudWatchRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.131.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "TokenVendingMachineStack/TvmApi/CloudWatchRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "apigateway.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.131.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.131.0"
+                }
+              },
+              "Account": {
+                "id": "Account",
+                "path": "TokenVendingMachineStack/TvmApi/Account",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Account",
+                  "aws:cdk:cloudformation:props": {
+                    "cloudWatchRoleArn": {
+                      "Fn::GetAtt": [
+                        "TvmApiCloudWatchRole44EA47B0",
+                        "Arn"
+                      ]
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.CfnAccount",
+                  "version": "2.131.0"
+                }
+              },
+              "Deployment": {
+                "id": "Deployment",
+                "path": "TokenVendingMachineStack/TvmApi/Deployment",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "TokenVendingMachineStack/TvmApi/Deployment/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::Deployment",
+                      "aws:cdk:cloudformation:props": {
+                        "description": "Automatically created by the RestApi construct",
+                        "restApiId": {
+                          "Ref": "TvmApi9CC896B2"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.CfnDeployment",
+                      "version": "2.131.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.Deployment",
+                  "version": "2.131.0"
+                }
+              },
+              "DeploymentStage.prod": {
+                "id": "DeploymentStage.prod",
+                "path": "TokenVendingMachineStack/TvmApi/DeploymentStage.prod",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "TokenVendingMachineStack/TvmApi/DeploymentStage.prod/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::ApiGateway::Stage",
+                      "aws:cdk:cloudformation:props": {
+                        "accessLogSetting": {
+                          "destinationArn": {
+                            "Fn::GetAtt": [
+                              "TvmApiAccessLogsCE78B3C0",
+                              "Arn"
+                            ]
+                          },
+                          "format": "$context.identity.sourceIp $context.identity.caller $context.identity.user [$context.requestTime] \"$context.httpMethod $context.resourcePath $context.protocol\" $context.status $context.responseLength $context.requestId"
+                        },
+                        "deploymentId": {
+                          "Ref": "TvmApiDeploymentD7E77208e3d00eb1296beb226e362895e59e2aa4"
+                        },
+                        "methodSettings": [
+                          {
+                            "httpMethod": "*",
+                            "resourcePath": "/*",
+                            "dataTraceEnabled": true,
+                            "loggingLevel": "INFO"
+                          }
+                        ],
+                        "restApiId": {
+                          "Ref": "TvmApi9CC896B2"
+                        },
+                        "stageName": "prod"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.CfnStage",
+                      "version": "2.131.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.Stage",
+                  "version": "2.131.0"
+                }
+              },
+              "Endpoint": {
+                "id": "Endpoint",
+                "path": "TokenVendingMachineStack/TvmApi/Endpoint",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.131.0"
+                }
+              },
+              "Default": {
+                "id": "Default",
+                "path": "TokenVendingMachineStack/TvmApi/Default",
+                "children": {
+                  "OPTIONS": {
+                    "id": "OPTIONS",
+                    "path": "TokenVendingMachineStack/TvmApi/Default/OPTIONS",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "TokenVendingMachineStack/TvmApi/Default/OPTIONS/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                          "aws:cdk:cloudformation:props": {
+                            "apiKeyRequired": false,
+                            "authorizationType": "NONE",
+                            "httpMethod": "OPTIONS",
+                            "integration": {
+                              "type": "MOCK",
+                              "requestTemplates": {
+                                "application/json": "{ statusCode: 200 }"
+                              },
+                              "integrationResponses": [
+                                {
+                                  "statusCode": "204",
+                                  "responseParameters": {
+                                    "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+                                    "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                    "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+                                  }
+                                }
+                              ]
+                            },
+                            "methodResponses": [
+                              {
+                                "statusCode": "204",
+                                "responseParameters": {
+                                  "method.response.header.Access-Control-Allow-Headers": true,
+                                  "method.response.header.Access-Control-Allow-Origin": true,
+                                  "method.response.header.Access-Control-Allow-Methods": true
+                                }
+                              }
+                            ],
+                            "resourceId": {
+                              "Fn::GetAtt": [
+                                "TvmApi9CC896B2",
+                                "RootResourceId"
+                              ]
+                            },
+                            "restApiId": {
+                              "Ref": "TvmApi9CC896B2"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                          "version": "2.131.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                      "version": "2.131.0"
+                    }
+                  },
+                  ".well-known": {
+                    "id": ".well-known",
+                    "path": "TokenVendingMachineStack/TvmApi/Default/.well-known",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "TokenVendingMachineStack/TvmApi/Default/.well-known/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ApiGateway::Resource",
+                          "aws:cdk:cloudformation:props": {
+                            "parentId": {
+                              "Fn::GetAtt": [
+                                "TvmApi9CC896B2",
+                                "RootResourceId"
+                              ]
+                            },
+                            "pathPart": ".well-known",
+                            "restApiId": {
+                              "Ref": "TvmApi9CC896B2"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.CfnResource",
+                          "version": "2.131.0"
+                        }
+                      },
+                      "OPTIONS": {
+                        "id": "OPTIONS",
+                        "path": "TokenVendingMachineStack/TvmApi/Default/.well-known/OPTIONS",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "TokenVendingMachineStack/TvmApi/Default/.well-known/OPTIONS/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                              "aws:cdk:cloudformation:props": {
+                                "apiKeyRequired": false,
+                                "authorizationType": "NONE",
+                                "httpMethod": "OPTIONS",
+                                "integration": {
+                                  "type": "MOCK",
+                                  "requestTemplates": {
+                                    "application/json": "{ statusCode: 200 }"
+                                  },
+                                  "integrationResponses": [
+                                    {
+                                      "statusCode": "204",
+                                      "responseParameters": {
+                                        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+                                        "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+                                      }
+                                    }
+                                  ]
+                                },
+                                "methodResponses": [
+                                  {
+                                    "statusCode": "204",
+                                    "responseParameters": {
+                                      "method.response.header.Access-Control-Allow-Headers": true,
+                                      "method.response.header.Access-Control-Allow-Origin": true,
+                                      "method.response.header.Access-Control-Allow-Methods": true
+                                    }
+                                  }
+                                ],
+                                "resourceId": {
+                                  "Ref": "TvmApiwellknown6FBE51C8"
+                                },
+                                "restApiId": {
+                                  "Ref": "TvmApi9CC896B2"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                              "version": "2.131.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                          "version": "2.131.0"
+                        }
+                      },
+                      "openid-configuration": {
+                        "id": "openid-configuration",
+                        "path": "TokenVendingMachineStack/TvmApi/Default/.well-known/openid-configuration",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "TokenVendingMachineStack/TvmApi/Default/.well-known/openid-configuration/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ApiGateway::Resource",
+                              "aws:cdk:cloudformation:props": {
+                                "parentId": {
+                                  "Ref": "TvmApiwellknown6FBE51C8"
+                                },
+                                "pathPart": "openid-configuration",
+                                "restApiId": {
+                                  "Ref": "TvmApi9CC896B2"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.CfnResource",
+                              "version": "2.131.0"
+                            }
+                          },
+                          "OPTIONS": {
+                            "id": "OPTIONS",
+                            "path": "TokenVendingMachineStack/TvmApi/Default/.well-known/openid-configuration/OPTIONS",
+                            "children": {
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "TokenVendingMachineStack/TvmApi/Default/.well-known/openid-configuration/OPTIONS/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                  "aws:cdk:cloudformation:props": {
+                                    "apiKeyRequired": false,
+                                    "authorizationType": "NONE",
+                                    "httpMethod": "OPTIONS",
+                                    "integration": {
+                                      "type": "MOCK",
+                                      "requestTemplates": {
+                                        "application/json": "{ statusCode: 200 }"
+                                      },
+                                      "integrationResponses": [
+                                        {
+                                          "statusCode": "204",
+                                          "responseParameters": {
+                                            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+                                            "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+                                          }
+                                        }
+                                      ]
+                                    },
+                                    "methodResponses": [
+                                      {
+                                        "statusCode": "204",
+                                        "responseParameters": {
+                                          "method.response.header.Access-Control-Allow-Headers": true,
+                                          "method.response.header.Access-Control-Allow-Origin": true,
+                                          "method.response.header.Access-Control-Allow-Methods": true
+                                        }
+                                      }
+                                    ],
+                                    "resourceId": {
+                                      "Ref": "TvmApiwellknownopenidconfigurationF023F998"
+                                    },
+                                    "restApiId": {
+                                      "Ref": "TvmApi9CC896B2"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                  "version": "2.131.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                              "version": "2.131.0"
+                            }
+                          },
+                          "GET": {
+                            "id": "GET",
+                            "path": "TokenVendingMachineStack/TvmApi/Default/.well-known/openid-configuration/GET",
+                            "children": {
+                              "ApiPermission.TokenVendingMachineStackTvmApiE91A4EFD.GET...well-known.openid-configuration": {
+                                "id": "ApiPermission.TokenVendingMachineStackTvmApiE91A4EFD.GET...well-known.openid-configuration",
+                                "path": "TokenVendingMachineStack/TvmApi/Default/.well-known/openid-configuration/GET/ApiPermission.TokenVendingMachineStackTvmApiE91A4EFD.GET...well-known.openid-configuration",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                  "aws:cdk:cloudformation:props": {
+                                    "action": "lambda:InvokeFunction",
+                                    "functionName": {
+                                      "Fn::GetAtt": [
+                                        "OpenIdConfigurationHandler6BB639A3",
+                                        "Arn"
+                                      ]
+                                    },
+                                    "principal": "apigateway.amazonaws.com",
+                                    "sourceArn": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":execute-api:",
+                                          {
+                                            "Ref": "AWS::Region"
+                                          },
+                                          ":",
+                                          {
+                                            "Ref": "AWS::AccountId"
+                                          },
+                                          ":",
+                                          {
+                                            "Ref": "TvmApi9CC896B2"
+                                          },
+                                          "/",
+                                          {
+                                            "Ref": "TvmApiDeploymentStageprod48FCCD80"
+                                          },
+                                          "/GET/.well-known/openid-configuration"
+                                        ]
+                                      ]
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                  "version": "2.131.0"
+                                }
+                              },
+                              "ApiPermission.Test.TokenVendingMachineStackTvmApiE91A4EFD.GET...well-known.openid-configuration": {
+                                "id": "ApiPermission.Test.TokenVendingMachineStackTvmApiE91A4EFD.GET...well-known.openid-configuration",
+                                "path": "TokenVendingMachineStack/TvmApi/Default/.well-known/openid-configuration/GET/ApiPermission.Test.TokenVendingMachineStackTvmApiE91A4EFD.GET...well-known.openid-configuration",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                  "aws:cdk:cloudformation:props": {
+                                    "action": "lambda:InvokeFunction",
+                                    "functionName": {
+                                      "Fn::GetAtt": [
+                                        "OpenIdConfigurationHandler6BB639A3",
+                                        "Arn"
+                                      ]
+                                    },
+                                    "principal": "apigateway.amazonaws.com",
+                                    "sourceArn": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":execute-api:",
+                                          {
+                                            "Ref": "AWS::Region"
+                                          },
+                                          ":",
+                                          {
+                                            "Ref": "AWS::AccountId"
+                                          },
+                                          ":",
+                                          {
+                                            "Ref": "TvmApi9CC896B2"
+                                          },
+                                          "/test-invoke-stage/GET/.well-known/openid-configuration"
+                                        ]
+                                      ]
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                  "version": "2.131.0"
+                                }
+                              },
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "TokenVendingMachineStack/TvmApi/Default/.well-known/openid-configuration/GET/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                  "aws:cdk:cloudformation:props": {
+                                    "authorizationType": "NONE",
+                                    "httpMethod": "GET",
+                                    "integration": {
+                                      "type": "AWS_PROXY",
+                                      "uri": {
+                                        "Fn::Join": [
+                                          "",
+                                          [
+                                            "arn:",
+                                            {
+                                              "Ref": "AWS::Partition"
+                                            },
+                                            ":apigateway:",
+                                            {
+                                              "Ref": "AWS::Region"
+                                            },
+                                            ":lambda:path/2015-03-31/functions/",
+                                            {
+                                              "Fn::GetAtt": [
+                                                "OpenIdConfigurationHandler6BB639A3",
+                                                "Arn"
+                                              ]
+                                            },
+                                            "/invocations"
+                                          ]
+                                        ]
+                                      },
+                                      "integrationHttpMethod": "POST"
+                                    },
+                                    "requestValidatorId": {
+                                      "Ref": "TvmApiValidator22D769BA"
+                                    },
+                                    "resourceId": {
+                                      "Ref": "TvmApiwellknownopenidconfigurationF023F998"
+                                    },
+                                    "restApiId": {
+                                      "Ref": "TvmApi9CC896B2"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                  "version": "2.131.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                              "version": "2.131.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.Resource",
+                          "version": "2.131.0"
+                        }
+                      },
+                      "jwks.json": {
+                        "id": "jwks.json",
+                        "path": "TokenVendingMachineStack/TvmApi/Default/.well-known/jwks.json",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "TokenVendingMachineStack/TvmApi/Default/.well-known/jwks.json/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ApiGateway::Resource",
+                              "aws:cdk:cloudformation:props": {
+                                "parentId": {
+                                  "Ref": "TvmApiwellknown6FBE51C8"
+                                },
+                                "pathPart": "jwks.json",
+                                "restApiId": {
+                                  "Ref": "TvmApi9CC896B2"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.CfnResource",
+                              "version": "2.131.0"
+                            }
+                          },
+                          "OPTIONS": {
+                            "id": "OPTIONS",
+                            "path": "TokenVendingMachineStack/TvmApi/Default/.well-known/jwks.json/OPTIONS",
+                            "children": {
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "TokenVendingMachineStack/TvmApi/Default/.well-known/jwks.json/OPTIONS/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                  "aws:cdk:cloudformation:props": {
+                                    "apiKeyRequired": false,
+                                    "authorizationType": "NONE",
+                                    "httpMethod": "OPTIONS",
+                                    "integration": {
+                                      "type": "MOCK",
+                                      "requestTemplates": {
+                                        "application/json": "{ statusCode: 200 }"
+                                      },
+                                      "integrationResponses": [
+                                        {
+                                          "statusCode": "204",
+                                          "responseParameters": {
+                                            "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+                                            "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                            "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+                                          }
+                                        }
+                                      ]
+                                    },
+                                    "methodResponses": [
+                                      {
+                                        "statusCode": "204",
+                                        "responseParameters": {
+                                          "method.response.header.Access-Control-Allow-Headers": true,
+                                          "method.response.header.Access-Control-Allow-Origin": true,
+                                          "method.response.header.Access-Control-Allow-Methods": true
+                                        }
+                                      }
+                                    ],
+                                    "resourceId": {
+                                      "Ref": "TvmApiwellknownjwksjsonCFDE7718"
+                                    },
+                                    "restApiId": {
+                                      "Ref": "TvmApi9CC896B2"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                  "version": "2.131.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                              "version": "2.131.0"
+                            }
+                          },
+                          "GET": {
+                            "id": "GET",
+                            "path": "TokenVendingMachineStack/TvmApi/Default/.well-known/jwks.json/GET",
+                            "children": {
+                              "ApiPermission.TokenVendingMachineStackTvmApiE91A4EFD.GET...well-known.jwks.json": {
+                                "id": "ApiPermission.TokenVendingMachineStackTvmApiE91A4EFD.GET...well-known.jwks.json",
+                                "path": "TokenVendingMachineStack/TvmApi/Default/.well-known/jwks.json/GET/ApiPermission.TokenVendingMachineStackTvmApiE91A4EFD.GET...well-known.jwks.json",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                  "aws:cdk:cloudformation:props": {
+                                    "action": "lambda:InvokeFunction",
+                                    "functionName": {
+                                      "Fn::GetAtt": [
+                                        "JwksEndpointHandlerF3BCFCB7",
+                                        "Arn"
+                                      ]
+                                    },
+                                    "principal": "apigateway.amazonaws.com",
+                                    "sourceArn": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":execute-api:",
+                                          {
+                                            "Ref": "AWS::Region"
+                                          },
+                                          ":",
+                                          {
+                                            "Ref": "AWS::AccountId"
+                                          },
+                                          ":",
+                                          {
+                                            "Ref": "TvmApi9CC896B2"
+                                          },
+                                          "/",
+                                          {
+                                            "Ref": "TvmApiDeploymentStageprod48FCCD80"
+                                          },
+                                          "/GET/.well-known/jwks.json"
+                                        ]
+                                      ]
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                  "version": "2.131.0"
+                                }
+                              },
+                              "ApiPermission.Test.TokenVendingMachineStackTvmApiE91A4EFD.GET...well-known.jwks.json": {
+                                "id": "ApiPermission.Test.TokenVendingMachineStackTvmApiE91A4EFD.GET...well-known.jwks.json",
+                                "path": "TokenVendingMachineStack/TvmApi/Default/.well-known/jwks.json/GET/ApiPermission.Test.TokenVendingMachineStackTvmApiE91A4EFD.GET...well-known.jwks.json",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                                  "aws:cdk:cloudformation:props": {
+                                    "action": "lambda:InvokeFunction",
+                                    "functionName": {
+                                      "Fn::GetAtt": [
+                                        "JwksEndpointHandlerF3BCFCB7",
+                                        "Arn"
+                                      ]
+                                    },
+                                    "principal": "apigateway.amazonaws.com",
+                                    "sourceArn": {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          "arn:",
+                                          {
+                                            "Ref": "AWS::Partition"
+                                          },
+                                          ":execute-api:",
+                                          {
+                                            "Ref": "AWS::Region"
+                                          },
+                                          ":",
+                                          {
+                                            "Ref": "AWS::AccountId"
+                                          },
+                                          ":",
+                                          {
+                                            "Ref": "TvmApi9CC896B2"
+                                          },
+                                          "/test-invoke-stage/GET/.well-known/jwks.json"
+                                        ]
+                                      ]
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                                  "version": "2.131.0"
+                                }
+                              },
+                              "Resource": {
+                                "id": "Resource",
+                                "path": "TokenVendingMachineStack/TvmApi/Default/.well-known/jwks.json/GET/Resource",
+                                "attributes": {
+                                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                                  "aws:cdk:cloudformation:props": {
+                                    "authorizationType": "NONE",
+                                    "httpMethod": "GET",
+                                    "integration": {
+                                      "type": "AWS_PROXY",
+                                      "uri": {
+                                        "Fn::Join": [
+                                          "",
+                                          [
+                                            "arn:",
+                                            {
+                                              "Ref": "AWS::Partition"
+                                            },
+                                            ":apigateway:",
+                                            {
+                                              "Ref": "AWS::Region"
+                                            },
+                                            ":lambda:path/2015-03-31/functions/",
+                                            {
+                                              "Fn::GetAtt": [
+                                                "JwksEndpointHandlerF3BCFCB7",
+                                                "Arn"
+                                              ]
+                                            },
+                                            "/invocations"
+                                          ]
+                                        ]
+                                      },
+                                      "integrationHttpMethod": "POST"
+                                    },
+                                    "requestValidatorId": {
+                                      "Ref": "TvmApiValidator22D769BA"
+                                    },
+                                    "resourceId": {
+                                      "Ref": "TvmApiwellknownjwksjsonCFDE7718"
+                                    },
+                                    "restApiId": {
+                                      "Ref": "TvmApi9CC896B2"
+                                    }
+                                  }
+                                },
+                                "constructInfo": {
+                                  "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                                  "version": "2.131.0"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                              "version": "2.131.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.Resource",
+                          "version": "2.131.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.Resource",
+                      "version": "2.131.0"
+                    }
+                  },
+                  "token": {
+                    "id": "token",
+                    "path": "TokenVendingMachineStack/TvmApi/Default/token",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "TokenVendingMachineStack/TvmApi/Default/token/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ApiGateway::Resource",
+                          "aws:cdk:cloudformation:props": {
+                            "parentId": {
+                              "Fn::GetAtt": [
+                                "TvmApi9CC896B2",
+                                "RootResourceId"
+                              ]
+                            },
+                            "pathPart": "token",
+                            "restApiId": {
+                              "Ref": "TvmApi9CC896B2"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.CfnResource",
+                          "version": "2.131.0"
+                        }
+                      },
+                      "OPTIONS": {
+                        "id": "OPTIONS",
+                        "path": "TokenVendingMachineStack/TvmApi/Default/token/OPTIONS",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "TokenVendingMachineStack/TvmApi/Default/token/OPTIONS/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                              "aws:cdk:cloudformation:props": {
+                                "apiKeyRequired": false,
+                                "authorizationType": "NONE",
+                                "httpMethod": "OPTIONS",
+                                "integration": {
+                                  "type": "MOCK",
+                                  "requestTemplates": {
+                                    "application/json": "{ statusCode: 200 }"
+                                  },
+                                  "integrationResponses": [
+                                    {
+                                      "statusCode": "204",
+                                      "responseParameters": {
+                                        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+                                        "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+                                      }
+                                    }
+                                  ]
+                                },
+                                "methodResponses": [
+                                  {
+                                    "statusCode": "204",
+                                    "responseParameters": {
+                                      "method.response.header.Access-Control-Allow-Headers": true,
+                                      "method.response.header.Access-Control-Allow-Origin": true,
+                                      "method.response.header.Access-Control-Allow-Methods": true
+                                    }
+                                  }
+                                ],
+                                "resourceId": {
+                                  "Ref": "TvmApitokenB3A67415"
+                                },
+                                "restApiId": {
+                                  "Ref": "TvmApi9CC896B2"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                              "version": "2.131.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                          "version": "2.131.0"
+                        }
+                      },
+                      "POST": {
+                        "id": "POST",
+                        "path": "TokenVendingMachineStack/TvmApi/Default/token/POST",
+                        "children": {
+                          "ApiPermission.TokenVendingMachineStackTvmApiE91A4EFD.POST..token": {
+                            "id": "ApiPermission.TokenVendingMachineStackTvmApiE91A4EFD.POST..token",
+                            "path": "TokenVendingMachineStack/TvmApi/Default/token/POST/ApiPermission.TokenVendingMachineStackTvmApiE91A4EFD.POST..token",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                              "aws:cdk:cloudformation:props": {
+                                "action": "lambda:InvokeFunction",
+                                "functionName": {
+                                  "Fn::GetAtt": [
+                                    "TokenVendingMachineHandlerE4E0C0AF",
+                                    "Arn"
+                                  ]
+                                },
+                                "principal": "apigateway.amazonaws.com",
+                                "sourceArn": {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      "arn:",
+                                      {
+                                        "Ref": "AWS::Partition"
+                                      },
+                                      ":execute-api:",
+                                      {
+                                        "Ref": "AWS::Region"
+                                      },
+                                      ":",
+                                      {
+                                        "Ref": "AWS::AccountId"
+                                      },
+                                      ":",
+                                      {
+                                        "Ref": "TvmApi9CC896B2"
+                                      },
+                                      "/",
+                                      {
+                                        "Ref": "TvmApiDeploymentStageprod48FCCD80"
+                                      },
+                                      "/POST/token"
+                                    ]
+                                  ]
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                              "version": "2.131.0"
+                            }
+                          },
+                          "ApiPermission.Test.TokenVendingMachineStackTvmApiE91A4EFD.POST..token": {
+                            "id": "ApiPermission.Test.TokenVendingMachineStackTvmApiE91A4EFD.POST..token",
+                            "path": "TokenVendingMachineStack/TvmApi/Default/token/POST/ApiPermission.Test.TokenVendingMachineStackTvmApiE91A4EFD.POST..token",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                              "aws:cdk:cloudformation:props": {
+                                "action": "lambda:InvokeFunction",
+                                "functionName": {
+                                  "Fn::GetAtt": [
+                                    "TokenVendingMachineHandlerE4E0C0AF",
+                                    "Arn"
+                                  ]
+                                },
+                                "principal": "apigateway.amazonaws.com",
+                                "sourceArn": {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      "arn:",
+                                      {
+                                        "Ref": "AWS::Partition"
+                                      },
+                                      ":execute-api:",
+                                      {
+                                        "Ref": "AWS::Region"
+                                      },
+                                      ":",
+                                      {
+                                        "Ref": "AWS::AccountId"
+                                      },
+                                      ":",
+                                      {
+                                        "Ref": "TvmApi9CC896B2"
+                                      },
+                                      "/test-invoke-stage/POST/token"
+                                    ]
+                                  ]
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                              "version": "2.131.0"
+                            }
+                          },
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "TokenVendingMachineStack/TvmApi/Default/token/POST/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                              "aws:cdk:cloudformation:props": {
+                                "authorizationType": "NONE",
+                                "httpMethod": "POST",
+                                "integration": {
+                                  "type": "AWS_PROXY",
+                                  "uri": {
+                                    "Fn::Join": [
+                                      "",
+                                      [
+                                        "arn:",
+                                        {
+                                          "Ref": "AWS::Partition"
+                                        },
+                                        ":apigateway:",
+                                        {
+                                          "Ref": "AWS::Region"
+                                        },
+                                        ":lambda:path/2015-03-31/functions/",
+                                        {
+                                          "Fn::GetAtt": [
+                                            "TokenVendingMachineHandlerE4E0C0AF",
+                                            "Arn"
+                                          ]
+                                        },
+                                        "/invocations"
+                                      ]
+                                    ]
+                                  },
+                                  "integrationHttpMethod": "POST"
+                                },
+                                "requestValidatorId": {
+                                  "Ref": "TvmApiValidator22D769BA"
+                                },
+                                "resourceId": {
+                                  "Ref": "TvmApitokenB3A67415"
+                                },
+                                "restApiId": {
+                                  "Ref": "TvmApi9CC896B2"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                              "version": "2.131.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                          "version": "2.131.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.Resource",
+                      "version": "2.131.0"
+                    }
+                  },
+                  "userinfo": {
+                    "id": "userinfo",
+                    "path": "TokenVendingMachineStack/TvmApi/Default/userinfo",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "TokenVendingMachineStack/TvmApi/Default/userinfo/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ApiGateway::Resource",
+                          "aws:cdk:cloudformation:props": {
+                            "parentId": {
+                              "Fn::GetAtt": [
+                                "TvmApi9CC896B2",
+                                "RootResourceId"
+                              ]
+                            },
+                            "pathPart": "userinfo",
+                            "restApiId": {
+                              "Ref": "TvmApi9CC896B2"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.CfnResource",
+                          "version": "2.131.0"
+                        }
+                      },
+                      "OPTIONS": {
+                        "id": "OPTIONS",
+                        "path": "TokenVendingMachineStack/TvmApi/Default/userinfo/OPTIONS",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "TokenVendingMachineStack/TvmApi/Default/userinfo/OPTIONS/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                              "aws:cdk:cloudformation:props": {
+                                "apiKeyRequired": false,
+                                "authorizationType": "NONE",
+                                "httpMethod": "OPTIONS",
+                                "integration": {
+                                  "type": "MOCK",
+                                  "requestTemplates": {
+                                    "application/json": "{ statusCode: 200 }"
+                                  },
+                                  "integrationResponses": [
+                                    {
+                                      "statusCode": "204",
+                                      "responseParameters": {
+                                        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+                                        "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+                                      }
+                                    }
+                                  ]
+                                },
+                                "methodResponses": [
+                                  {
+                                    "statusCode": "204",
+                                    "responseParameters": {
+                                      "method.response.header.Access-Control-Allow-Headers": true,
+                                      "method.response.header.Access-Control-Allow-Origin": true,
+                                      "method.response.header.Access-Control-Allow-Methods": true
+                                    }
+                                  }
+                                ],
+                                "resourceId": {
+                                  "Ref": "TvmApiuserinfoDB61FC45"
+                                },
+                                "restApiId": {
+                                  "Ref": "TvmApi9CC896B2"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                              "version": "2.131.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                          "version": "2.131.0"
+                        }
+                      },
+                      "GET": {
+                        "id": "GET",
+                        "path": "TokenVendingMachineStack/TvmApi/Default/userinfo/GET",
+                        "children": {
+                          "ApiPermission.TokenVendingMachineStackTvmApiE91A4EFD.GET..userinfo": {
+                            "id": "ApiPermission.TokenVendingMachineStackTvmApiE91A4EFD.GET..userinfo",
+                            "path": "TokenVendingMachineStack/TvmApi/Default/userinfo/GET/ApiPermission.TokenVendingMachineStackTvmApiE91A4EFD.GET..userinfo",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                              "aws:cdk:cloudformation:props": {
+                                "action": "lambda:InvokeFunction",
+                                "functionName": {
+                                  "Fn::GetAtt": [
+                                    "TokenVendingMachineHandlerE4E0C0AF",
+                                    "Arn"
+                                  ]
+                                },
+                                "principal": "apigateway.amazonaws.com",
+                                "sourceArn": {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      "arn:",
+                                      {
+                                        "Ref": "AWS::Partition"
+                                      },
+                                      ":execute-api:",
+                                      {
+                                        "Ref": "AWS::Region"
+                                      },
+                                      ":",
+                                      {
+                                        "Ref": "AWS::AccountId"
+                                      },
+                                      ":",
+                                      {
+                                        "Ref": "TvmApi9CC896B2"
+                                      },
+                                      "/",
+                                      {
+                                        "Ref": "TvmApiDeploymentStageprod48FCCD80"
+                                      },
+                                      "/GET/userinfo"
+                                    ]
+                                  ]
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                              "version": "2.131.0"
+                            }
+                          },
+                          "ApiPermission.Test.TokenVendingMachineStackTvmApiE91A4EFD.GET..userinfo": {
+                            "id": "ApiPermission.Test.TokenVendingMachineStackTvmApiE91A4EFD.GET..userinfo",
+                            "path": "TokenVendingMachineStack/TvmApi/Default/userinfo/GET/ApiPermission.Test.TokenVendingMachineStackTvmApiE91A4EFD.GET..userinfo",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                              "aws:cdk:cloudformation:props": {
+                                "action": "lambda:InvokeFunction",
+                                "functionName": {
+                                  "Fn::GetAtt": [
+                                    "TokenVendingMachineHandlerE4E0C0AF",
+                                    "Arn"
+                                  ]
+                                },
+                                "principal": "apigateway.amazonaws.com",
+                                "sourceArn": {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      "arn:",
+                                      {
+                                        "Ref": "AWS::Partition"
+                                      },
+                                      ":execute-api:",
+                                      {
+                                        "Ref": "AWS::Region"
+                                      },
+                                      ":",
+                                      {
+                                        "Ref": "AWS::AccountId"
+                                      },
+                                      ":",
+                                      {
+                                        "Ref": "TvmApi9CC896B2"
+                                      },
+                                      "/test-invoke-stage/GET/userinfo"
+                                    ]
+                                  ]
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                              "version": "2.131.0"
+                            }
+                          },
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "TokenVendingMachineStack/TvmApi/Default/userinfo/GET/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                              "aws:cdk:cloudformation:props": {
+                                "authorizationType": "NONE",
+                                "httpMethod": "GET",
+                                "integration": {
+                                  "type": "AWS_PROXY",
+                                  "uri": {
+                                    "Fn::Join": [
+                                      "",
+                                      [
+                                        "arn:",
+                                        {
+                                          "Ref": "AWS::Partition"
+                                        },
+                                        ":apigateway:",
+                                        {
+                                          "Ref": "AWS::Region"
+                                        },
+                                        ":lambda:path/2015-03-31/functions/",
+                                        {
+                                          "Fn::GetAtt": [
+                                            "TokenVendingMachineHandlerE4E0C0AF",
+                                            "Arn"
+                                          ]
+                                        },
+                                        "/invocations"
+                                      ]
+                                    ]
+                                  },
+                                  "integrationHttpMethod": "POST"
+                                },
+                                "requestValidatorId": {
+                                  "Ref": "TvmApiValidator22D769BA"
+                                },
+                                "resourceId": {
+                                  "Ref": "TvmApiuserinfoDB61FC45"
+                                },
+                                "restApiId": {
+                                  "Ref": "TvmApi9CC896B2"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                              "version": "2.131.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                          "version": "2.131.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.Resource",
+                      "version": "2.131.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.ResourceBase",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_apigateway.RestApi",
+              "version": "2.131.0"
+            }
+          },
+          "TvmApiWafAssociation": {
+            "id": "TvmApiWafAssociation",
+            "path": "TokenVendingMachineStack/TvmApiWafAssociation",
+            "attributes": {
+              "aws:cdk:cloudformation:type": "AWS::WAFv2::WebACLAssociation",
+              "aws:cdk:cloudformation:props": {
+                "resourceArn": {
+                  "Fn::Sub": [
+                    "arn:aws:apigateway:${AWS::Region}::/restapis/${RestApiId}/stages/prod",
+                    {
+                      "RestApiId": {
+                        "Ref": "TvmApi9CC896B2"
+                      }
+                    }
+                  ]
+                },
+                "webAclArn": {
+                  "Fn::GetAtt": [
+                    "TvmApiWafAcl",
+                    "Arn"
+                  ]
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_wafv2.CfnWebACLAssociation",
+              "version": "2.131.0"
+            }
+          },
+          "TvmApiValidator": {
+            "id": "TvmApiValidator",
+            "path": "TokenVendingMachineStack/TvmApiValidator",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "TokenVendingMachineStack/TvmApiValidator/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::RequestValidator",
+                  "aws:cdk:cloudformation:props": {
+                    "name": "body-and-params-validator",
+                    "restApiId": {
+                      "Ref": "TvmApi9CC896B2"
+                    },
+                    "validateRequestBody": true,
+                    "validateRequestParameters": true
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.CfnRequestValidator",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_apigateway.RequestValidator",
+              "version": "2.131.0"
+            }
+          },
+          "OpenIdConfigurationHandler": {
+            "id": "OpenIdConfigurationHandler",
+            "path": "TokenVendingMachineStack/OpenIdConfigurationHandler",
+            "children": {
+              "Code": {
+                "id": "Code",
+                "path": "TokenVendingMachineStack/OpenIdConfigurationHandler/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "TokenVendingMachineStack/OpenIdConfigurationHandler/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.131.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "TokenVendingMachineStack/OpenIdConfigurationHandler/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.131.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.131.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "TokenVendingMachineStack/OpenIdConfigurationHandler/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                      },
+                      "s3Key": "6672efaf4fb5e13c1acae42551eb24225589e38466992a1d1e01a421159ade93.jar"
+                    },
+                    "handler": "com.amazon.OpenIdConfigurationHandler::handleRequest",
+                    "role": {
+                      "Fn::GetAtt": [
+                        "TvmLambdaExecRoleC50FF80B",
+                        "Arn"
+                      ]
+                    },
+                    "runtime": "java21",
+                    "timeout": 10
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.131.0"
+                }
+              },
+              "InvokeFcyXBRX02EWa52GlF+ECQiCzDt0fdRUDi4mo4foC5aU=": {
+                "id": "InvokeFcyXBRX02EWa52GlF+ECQiCzDt0fdRUDi4mo4foC5aU=",
+                "path": "TokenVendingMachineStack/OpenIdConfigurationHandler/InvokeFcyXBRX02EWa52GlF+ECQiCzDt0fdRUDi4mo4foC5aU=",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                  "aws:cdk:cloudformation:props": {
+                    "action": "lambda:InvokeFunction",
+                    "functionName": {
+                      "Fn::GetAtt": [
+                        "OpenIdConfigurationHandler6BB639A3",
+                        "Arn"
+                      ]
+                    },
+                    "principal": "apigateway.amazonaws.com"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda.Function",
+              "version": "2.131.0"
+            }
+          },
+          "JwksEndpointHandler": {
+            "id": "JwksEndpointHandler",
+            "path": "TokenVendingMachineStack/JwksEndpointHandler",
+            "children": {
+              "Code": {
+                "id": "Code",
+                "path": "TokenVendingMachineStack/JwksEndpointHandler/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "TokenVendingMachineStack/JwksEndpointHandler/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.131.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "TokenVendingMachineStack/JwksEndpointHandler/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.131.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.131.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "TokenVendingMachineStack/JwksEndpointHandler/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                      },
+                      "s3Key": "6672efaf4fb5e13c1acae42551eb24225589e38466992a1d1e01a421159ade93.jar"
+                    },
+                    "environment": {
+                      "variables": {
+                        "KEY_SECRET_NAME": {
+                          "Fn::Join": [
+                            "-",
+                            [
+                              {
+                                "Fn::Select": [
+                                  0,
+                                  {
+                                    "Fn::Split": [
+                                      "-",
+                                      {
+                                        "Fn::Select": [
+                                          6,
+                                          {
+                                            "Fn::Split": [
+                                              ":",
+                                              {
+                                                "Ref": "TvmKeySecretE13F1521"
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "Fn::Select": [
+                                  1,
+                                  {
+                                    "Fn::Split": [
+                                      "-",
+                                      {
+                                        "Fn::Select": [
+                                          6,
+                                          {
+                                            "Fn::Split": [
+                                              ":",
+                                              {
+                                                "Ref": "TvmKeySecretE13F1521"
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          ]
+                        }
+                      }
+                    },
+                    "handler": "com.amazon.JwksEndpointHandler::handleRequest",
+                    "role": {
+                      "Fn::GetAtt": [
+                        "TvmLambdaExecRoleC50FF80B",
+                        "Arn"
+                      ]
+                    },
+                    "runtime": "java21",
+                    "timeout": 10
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.131.0"
+                }
+              },
+              "InvokeFcyXBRX02EWa52GlF+ECQiCzDt0fdRUDi4mo4foC5aU=": {
+                "id": "InvokeFcyXBRX02EWa52GlF+ECQiCzDt0fdRUDi4mo4foC5aU=",
+                "path": "TokenVendingMachineStack/JwksEndpointHandler/InvokeFcyXBRX02EWa52GlF+ECQiCzDt0fdRUDi4mo4foC5aU=",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                  "aws:cdk:cloudformation:props": {
+                    "action": "lambda:InvokeFunction",
+                    "functionName": {
+                      "Fn::GetAtt": [
+                        "JwksEndpointHandlerF3BCFCB7",
+                        "Arn"
+                      ]
+                    },
+                    "principal": "apigateway.amazonaws.com"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda.Function",
+              "version": "2.131.0"
+            }
+          },
+          "TokenVendingMachineHandler": {
+            "id": "TokenVendingMachineHandler",
+            "path": "TokenVendingMachineStack/TokenVendingMachineHandler",
+            "children": {
+              "Code": {
+                "id": "Code",
+                "path": "TokenVendingMachineStack/TokenVendingMachineHandler/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "TokenVendingMachineStack/TokenVendingMachineHandler/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.131.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "TokenVendingMachineStack/TokenVendingMachineHandler/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.131.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.131.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "TokenVendingMachineStack/TokenVendingMachineHandler/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                      },
+                      "s3Key": "6672efaf4fb5e13c1acae42551eb24225589e38466992a1d1e01a421159ade93.jar"
+                    },
+                    "environment": {
+                      "variables": {
+                        "KEY_SECRET_NAME": {
+                          "Fn::Join": [
+                            "-",
+                            [
+                              {
+                                "Fn::Select": [
+                                  0,
+                                  {
+                                    "Fn::Split": [
+                                      "-",
+                                      {
+                                        "Fn::Select": [
+                                          6,
+                                          {
+                                            "Fn::Split": [
+                                              ":",
+                                              {
+                                                "Ref": "TvmKeySecretE13F1521"
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "Fn::Select": [
+                                  1,
+                                  {
+                                    "Fn::Split": [
+                                      "-",
+                                      {
+                                        "Fn::Select": [
+                                          6,
+                                          {
+                                            "Fn::Split": [
+                                              ":",
+                                              {
+                                                "Ref": "TvmKeySecretE13F1521"
+                                              }
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          ]
+                        },
+                        "AUDIENCE": "qbusiness-audience"
+                      }
+                    },
+                    "handler": "com.amazon.TokenVendingMachineHandler::handleRequest",
+                    "role": {
+                      "Fn::GetAtt": [
+                        "TvmLambdaExecRoleC50FF80B",
+                        "Arn"
+                      ]
+                    },
+                    "runtime": "java21",
+                    "timeout": 10
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.131.0"
+                }
+              },
+              "InvokeFcyXBRX02EWa52GlF+ECQiCzDt0fdRUDi4mo4foC5aU=": {
+                "id": "InvokeFcyXBRX02EWa52GlF+ECQiCzDt0fdRUDi4mo4foC5aU=",
+                "path": "TokenVendingMachineStack/TokenVendingMachineHandler/InvokeFcyXBRX02EWa52GlF+ECQiCzDt0fdRUDi4mo4foC5aU=",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                  "aws:cdk:cloudformation:props": {
+                    "action": "lambda:InvokeFunction",
+                    "functionName": {
+                      "Fn::GetAtt": [
+                        "TokenVendingMachineHandlerE4E0C0AF",
+                        "Arn"
+                      ]
+                    },
+                    "principal": "apigateway.amazonaws.com"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda.Function",
+              "version": "2.131.0"
+            }
+          },
+          "TvmIssuerUrl": {
+            "id": "TvmIssuerUrl",
+            "path": "TokenVendingMachineStack/TvmIssuerUrl",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.131.0"
+            }
+          },
+          "TvmAudience": {
+            "id": "TvmAudience",
+            "path": "TokenVendingMachineStack/TvmAudience",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.131.0"
+            }
+          },
+          "TvmApiUrl": {
+            "id": "TvmApiUrl",
+            "path": "TokenVendingMachineStack/TvmApiUrl",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.131.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "TokenVendingMachineStack/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "TokenVendingMachineStack/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.131.0"
+                }
+              },
+              "Condition": {
+                "id": "Condition",
+                "path": "TokenVendingMachineStack/CDKMetadata/Condition",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnCondition",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.3.0"
+            }
+          },
+          "Exports": {
+            "id": "Exports",
+            "path": "TokenVendingMachineStack/Exports",
+            "children": {
+              "Output{\"Ref\":\"TvmApi9CC896B2\"}": {
+                "id": "Output{\"Ref\":\"TvmApi9CC896B2\"}",
+                "path": "TokenVendingMachineStack/Exports/Output{\"Ref\":\"TvmApi9CC896B2\"}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.131.0"
+                }
+              },
+              "Output{\"Ref\":\"TvmApiDeploymentStageprod48FCCD80\"}": {
+                "id": "Output{\"Ref\":\"TvmApiDeploymentStageprod48FCCD80\"}",
+                "path": "TokenVendingMachineStack/Exports/Output{\"Ref\":\"TvmApiDeploymentStageprod48FCCD80\"}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.3.0"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "TokenVendingMachineStack/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.131.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "TokenVendingMachineStack/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.131.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.131.0"
+        }
+      },
+      "OidcProviderStack": {
+        "id": "OidcProviderStack",
+        "path": "OidcProviderStack",
+        "children": {
+          "TvmIamOidcProvider": {
+            "id": "TvmIamOidcProvider",
+            "path": "OidcProviderStack/TvmIamOidcProvider",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "OidcProviderStack/TvmIamOidcProvider/Resource",
+                "children": {
+                  "Default": {
+                    "id": "Default",
+                    "path": "OidcProviderStack/TvmIamOidcProvider/Resource/Default",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnResource",
+                      "version": "2.131.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CustomResource",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_iam.OpenIdConnectProvider",
+              "version": "2.131.0"
+            }
+          },
+          "Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider": {
+            "id": "Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider",
+            "path": "OidcProviderStack/Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider",
+            "children": {
+              "Staging": {
+                "id": "Staging",
+                "path": "OidcProviderStack/Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider/Staging",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.AssetStaging",
+                  "version": "2.131.0"
+                }
+              },
+              "Role": {
+                "id": "Role",
+                "path": "OidcProviderStack/Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider/Role",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.131.0"
+                }
+              },
+              "Handler": {
+                "id": "Handler",
+                "path": "OidcProviderStack/Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider/Handler",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CustomResourceProviderBase",
+              "version": "2.131.0"
+            }
+          },
+          "TvmOidcProviderArn": {
+            "id": "TvmOidcProviderArn",
+            "path": "OidcProviderStack/TvmOidcProviderArn",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.131.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "OidcProviderStack/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "OidcProviderStack/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.131.0"
+                }
+              },
+              "Condition": {
+                "id": "Condition",
+                "path": "OidcProviderStack/CDKMetadata/Condition",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnCondition",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.3.0"
+            }
+          },
+          "Exports": {
+            "id": "Exports",
+            "path": "OidcProviderStack/Exports",
+            "children": {
+              "Output{\"Ref\":\"TvmIamOidcProviderBFFB1434\"}": {
+                "id": "Output{\"Ref\":\"TvmIamOidcProviderBFFB1434\"}",
+                "path": "OidcProviderStack/Exports/Output{\"Ref\":\"TvmIamOidcProviderBFFB1434\"}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.3.0"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "OidcProviderStack/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.131.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "OidcProviderStack/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.131.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.131.0"
+        }
+      },
+      "QBusinessStack": {
+        "id": "QBusinessStack",
+        "path": "QBusinessStack",
+        "children": {
+          "QBusinessApp": {
+            "id": "QBusinessApp",
+            "path": "QBusinessStack/QBusinessApp",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnResource",
+              "version": "2.131.0"
+            }
+          },
+          "QBusinessIndex": {
+            "id": "QBusinessIndex",
+            "path": "QBusinessStack/QBusinessIndex",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnResource",
+              "version": "2.131.0"
+            }
+          },
+          "QBusinessApplicationId": {
+            "id": "QBusinessApplicationId",
+            "path": "QBusinessStack/QBusinessApplicationId",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.131.0"
+            }
+          },
+          "QBusinessRetrieverId": {
+            "id": "QBusinessRetrieverId",
+            "path": "QBusinessStack/QBusinessRetrieverId",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.131.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "QBusinessStack/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "QBusinessStack/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.131.0"
+                }
+              },
+              "Condition": {
+                "id": "Condition",
+                "path": "QBusinessStack/CDKMetadata/Condition",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnCondition",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.3.0"
+            }
+          },
+          "Exports": {
+            "id": "Exports",
+            "path": "QBusinessStack/Exports",
+            "children": {
+              "Output{\"Fn::GetAtt\":[\"QBusinessApp\",\"ApplicationId\"]}": {
+                "id": "Output{\"Fn::GetAtt\":[\"QBusinessApp\",\"ApplicationId\"]}",
+                "path": "QBusinessStack/Exports/Output{\"Fn::GetAtt\":[\"QBusinessApp\",\"ApplicationId\"]}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.131.0"
+                }
+              },
+              "Output{\"Fn::GetAtt\":[\"QBusinessIndex\",\"IndexId\"]}": {
+                "id": "Output{\"Fn::GetAtt\":[\"QBusinessIndex\",\"IndexId\"]}",
+                "path": "QBusinessStack/Exports/Output{\"Fn::GetAtt\":[\"QBusinessIndex\",\"IndexId\"]}",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnOutput",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.3.0"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "QBusinessStack/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.131.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "QBusinessStack/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.131.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.131.0"
+        }
+      },
+      "SearchStack": {
+        "id": "SearchStack",
+        "path": "SearchStack",
+        "children": {
+          "SearchWithTipRoleCond": {
+            "id": "SearchWithTipRoleCond",
+            "path": "SearchStack/SearchWithTipRoleCond",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SearchStack/SearchWithTipRoleCond/Resource",
+                "children": {
+                  "Default": {
+                    "id": "Default",
+                    "path": "SearchStack/SearchWithTipRoleCond/Resource/Default",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.CfnResource",
+                      "version": "2.131.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CustomResource",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnJson",
+              "version": "2.131.0"
+            }
+          },
+          "AWSCDKCfnUtilsProviderCustomResourceProvider": {
+            "id": "AWSCDKCfnUtilsProviderCustomResourceProvider",
+            "path": "SearchStack/AWSCDKCfnUtilsProviderCustomResourceProvider",
+            "children": {
+              "Staging": {
+                "id": "Staging",
+                "path": "SearchStack/AWSCDKCfnUtilsProviderCustomResourceProvider/Staging",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.AssetStaging",
+                  "version": "2.131.0"
+                }
+              },
+              "Role": {
+                "id": "Role",
+                "path": "SearchStack/AWSCDKCfnUtilsProviderCustomResourceProvider/Role",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.131.0"
+                }
+              },
+              "Handler": {
+                "id": "Handler",
+                "path": "SearchStack/AWSCDKCfnUtilsProviderCustomResourceProvider/Handler",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CustomResourceProviderBase",
+              "version": "2.131.0"
+            }
+          },
+          "SearchWithTipRole": {
+            "id": "SearchWithTipRole",
+            "path": "SearchStack/SearchWithTipRole",
+            "children": {
+              "ImportSearchWithTipRole": {
+                "id": "ImportSearchWithTipRole",
+                "path": "SearchStack/SearchWithTipRole/ImportSearchWithTipRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.131.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "SearchStack/SearchWithTipRole/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                  "aws:cdk:cloudformation:props": {
+                    "assumeRolePolicyDocument": {
+                      "Statement": [
+                        {
+                          "Action": [
+                            "sts:AssumeRole",
+                            "sts:SetContext"
+                          ],
+                          "Effect": "Allow",
+                          "Principal": {
+                            "Service": "qbusiness.amazonaws.com"
+                          }
+                        },
+                        {
+                          "Condition": {
+                            "StringEquals": {
+                              "Fn::GetAtt": [
+                                "SearchWithTipRoleCondD71D0E28",
+                                "Value"
+                              ]
+                            }
+                          },
+                          "Principal": {
+                            "Federated": {
+                              "Fn::ImportValue": "OidcProviderStack:ExportsOutputRefTvmIamOidcProviderBFFB14340A3C0CA5"
+                            }
+                          },
+                          "Action": [
+                            "sts:AssumeRoleWithWebIdentity",
+                            "sts:TagSession"
+                          ],
+                          "Effect": "Allow"
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    },
+                    "policies": [
+                      {
+                        "policyName": "SearchWithTipInlinePolicy",
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "qbusiness:SearchRelevantContent",
+                              "Effect": "Allow",
+                              "Resource": {
+                                "Fn::Join": [
+                                  "",
+                                  [
+                                    "arn:aws:qbusiness:",
+                                    {
+                                      "Ref": "AWS::Region"
+                                    },
+                                    ":",
+                                    {
+                                      "Ref": "AWS::AccountId"
+                                    },
+                                    ":application/",
+                                    {
+                                      "Fn::ImportValue": "QBusinessStack:ExportsOutputFnGetAttQBusinessAppApplicationId58AC7172"
+                                    }
+                                  ]
+                                ]
+                              },
+                              "Sid": "AllowQBusinessSearch"
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        }
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_iam.Role",
+              "version": "2.131.0"
+            }
+          },
+          "SearchLambdaExecRole": {
+            "id": "SearchLambdaExecRole",
+            "path": "SearchStack/SearchLambdaExecRole",
+            "children": {
+              "ImportSearchLambdaExecRole": {
+                "id": "ImportSearchLambdaExecRole",
+                "path": "SearchStack/SearchLambdaExecRole/ImportSearchLambdaExecRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.131.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "SearchStack/SearchLambdaExecRole/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                  "aws:cdk:cloudformation:props": {
+                    "assumeRolePolicyDocument": {
+                      "Statement": [
+                        {
+                          "Action": "sts:AssumeRole",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "Service": "lambda.amazonaws.com"
+                          }
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                  "version": "2.131.0"
+                }
+              },
+              "DefaultPolicy": {
+                "id": "DefaultPolicy",
+                "path": "SearchStack/SearchLambdaExecRole/DefaultPolicy",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "SearchStack/SearchLambdaExecRole/DefaultPolicy/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                      "aws:cdk:cloudformation:props": {
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": [
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": {
+                                "Fn::Join": [
+                                  "",
+                                  [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "SearchHandlerLogs853F3C45",
+                                        "Arn"
+                                      ]
+                                    },
+                                    ":*"
+                                  ]
+                                ]
+                              },
+                              "Sid": "AllowLambdaLogs"
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "policyName": "SearchLambdaExecRoleDefaultPolicy4A4C64C5",
+                        "roles": [
+                          {
+                            "Ref": "SearchLambdaExecRole2CFCBBDB"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                      "version": "2.131.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Policy",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_iam.Role",
+              "version": "2.131.0"
+            }
+          },
+          "SearchHandlerLogs": {
+            "id": "SearchHandlerLogs",
+            "path": "SearchStack/SearchHandlerLogs",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SearchStack/SearchHandlerLogs/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Logs::LogGroup",
+                  "aws:cdk:cloudformation:props": {
+                    "logGroupName": "/aws/lambda/SearchHandler",
+                    "retentionInDays": 30
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_logs.CfnLogGroup",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_logs.LogGroup",
+              "version": "2.131.0"
+            }
+          },
+          "SearchHandler": {
+            "id": "SearchHandler",
+            "path": "SearchStack/SearchHandler",
+            "children": {
+              "Code": {
+                "id": "Code",
+                "path": "SearchStack/SearchHandler/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "SearchStack/SearchHandler/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.131.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "SearchStack/SearchHandler/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.131.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.131.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "SearchStack/SearchHandler/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                      },
+                      "s3Key": "ff9fdba5d7eff922ba44665023a767108f49dadf7377cf07c6ed68534a90b97c.jar"
+                    },
+                    "environment": {
+                      "variables": {
+                        "TOKEN_ENDPOINT": {
+                          "Fn::Join": [
+                            "",
+                            [
+                              "https://",
+                              {
+                                "Fn::ImportValue": "TokenVendingMachineStack:ExportsOutputRefTvmApi9CC896B2287C1435"
+                              },
+                              ".execute-api.",
+                              {
+                                "Ref": "AWS::Region"
+                              },
+                              ".",
+                              {
+                                "Ref": "AWS::URLSuffix"
+                              },
+                              "/",
+                              {
+                                "Fn::ImportValue": "TokenVendingMachineStack:ExportsOutputRefTvmApiDeploymentStageprod48FCCD805009B9E8"
+                              },
+                              "/token"
+                            ]
+                          ]
+                        },
+                        "ROLE_ARN": {
+                          "Fn::GetAtt": [
+                            "SearchWithTipRole8D8BFAFA",
+                            "Arn"
+                          ]
+                        },
+                        "QBUS_RETRIEVER_ID": {
+                          "Fn::ImportValue": "QBusinessStack:ExportsOutputFnGetAttQBusinessIndexIndexId2AE7C306"
+                        },
+                        "QBUS_APP_ID": {
+                          "Fn::ImportValue": "QBusinessStack:ExportsOutputFnGetAttQBusinessAppApplicationId58AC7172"
+                        }
+                      }
+                    },
+                    "functionName": "SearchHandler",
+                    "handler": "com.amazon.SearchHandler::handleRequest",
+                    "role": {
+                      "Fn::GetAtt": [
+                        "SearchLambdaExecRole2CFCBBDB",
+                        "Arn"
+                      ]
+                    },
+                    "runtime": "java21",
+                    "timeout": 60
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_lambda.Function",
+              "version": "2.131.0"
+            }
+          },
+          "SearchApiAccessLogs": {
+            "id": "SearchApiAccessLogs",
+            "path": "SearchStack/SearchApiAccessLogs",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SearchStack/SearchApiAccessLogs/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Logs::LogGroup",
+                  "aws:cdk:cloudformation:props": {
+                    "logGroupName": "/aws/apigateway/SearchRelevantContentApi-access-logs",
+                    "retentionInDays": 30
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_logs.CfnLogGroup",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_logs.LogGroup",
+              "version": "2.131.0"
+            }
+          },
+          "SearchApi": {
+            "id": "SearchApi",
+            "path": "SearchStack/SearchApi",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SearchStack/SearchApi/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::RestApi",
+                  "aws:cdk:cloudformation:props": {
+                    "name": "SearchRelevantContentApi"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.CfnRestApi",
+                  "version": "2.131.0"
+                }
+              },
+              "CloudWatchRole": {
+                "id": "CloudWatchRole",
+                "path": "SearchStack/SearchApi/CloudWatchRole",
+                "children": {
+                  "ImportCloudWatchRole": {
+                    "id": "ImportCloudWatchRole",
+                    "path": "SearchStack/SearchApi/CloudWatchRole/ImportCloudWatchRole",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.Resource",
+                      "version": "2.131.0"
+                    }
+                  },
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "SearchStack/SearchApi/CloudWatchRole/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": "apigateway.amazonaws.com"
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "managedPolicyArns": [
+                          {
+                            "Fn::Join": [
+                              "",
+                              [
+                                "arn:",
+                                {
+                                  "Ref": "AWS::Partition"
+                                },
+                                ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.131.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.131.0"
+                }
+              },
+              "Account": {
+                "id": "Account",
+                "path": "SearchStack/SearchApi/Account",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Account",
+                  "aws:cdk:cloudformation:props": {
+                    "cloudWatchRoleArn": {
+                      "Fn::GetAtt": [
+                        "SearchApiCloudWatchRoleF2BBFCD8",
+                        "Arn"
+                      ]
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.CfnAccount",
+                  "version": "2.131.0"
+                }
+              },
+              "Default": {
+                "id": "Default",
+                "path": "SearchStack/SearchApi/Default",
+                "children": {
+                  "OPTIONS": {
+                    "id": "OPTIONS",
+                    "path": "SearchStack/SearchApi/Default/OPTIONS",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "SearchStack/SearchApi/Default/OPTIONS/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                          "aws:cdk:cloudformation:props": {
+                            "apiKeyRequired": false,
+                            "authorizationType": "NONE",
+                            "httpMethod": "OPTIONS",
+                            "integration": {
+                              "type": "MOCK",
+                              "requestTemplates": {
+                                "application/json": "{ statusCode: 200 }"
+                              },
+                              "integrationResponses": [
+                                {
+                                  "statusCode": "204",
+                                  "responseParameters": {
+                                    "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+                                    "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                    "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+                                  }
+                                }
+                              ]
+                            },
+                            "methodResponses": [
+                              {
+                                "statusCode": "204",
+                                "responseParameters": {
+                                  "method.response.header.Access-Control-Allow-Headers": true,
+                                  "method.response.header.Access-Control-Allow-Origin": true,
+                                  "method.response.header.Access-Control-Allow-Methods": true
+                                }
+                              }
+                            ],
+                            "resourceId": {
+                              "Fn::GetAtt": [
+                                "SearchApi2D039D25",
+                                "RootResourceId"
+                              ]
+                            },
+                            "restApiId": {
+                              "Ref": "SearchApi2D039D25"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                          "version": "2.131.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                      "version": "2.131.0"
+                    }
+                  },
+                  "search": {
+                    "id": "search",
+                    "path": "SearchStack/SearchApi/Default/search",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "SearchStack/SearchApi/Default/search/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::ApiGateway::Resource",
+                          "aws:cdk:cloudformation:props": {
+                            "parentId": {
+                              "Fn::GetAtt": [
+                                "SearchApi2D039D25",
+                                "RootResourceId"
+                              ]
+                            },
+                            "pathPart": "search",
+                            "restApiId": {
+                              "Ref": "SearchApi2D039D25"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.CfnResource",
+                          "version": "2.131.0"
+                        }
+                      },
+                      "OPTIONS": {
+                        "id": "OPTIONS",
+                        "path": "SearchStack/SearchApi/Default/search/OPTIONS",
+                        "children": {
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "SearchStack/SearchApi/Default/search/OPTIONS/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                              "aws:cdk:cloudformation:props": {
+                                "apiKeyRequired": false,
+                                "authorizationType": "NONE",
+                                "httpMethod": "OPTIONS",
+                                "integration": {
+                                  "type": "MOCK",
+                                  "requestTemplates": {
+                                    "application/json": "{ statusCode: 200 }"
+                                  },
+                                  "integrationResponses": [
+                                    {
+                                      "statusCode": "204",
+                                      "responseParameters": {
+                                        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+                                        "method.response.header.Access-Control-Allow-Origin": "'*'",
+                                        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+                                      }
+                                    }
+                                  ]
+                                },
+                                "methodResponses": [
+                                  {
+                                    "statusCode": "204",
+                                    "responseParameters": {
+                                      "method.response.header.Access-Control-Allow-Headers": true,
+                                      "method.response.header.Access-Control-Allow-Origin": true,
+                                      "method.response.header.Access-Control-Allow-Methods": true
+                                    }
+                                  }
+                                ],
+                                "resourceId": {
+                                  "Ref": "SearchApisearch6B016651"
+                                },
+                                "restApiId": {
+                                  "Ref": "SearchApi2D039D25"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                              "version": "2.131.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                          "version": "2.131.0"
+                        }
+                      },
+                      "POST": {
+                        "id": "POST",
+                        "path": "SearchStack/SearchApi/Default/search/POST",
+                        "children": {
+                          "ApiPermission.SearchStackSearchApi7DFC16E0.POST..search": {
+                            "id": "ApiPermission.SearchStackSearchApi7DFC16E0.POST..search",
+                            "path": "SearchStack/SearchApi/Default/search/POST/ApiPermission.SearchStackSearchApi7DFC16E0.POST..search",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::Lambda::Permission",
+                              "aws:cdk:cloudformation:props": {
+                                "action": "lambda:InvokeFunction",
+                                "functionName": {
+                                  "Fn::GetAtt": [
+                                    "SearchHandler00CE2B50",
+                                    "Arn"
+                                  ]
+                                },
+                                "principal": "apigateway.amazonaws.com",
+                                "sourceArn": {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      "arn:",
+                                      {
+                                        "Ref": "AWS::Partition"
+                                      },
+                                      ":execute-api:",
+                                      {
+                                        "Ref": "AWS::Region"
+                                      },
+                                      ":",
+                                      {
+                                        "Ref": "AWS::AccountId"
+                                      },
+                                      ":",
+                                      {
+                                        "Ref": "SearchApi2D039D25"
+                                      },
+                                      "/*/POST/search"
+                                    ]
+                                  ]
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_lambda.CfnPermission",
+                              "version": "2.131.0"
+                            }
+                          },
+                          "Resource": {
+                            "id": "Resource",
+                            "path": "SearchStack/SearchApi/Default/search/POST/Resource",
+                            "attributes": {
+                              "aws:cdk:cloudformation:type": "AWS::ApiGateway::Method",
+                              "aws:cdk:cloudformation:props": {
+                                "authorizationType": "NONE",
+                                "httpMethod": "POST",
+                                "integration": {
+                                  "type": "AWS_PROXY",
+                                  "uri": {
+                                    "Fn::Join": [
+                                      "",
+                                      [
+                                        "arn:",
+                                        {
+                                          "Ref": "AWS::Partition"
+                                        },
+                                        ":apigateway:",
+                                        {
+                                          "Ref": "AWS::Region"
+                                        },
+                                        ":lambda:path/2015-03-31/functions/",
+                                        {
+                                          "Fn::GetAtt": [
+                                            "SearchHandler00CE2B50",
+                                            "Arn"
+                                          ]
+                                        },
+                                        "/invocations"
+                                      ]
+                                    ]
+                                  },
+                                  "integrationHttpMethod": "POST"
+                                },
+                                "requestValidatorId": {
+                                  "Ref": "SearchApiValidator8B9D3779"
+                                },
+                                "resourceId": {
+                                  "Ref": "SearchApisearch6B016651"
+                                },
+                                "restApiId": {
+                                  "Ref": "SearchApi2D039D25"
+                                }
+                              }
+                            },
+                            "constructInfo": {
+                              "fqn": "aws-cdk-lib.aws_apigateway.CfnMethod",
+                              "version": "2.131.0"
+                            }
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_apigateway.Method",
+                          "version": "2.131.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_apigateway.Resource",
+                      "version": "2.131.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.ResourceBase",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_apigateway.RestApi",
+              "version": "2.131.0"
+            }
+          },
+          "SearchApiValidator": {
+            "id": "SearchApiValidator",
+            "path": "SearchStack/SearchApiValidator",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SearchStack/SearchApiValidator/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::RequestValidator",
+                  "aws:cdk:cloudformation:props": {
+                    "name": "body-and-params-validator",
+                    "restApiId": {
+                      "Ref": "SearchApi2D039D25"
+                    },
+                    "validateRequestBody": true,
+                    "validateRequestParameters": true
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.CfnRequestValidator",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_apigateway.RequestValidator",
+              "version": "2.131.0"
+            }
+          },
+          "SearchApiDeployment": {
+            "id": "SearchApiDeployment",
+            "path": "SearchStack/SearchApiDeployment",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SearchStack/SearchApiDeployment/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Deployment",
+                  "aws:cdk:cloudformation:props": {
+                    "restApiId": {
+                      "Ref": "SearchApi2D039D25"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.CfnDeployment",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_apigateway.Deployment",
+              "version": "2.131.0"
+            }
+          },
+          "SearchApiStage": {
+            "id": "SearchApiStage",
+            "path": "SearchStack/SearchApiStage",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "SearchStack/SearchApiStage/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::ApiGateway::Stage",
+                  "aws:cdk:cloudformation:props": {
+                    "accessLogSetting": {
+                      "destinationArn": {
+                        "Fn::GetAtt": [
+                          "SearchApiAccessLogsEE491AD6",
+                          "Arn"
+                        ]
+                      },
+                      "format": "$context.identity.sourceIp $context.identity.caller $context.identity.user [$context.requestTime] \"$context.httpMethod $context.resourcePath $context.protocol\" $context.status $context.responseLength $context.requestId"
+                    },
+                    "deploymentId": {
+                      "Ref": "SearchApiDeployment8CEF72913316340d4011ddb4f6737596f2a25c88"
+                    },
+                    "methodSettings": [
+                      {
+                        "httpMethod": "*",
+                        "resourcePath": "/*",
+                        "dataTraceEnabled": true,
+                        "loggingLevel": "INFO"
+                      }
+                    ],
+                    "restApiId": {
+                      "Ref": "SearchApi2D039D25"
+                    },
+                    "stageName": "prod"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_apigateway.CfnStage",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_apigateway.Stage",
+              "version": "2.131.0"
+            }
+          },
+          "SearchApiWafAcl": {
+            "id": "SearchApiWafAcl",
+            "path": "SearchStack/SearchApiWafAcl",
+            "attributes": {
+              "aws:cdk:cloudformation:type": "AWS::WAFv2::WebACL",
+              "aws:cdk:cloudformation:props": {
+                "defaultAction": {
+                  "allow": {}
+                },
+                "name": "SearchApiWafAcl",
+                "rules": [
+                  {
+                    "name": "RateLimitRule",
+                    "priority": 1,
+                    "statement": {
+                      "rateBasedStatement": {
+                        "aggregateKeyType": "IP",
+                        "limit": 1000
+                      }
+                    },
+                    "visibilityConfig": {
+                      "cloudWatchMetricsEnabled": true,
+                      "metricName": "RateLimitRule",
+                      "sampledRequestsEnabled": true
+                    },
+                    "action": {
+                      "block": {}
+                    }
+                  }
+                ],
+                "scope": "REGIONAL",
+                "visibilityConfig": {
+                  "cloudWatchMetricsEnabled": true,
+                  "metricName": "SearchApiWafAcl",
+                  "sampledRequestsEnabled": true
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_wafv2.CfnWebACL",
+              "version": "2.131.0"
+            }
+          },
+          "SearchApiWafAssociation": {
+            "id": "SearchApiWafAssociation",
+            "path": "SearchStack/SearchApiWafAssociation",
+            "attributes": {
+              "aws:cdk:cloudformation:type": "AWS::WAFv2::WebACLAssociation",
+              "aws:cdk:cloudformation:props": {
+                "resourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      "::/restapis/",
+                      {
+                        "Ref": "SearchApi2D039D25"
+                      },
+                      "/stages/",
+                      {
+                        "Ref": "SearchApiStageD75ACE9D"
+                      }
+                    ]
+                  ]
+                },
+                "webAclArn": {
+                  "Fn::GetAtt": [
+                    "SearchApiWafAcl",
+                    "Arn"
+                  ]
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_wafv2.CfnWebACLAssociation",
+              "version": "2.131.0"
+            }
+          },
+          "SearchApiUrl": {
+            "id": "SearchApiUrl",
+            "path": "SearchStack/SearchApiUrl",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.131.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "SearchStack/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "SearchStack/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.131.0"
+                }
+              },
+              "Condition": {
+                "id": "Condition",
+                "path": "SearchStack/CDKMetadata/Condition",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnCondition",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.3.0"
+            }
+          },
+          "BootstrapVersion": {
+            "id": "BootstrapVersion",
+            "path": "SearchStack/BootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnParameter",
+              "version": "2.131.0"
+            }
+          },
+          "CheckBootstrapVersion": {
+            "id": "CheckBootstrapVersion",
+            "path": "SearchStack/CheckBootstrapVersion",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnRule",
+              "version": "2.131.0"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.131.0"
+        }
+      },
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": {
+          "fqn": "constructs.Construct",
+          "version": "10.3.0"
+        }
+      }
+    },
+    "constructInfo": {
+      "fqn": "aws-cdk-lib.App",
+      "version": "2.131.0"
+    }
+  }
+}

@@ -6,7 +6,6 @@ import software.amazon.awscdk.Fn;
 import software.amazon.awscdk.Stack;
 import software.amazon.awscdk.StackProps;
 import software.constructs.Construct;
-
 import software.amazon.awscdk.services.iam.OpenIdConnectProvider;
 
 import java.util.List;
@@ -26,19 +25,29 @@ public class OidcProviderStack extends Stack {
         super(scope, id, props);
 
         // 1) Import exactly the export names from TVM stack
-        String issuer = Fn.importValue("TvmIssuerUrl");
+        String issuer   = Fn.importValue("TvmIssuerUrl");
         String audience = Fn.importValue("TvmAudience");
 
-        List<String> thumbprints = List.of("9e99a48a9960b14926bb7f3b02e22da0afd8f4f");
+        // 2) Use a comprehensive, pinned list of AWS cert thumbprints (SHA‑1; 20 bytes = 40 hex chars)
+        List<String> thumbprints = List.of(
+                // CloudFront intermediate CA
+                "6938fd4d98bab03faadb97b34396831e3780aea1",
+                // Amazon Root CA 1
+                "9e99a48a9960b14926bb7f3b02e22da0afd8f4ff",
+                // Amazon Root CA 2
+                "146f82d739f8743252a613787ee538729a59373e",
+                // Amazon Trust Services Root
+                "b3f5e77f65955f6e8878eca038736e33c2fffa8c"
+        );
 
-        // 2) Create the OIDC provider
+        // 3) Create the OIDC provider
         this.oidcProvider = OpenIdConnectProvider.Builder.create(this, "TvmIamOidcProvider")
                 .url(issuer)
                 .clientIds(List.of(audience))
                 .thumbprints(thumbprints)
                 .build();
 
-        // 3) Re-export its ARN for downstream stacks
+        // 4) Export its ARN for downstream stacks
         new CfnOutput(this, "TvmOidcProviderArn", CfnOutputProps.builder()
                 .value(this.oidcProvider.getOpenIdConnectProviderArn())
                 .description("IAM OIDC Provider ARN")
@@ -46,7 +55,6 @@ public class OidcProviderStack extends Stack {
                 .build());
     }
 
-    // Getter for the OIDC provider
     public OpenIdConnectProvider getProvider() {
         return this.oidcProvider;
     }

@@ -5,6 +5,7 @@ import software.amazon.awscdk.Aspects;
 import software.amazon.awscdk.Duration;
 import software.amazon.awscdk.Fn;
 import software.amazon.awscdk.RemovalPolicy;
+import software.amazon.awscdk.SecretValue;
 import software.amazon.awscdk.Stack;
 import software.amazon.awscdk.StackProps;
 import software.constructs.Construct;
@@ -15,7 +16,9 @@ import io.github.cdklabs.cdknag.NagPackSuppression;
 import software.amazon.awscdk.CfnOutput;
 import software.amazon.awscdk.CfnOutputProps;
 import software.amazon.awscdk.services.apigateway.RestApi;
+import software.amazon.awscdk.services.apigateway.CfnStage;
 import software.amazon.awscdk.services.apigateway.LambdaIntegration;
+import software.amazon.awscdk.services.apigateway.Method;
 import software.amazon.awscdk.services.apigateway.CorsOptions;
 import software.amazon.awscdk.services.apigateway.Cors;
 import software.amazon.awscdk.services.apigateway.RequestValidator;
@@ -28,6 +31,8 @@ import software.amazon.awscdk.services.logs.LogGroup;
 import software.amazon.awscdk.services.logs.RetentionDays;
 import software.amazon.awscdk.services.wafv2.CfnWebACL;
 import software.amazon.awscdk.services.wafv2.CfnWebACLAssociation;
+import software.amazon.awscdk.services.secretsmanager.Secret;
+import software.amazon.awscdk.services.secretsmanager.SecretStringGenerator;
 
 import software.amazon.awscdk.services.kms.Key;
 import software.amazon.awscdk.services.kms.KeySpec;
@@ -67,36 +72,50 @@ public class TokenVendingMachineStack extends Stack {
                         .reason("OIDC signing requires an asymmetric key (RSA); KMS asymmetric keys cannot auto-rotate.")
                         .build()
         ));
+
+        // 2) Store just the keyId in Secrets Manager
+        Secret keySecret = Secret.Builder.create(this, "TvmKeySecret")
+                .generateSecretString(SecretStringGenerator.builder()
+                        .secretStringTemplate("{\"keyId\":\"" + signingKey.getKeyId() + "\"}")
+                        .generateStringKey("secret")
+                        .build())
+                .removalPolicy(RemovalPolicy.DESTROY)
+                .build();
+        NagSuppressions.addResourceSuppressions(keySecret,
+                List.of(NagPackSuppression.builder()
+                        .id("AwsSolutions-SMG4")
+                        .reason("Rotation not needed for this ephemeral signing secret.")
+                        .build()), true
+        );
+
         Alias.Builder.create(this, "TvmSigningKeyAlias")
                 .aliasName("alias/tvm-token-signing")
                 .targetKey(signingKey)
                 .build();
 
-        // 2) Lambda role with AWS-managed log policy
+        // 3) Lambda execution role
         Role lambdaRole = Role.Builder.create(this, "TvmLambdaExecRole")
                 .assumedBy(new ServicePrincipal("lambda.amazonaws.com"))
                 .managedPolicies(List.of(
                         ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole")
                 ))
                 .build();
-        NagSuppressions.addResourceSuppressions(
-                lambdaRole,
-                List.of(
-                        NagPackSuppression.builder()
-                                .id("AwsSolutions-IAM4")
-                                .reason("AWSLambdaBasicExecutionRole is required for Lambda logging")
-                                .build()
-                ), true
+        NagSuppressions.addResourceSuppressions(lambdaRole,
+                List.of(NagPackSuppression.builder()
+                        .id("AwsSolutions-IAM4")
+                        .reason("AWSLambdaBasicExecutionRole is required for Lambda logging")
+                        .build()), true
         );
         signingKey.grant(lambdaRole, "kms:Sign", "kms:GetPublicKey", "kms:DescribeKey");
+        keySecret.grantRead(lambdaRole);
 
-        // 3) API Gateway access logs
+        // 4) API Gateway access logs
         LogGroup apiAccessLogs = LogGroup.Builder.create(this, "TvmApiAccessLogs")
                 .logGroupName("/aws/apigateway/TokenVendingMachineApi-access-logs")
                 .retention(RetentionDays.ONE_MONTH)
                 .build();
 
-        // 4) WAF Web ACL
+        // 5) WAF Web ACL
         CfnWebACL wafAcl = CfnWebACL.Builder.create(this, "TvmApiWafAcl")
                 .name("TvmApiWafAcl")
                 .scope("REGIONAL")
@@ -130,7 +149,7 @@ public class TokenVendingMachineStack extends Stack {
                 ))
                 .build();
 
-        // 5) REST API
+        // 6) Create REST API
         this.api = RestApi.Builder.create(this, "TvmApi")
                 .restApiName("TokenVendingMachineApi")
                 .deployOptions(StageOptions.builder()
@@ -146,25 +165,32 @@ public class TokenVendingMachineStack extends Stack {
                         .allowHeaders(List.of("Content-Type", "Authorization"))
                         .build())
                 .build();
-        NagSuppressions.addResourceSuppressions(
-                api,
-                List.of(
-                        NagPackSuppression.builder()
-                                .id("AwsSolutions-IAM4")
-                                .reason("API Gateway needs AWS-managed log policy for CloudWatch pushes")
-                                .build()
-                ), true
+        NagSuppressions.addResourceSuppressions(api,
+                List.of(NagPackSuppression.builder()
+                        .id("AwsSolutions-IAM4")
+                        .reason("API GW needs AWS-managed log policy for CloudWatch")
+                        .build()), true
         );
 
-        // 6) Associate WAF via L1 resource after API/Stage exists
+        // 7) Suppress cdk-nag on the L1 stage
+        CfnStage cfnStage = (CfnStage) api.getDeploymentStage().getNode().getDefaultChild();
+        NagSuppressions.addResourceSuppressions(cfnStage,
+                List.of(NagPackSuppression.builder()
+                        .id("AwsSolutions-APIG3")
+                        .reason("WAF is attached downstream via CfnWebACLAssociation.")
+                        .build()), true
+        );
+
+        // 8) Associate WAF
         CfnWebACLAssociation.Builder.create(this, "TvmApiWafAssociation")
                 .resourceArn(Fn.sub(
                         "arn:aws:apigateway:${AWS::Region}::/restapis/${RestApiId}/stages/prod",
                         Map.of("RestApiId", api.getRestApiId())))
                 .webAclArn(wafAcl.getAttrArn())
-                .build();
+                .build()
+                .getNode().addDependency(cfnStage);
 
-        // 7) Request Validator
+        // 9) RequestValidator
         RequestValidator validator = RequestValidator.Builder.create(this, "TvmApiValidator")
                 .restApi(api)
                 .requestValidatorName("body-and-params-validator")
@@ -173,7 +199,7 @@ public class TokenVendingMachineStack extends Stack {
                 .build();
         api.getDeploymentStage().applyRemovalPolicy(RemovalPolicy.RETAIN);
 
-        // 8) Lambda handlers
+        // 10) Lambda handlers and integrations
         String tvmJar = "services/TokenVendingMachine/target/tvm-1.0.0-SNAPSHOT.jar";
         Function openIdConfigurationHandler = Function.Builder.create(this, "OpenIdConfigurationHandler")
                 .runtime(Runtime.JAVA_21)
@@ -187,9 +213,12 @@ public class TokenVendingMachineStack extends Stack {
                 .handler("com.amazon.JwksEndpointHandler::handleRequest")
                 .code(Code.fromAsset(tvmJar))
                 .role(lambdaRole)
-                .environment(Map.of("KEY_ID", signingKey.getKeyId()))
+                .environment(Map.of(
+                        "KEY_SECRET_NAME", keySecret.getSecretName()
+                ))
                 .timeout(Duration.seconds(10))
                 .build();
+        keySecret.grantRead(jwksEndpointHandler);
         Function tokenVendingMachineHandler = Function.Builder.create(this, "TokenVendingMachineHandler")
                 .runtime(Runtime.JAVA_21)
                 .handler("com.amazon.TokenVendingMachineHandler::handleRequest")
@@ -197,12 +226,12 @@ public class TokenVendingMachineStack extends Stack {
                 .role(lambdaRole)
                 .environment(Map.of(
                         "AUDIENCE", audience,
-                        "KEY_ID", signingKey.getKeyId()
+                        "KEY_SECRET_NAME", keySecret.getSecretName()
                 ))
                 .timeout(Duration.seconds(10))
                 .build();
+        keySecret.grantRead(tokenVendingMachineHandler);
 
-        // 9) API integrations
         var wellKnown = api.getRoot().addResource(".well-known");
         var openidConfigMethod = wellKnown.addResource("openid-configuration").addMethod(
                 "GET", new LambdaIntegration(openIdConfigurationHandler),
@@ -213,8 +242,13 @@ public class TokenVendingMachineStack extends Stack {
         var tokenMethod = api.getRoot().addResource("token").addMethod(
                 "POST", new LambdaIntegration(tokenVendingMachineHandler),
                 MethodOptions.builder().requestValidator(validator).build());
+        
+        // userinfo endpoint
+        var userinfoMethod = api.getRoot().addResource("userinfo").addMethod(
+                "GET", new LambdaIntegration(tokenVendingMachineHandler),
+                MethodOptions.builder().requestValidator(validator).build());
 
-        // suppress public endpoints
+        // suppress public endpoints findings
         NagSuppressions.addResourceSuppressions(openidConfigMethod, List.of(
                 NagPackSuppression.builder().id("AwsSolutions-APIG4").reason("OIDC Discovery endpoint must be public").build(),
                 NagPackSuppression.builder().id("AwsSolutions-COG4").reason("No Cognito auth on discovery").build()
@@ -227,29 +261,27 @@ public class TokenVendingMachineStack extends Stack {
                 NagPackSuppression.builder().id("AwsSolutions-APIG4").reason("Token endpoint must be public for OAuth2 clients").build(),
                 NagPackSuppression.builder().id("AwsSolutions-COG4").reason("No Cognito auth on token").build()
         ));
+        NagSuppressions.addResourceSuppressions(userinfoMethod, List.of(
+                NagPackSuppression.builder().id("AwsSolutions-APIG4").reason("UserInfo endpoint must be public").build(),
+                NagPackSuppression.builder().id("AwsSolutions-COG4").reason("No Cognito authorizer on UserInfo").build()
+        ));
 
-        // 10) Invoke permissions
+        // 11) Grant invoke
         openIdConfigurationHandler.grantInvoke(new ServicePrincipal("apigateway.amazonaws.com"));
         jwksEndpointHandler.grantInvoke(new ServicePrincipal("apigateway.amazonaws.com"));
         tokenVendingMachineHandler.grantInvoke(new ServicePrincipal("apigateway.amazonaws.com"));
 
-        // 11) Exports
+        // 12) Outputs
         String issuer = api.getUrl().replaceAll("/+$", "");
         new CfnOutput(this, "TvmIssuerUrl", CfnOutputProps.builder()
                 .value(issuer)
-                .description("OIDC Issuer URL for QBusiness")
-                .exportName("TvmIssuerUrl")
-                .build());
+                .exportName("TvmIssuerUrl").build());
         new CfnOutput(this, "TvmAudience", CfnOutputProps.builder()
                 .value(audience)
-                .description("OIDC client ID (audience) for QBusiness")
-                .exportName("TvmAudience")
-                .build());
+                .exportName("TvmAudience").build());
         new CfnOutput(this, "TvmApiUrl", CfnOutputProps.builder()
                 .value(api.getUrl())
-                .description("API Gateway URL for the TVM")
-                .exportName("TvmApiUrl")
-                .build());
+                .exportName("TvmApiUrl").build());
     }
 
     public RestApi getApi() { return api; }

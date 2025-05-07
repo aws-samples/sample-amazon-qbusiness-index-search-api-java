@@ -5,37 +5,38 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.Jwts;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Base64;
+import java.util.Date;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * Token Vending Machine (TVM) Lambda handler that issues JWT tokens
- * and serves a /userinfo endpoint for QBusiness.
+ * and serves a /userinfo endpoint for QBusiness, now signing via KMS.
  */
 public class TokenVendingMachineHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
     private static final ObjectMapper JSON = new ObjectMapper();
+    private static final String AUDIENCE = System.getenv("AUDIENCE");
+    private static final int TOKEN_EXPIRATION_MINUTES = 60;
+    private static final String USER_ATTRIBUTE_CLAIM = "email";
 
-    // Configuration from environment variables
-    private static final String AUDIENCE    = System.getenv("AUDIENCE");
-    private static final int    TOKEN_EXPIRATION_MINUTES = 60;
+    private final KeyManager keyManager;
 
-    // Claim names
-    private static final String USER_ATTRIBUTE_CLAIM    = "email";
-    private static final String AWS_PRINCIPAL_TAG_EMAIL = "aws:PrincipalTag/Email";
-
-    private final KeyManager keyManager = KeyManager.getInstance();
+    public TokenVendingMachineHandler() {
+        this.keyManager = KeyManager.getInstance();
+        System.out.println("[TVM] Initialized KeyManager with keyId=" + keyManager.getKeyId());
+    }
 
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent req, Context ctx) {
         String path = req.getPath();
         ctx.getLogger().log("Incoming path: " + path);
-
         try {
             if (path.endsWith("/token")) {
                 return handleToken(req, ctx);
@@ -51,19 +52,15 @@ public class TokenVendingMachineHandler implements RequestHandler<APIGatewayProx
     }
 
     private APIGatewayProxyResponseEvent handleToken(APIGatewayProxyRequestEvent req, Context ctx) throws Exception {
-        // 1) Get the stage from the request context
-        String stage = req.getRequestContext().getStage();  // e.g. "prod"
-        
-        // 2) Read Host and scheme from headers
+        // Infer issuer
+        String stage = req.getRequestContext().getStage();
         Map<String,String> headers = req.getHeaders();
-        String host = headers.get("Host");                  // e.g. "abc123.execute-api.us-east-1.amazonaws.com"
+        String host = headers.get("Host");
         String proto = headers.getOrDefault("X-Forwarded-Proto", "https");
-        
-        // 3) Build the issuer URL
         String issuerUrl = proto + "://" + host + "/" + stage;
         ctx.getLogger().log("Inferred issuer URL: " + issuerUrl);
-        
-        // parse incoming body
+
+        // Parse email
         @SuppressWarnings("unchecked")
         Map<String,String> body = JSON.readValue(req.getBody(), Map.class);
         String email = body.get("email");
@@ -71,34 +68,41 @@ public class TokenVendingMachineHandler implements RequestHandler<APIGatewayProx
             return error(400, "Missing email parameter");
         }
 
-        // build JWT
+        // Build JWT header & payload
         Instant now = Instant.now();
         Instant exp = now.plus(TOKEN_EXPIRATION_MINUTES, ChronoUnit.MINUTES);
-        String jti = UUID.randomUUID().toString();
-        String sub = UUID.nameUUIDFromBytes(email.getBytes(StandardCharsets.UTF_8)).toString();
+        Map<String,Object> header = Map.of(
+                "alg", "RS256",
+                "typ", "JWT",
+                "kid", keyManager.getKeyId()
+        );
+        Map<String,Object> claims = new HashMap<>();
+        claims.put("jti", UUID.randomUUID().toString());
+        claims.put("sub", UUID.nameUUIDFromBytes(email.getBytes(StandardCharsets.UTF_8)).toString());
+        claims.put("iss", issuerUrl);
+        claims.put("aud", AUDIENCE);
+        claims.put("iat", Date.from(now).getTime() / 1000);
+        claims.put("exp", Date.from(exp).getTime() / 1000);
+        claims.put(USER_ATTRIBUTE_CLAIM, email);
+        claims.put("https://aws.amazon.com/tags", Map.of(
+                "principal_tags", Map.of("Email", new String[]{email})
+        ));
 
-        JwtBuilder b = Jwts.builder()
-                .setId(jti)
-                .setSubject(sub)
-                .setIssuer(issuerUrl)
-                .setAudience(AUDIENCE)
-                .setIssuedAt(Date.from(now))
-                .setExpiration(Date.from(exp))
-                .claim(USER_ATTRIBUTE_CLAIM, email)
-                .claim("https://aws.amazon.com/tags", Map.of(
-                        "principal_tags", Map.of(
-                                "Email", new String[]{email}
-                        )
-                ))
-                .setHeaderParam("kid", keyManager.getKeyId())
-                .signWith(keyManager.getKeyPair().getPrivate());
+        // Base64URL encode
+        String encodedHeader = Base64.getUrlEncoder().withoutPadding()
+                .encodeToString(JSON.writeValueAsString(header).getBytes(StandardCharsets.UTF_8));
+        String encodedPayload = Base64.getUrlEncoder().withoutPadding()
+                .encodeToString(JSON.writeValueAsString(claims).getBytes(StandardCharsets.UTF_8));
+        String signingInput = encodedHeader + "." + encodedPayload;
 
-        String token = b.compact();
-        ctx.getLogger().log("Generated JWT (prefix): " + token.substring(0, Math.min(10, token.length())) + "...");
+        // Sign via KMS
+        byte[] signature = keyManager.sign(signingInput.getBytes(StandardCharsets.UTF_8));
+        String encodedSignature = Base64.getUrlEncoder().withoutPadding().encodeToString(signature);
 
-        Map<String,String> resp = new HashMap<>();
-        resp.put("id_token", token);
-        return success(JSON.writeValueAsString(resp));
+        String jwt = signingInput + "." + encodedSignature;
+        ctx.getLogger().log("Generated JWT (prefix): " + jwt.substring(0, Math.min(10, jwt.length())) + "...");
+
+        return success(JSON.writeValueAsString(Map.of("id_token", jwt)));
     }
 
     private APIGatewayProxyResponseEvent handleUserInfo(APIGatewayProxyRequestEvent req, Context ctx) throws Exception {
@@ -106,27 +110,17 @@ public class TokenVendingMachineHandler implements RequestHandler<APIGatewayProx
         if (auth == null || !auth.startsWith("Bearer ")) {
             return error(401, "Missing or invalid Authorization header");
         }
-        String jwt = auth.substring("Bearer ".length());
-
-        // decode payload
+        String jwt = auth.substring(7);
         String[] parts = jwt.split("\\.");
-        if (parts.length != 3) {
-            return error(400, "Invalid JWT format");
-        }
+        if (parts.length != 3) return error(400, "Invalid JWT format");
         byte[] decoded = Base64.getUrlDecoder().decode(parts[1]);
-        @SuppressWarnings("unchecked")
-        Map<String,Object> claims = JSON.readValue(decoded, Map.class);
+        @SuppressWarnings("unchecked") Map<String,Object> claims = JSON.readValue(decoded, Map.class);
 
-        // return only the keys QBusiness cares about
         Map<String,Object> out = new HashMap<>();
         out.put("sub", claims.get("sub"));
         out.put("email", claims.get("email"));
-
-        @SuppressWarnings("unchecked")
-        Map<String,Object> awsTags = (Map<String,Object>) claims.get("https://aws.amazon.com/tags");
-        if (awsTags != null) {
-            out.put("https://aws.amazon.com/tags", awsTags);
-        }
+        @SuppressWarnings("unchecked") Map<String,Object> awsTags = (Map<String,Object>) claims.get("https://aws.amazon.com/tags");
+        if (awsTags != null) out.put("https://aws.amazon.com/tags", awsTags);
 
         return success(JSON.writeValueAsString(out));
     }
@@ -144,10 +138,9 @@ public class TokenVendingMachineHandler implements RequestHandler<APIGatewayProx
     }
 
     private APIGatewayProxyResponseEvent error(int code, String msg) {
-        String body = "{\"error\":\""+msg+"\"}";
         return new APIGatewayProxyResponseEvent()
                 .withStatusCode(code)
-                .withBody(body)
+                .withBody("{\"error\":\""+msg+"\"}")
                 .withHeaders(Map.of("Content-Type","application/json"));
     }
 }

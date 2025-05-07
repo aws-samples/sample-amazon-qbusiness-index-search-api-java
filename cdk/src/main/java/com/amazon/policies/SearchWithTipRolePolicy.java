@@ -1,15 +1,19 @@
 package com.amazon.policies;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
 import software.constructs.Construct;
+import software.amazon.awscdk.CfnJson;
 import software.amazon.awscdk.Stack;
 import software.amazon.awscdk.services.iam.PolicyDocument;
 import software.amazon.awscdk.services.iam.PolicyStatement;
 import software.amazon.awscdk.services.iam.Role;
+import software.amazon.awscdk.services.iam.IRole;
 import software.amazon.awscdk.services.iam.FederatedPrincipal;
+import software.amazon.awscdk.services.iam.CfnRole;
 import software.amazon.awscdk.services.iam.Effect;
 
 public class SearchWithTipRolePolicy {
@@ -30,40 +34,81 @@ public class SearchWithTipRolePolicy {
             String audience,
             String applicationId
     ) {
-        // During CDK synthesis, we need to avoid parsing the token as a URI
-        // Use a placeholder value that will be replaced at synth time
-        String issuerHost = "execute-api.${AWS::Region}.amazonaws.com";
+        // Extract issuer host from the issuer URL
+        String issuerHost;
+        try {
+            URI uri = new URI(issuerUrl);
+            issuerHost = uri.getHost();
+            System.out.println("Using issuer host: " + issuerHost);
+        } catch (Exception e) {
+            // Fallback to a manual parse if URI parsing fails
+            issuerHost = issuerUrl.replace("https://", "").replace("http://", "").split("/")[0];
+            System.out.println("Fallback to issuer host: " + issuerHost);
+        }
 
-        // inline policy granting QBusiness search permission
-        // Create a specific resource ARN for the QBusiness application
+        // Create resource ARN for the QBusiness application
         String qbusinessAppArn = "arn:aws:qbusiness:" + Stack.of(scope).getRegion() + ":" + 
                                   Stack.of(scope).getAccount() + ":application/" + applicationId;
-                                  
-        PolicyStatement inlineStmt = PolicyStatement.Builder.create()
-                .sid("AllowQBusinessSearch")
-                .effect(Effect.ALLOW)
-                .actions(List.of("qbusiness:SearchRelevantContent"))
-                .resources(List.of(qbusinessAppArn))
-                .build();
-
-        // Create the Role
-        return Role.Builder.create(scope, id)
-                // only your OIDC provider can assume this role via WebIdentity
-                .assumedBy(new FederatedPrincipal(
-                        oidcProviderArn,
-                        Map.of(
-                            "StringEquals", 
-                            Map.of(issuerHost + ":aud", audience)
-                        ),
-                        "sts:AssumeRoleWithWebIdentity"
-                ))
-                // attach the inline search policy
-                .inlinePolicies(Map.of(
-                        "SearchWithTipInlinePolicy",
-                        PolicyDocument.Builder.create()
-                                .statements(List.of(inlineStmt))
+        
+        // Create the search permission policy document
+        PolicyDocument searchPolicy = PolicyDocument.Builder.create()
+                .statements(List.of(
+                        PolicyStatement.Builder.create()
+                                .sid("AllowQBusinessSearch")
+                                .effect(Effect.ALLOW)
+                                .actions(List.of("qbusiness:SearchRelevantContent"))
+                                .resources(List.of(qbusinessAppArn))
                                 .build()
                 ))
                 .build();
+
+        // Instead of parsing the URI at synthesis time, we'll create a function that does this at deployment time
+        
+        // Create a CfnJson for the StringEquals condition - this delays resolution to deploy time
+        CfnJson audienceCondition = CfnJson.Builder.create(scope, id + "Cond")
+            .value(Map.of(
+                // We'll format the key as: c8kx5rc81k.execute-api.us-east-1.amazonaws.com/prod:aud
+                // This uses a Fn::Join to construct it at deployment time
+                software.amazon.awscdk.Fn.join("", List.of(
+                    software.amazon.awscdk.Fn.select(1, software.amazon.awscdk.Fn.split("://", issuerUrl)), // Remove https:// prefix
+                    ":aud" // Append :aud
+                )),
+                audience
+            ))
+            .build();
+
+        // 2) Re-assemble your trust policy, pointing the Condition to that CfnJson
+        Map<String, Object> trustPolicy = Map.of(
+            "Version", "2012-10-17",
+            "Statement", List.of(
+                Map.of(
+                    "Effect", "Allow",
+                    "Principal", Map.of("Service", "qbusiness.amazonaws.com"),
+                    "Action", List.of("sts:AssumeRole", "sts:SetContext")
+                ),
+                Map.of(
+                    "Effect", "Allow",
+                    "Principal", Map.of("Federated", oidcProviderArn),
+                    "Action", List.of("sts:AssumeRoleWithWebIdentity", "sts:TagSession"),
+                    "Condition", Map.of(
+                        "StringEquals",
+                        /* use the CfnJson token here instead of a plain Map */
+                        audienceCondition.getValue()
+                    )
+                )
+            )
+        );
+
+        // Create a Role using the L2 Builder (will have a dummy trust policy for now)
+        Role role = Role.Builder.create(scope, id)
+                .inlinePolicies(Map.of("SearchWithTipInlinePolicy", searchPolicy))
+                .assumedBy(new FederatedPrincipal(oidcProviderArn)) // This is just a temporary value that will be overridden
+                .build();
+                
+        // Get the underlying CfnRole resource and override the trust policy
+        var cfnRole = (CfnRole) role.getNode().getDefaultChild();
+        cfnRole.setAssumeRolePolicyDocument(trustPolicy);
+        
+        return role;
     }
 }

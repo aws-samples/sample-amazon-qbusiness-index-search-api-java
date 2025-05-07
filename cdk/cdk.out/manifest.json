@@ -1,0 +1,1215 @@
+{
+  "version": "36.0.0",
+  "artifacts": {
+    "TokenVendingMachineStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "TokenVendingMachineStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "TokenVendingMachineStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "TokenVendingMachineStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/00d1c5d4680017a3bb7870611b4ec479efe58b5163283dd042a028f227934658.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "TokenVendingMachineStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "TokenVendingMachineStack.assets"
+      ],
+      "metadata": {
+        "/TokenVendingMachineStack/TvmSigningKey/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmSigningKeyC38F9A74"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmSigningKeyAlias/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmSigningKeyAliasC867900D"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmLambdaExecRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmLambdaExecRoleC50FF80B"
+          },
+          {
+            "type": "aws:cdk:error",
+            "data": "AwsSolutions-IAM4[Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole]: The IAM user, role, or group uses AWS managed policies.\n",
+            "trace": [
+              "Annotations.addMessage (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addError (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1100)",
+              "AnnotationLogger.onNonCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-logger.js:29:57)",
+              "/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:55",
+              "Array.forEach (<anonymous>)",
+              "AwsSolutionsChecks.applyRule (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:38)",
+              "AwsSolutionsChecks.checkSecurityCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:970:14)",
+              "AwsSolutionsChecks.visit (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:71:18)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2282)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "invokeAspects (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:1906)",
+              "synthesize (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:1450)",
+              "App.synth (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/stage.js:1:2263)",
+              "/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:172",
+              "Kernel._Kernel_ensureSync (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:920:24)",
+              "Kernel.invoke (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:102)",
+              "KernelHost.processRequest (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15471:36)",
+              "KernelHost.run (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15431:22)",
+              "Immediate._onImmediate (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15432:46)",
+              "process.processImmediate (node:internal/timers:505:21)"
+            ]
+          },
+          {
+            "type": "aws:cdk:error",
+            "data": "AwsSolutions-IAM5[Resource::*]: The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission.\n",
+            "trace": [
+              "Annotations.addMessage (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addError (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1100)",
+              "AnnotationLogger.onNonCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-logger.js:29:57)",
+              "/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:55",
+              "Array.forEach (<anonymous>)",
+              "AwsSolutionsChecks.applyRule (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:38)",
+              "AwsSolutionsChecks.checkSecurityCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:979:14)",
+              "AwsSolutionsChecks.visit (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:71:18)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2282)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "invokeAspects (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:1906)",
+              "synthesize (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:1450)",
+              "App.synth (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/stage.js:1:2263)",
+              "/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:172",
+              "Kernel._Kernel_ensureSync (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:920:24)",
+              "Kernel.invoke (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:102)",
+              "KernelHost.processRequest (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15471:36)",
+              "KernelHost.run (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15431:22)",
+              "Immediate._onImmediate (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15432:46)",
+              "process.processImmediate (node:internal/timers:505:21)"
+            ]
+          }
+        ],
+        "/TokenVendingMachineStack/TvmLambdaExecRole/DefaultPolicy/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmLambdaExecRoleDefaultPolicy75C8D8DD"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApi9CC896B2"
+          },
+          {
+            "type": "aws:cdk:error",
+            "data": "AwsSolutions-APIG2: The REST API does not have request validation enabled.\n",
+            "trace": [
+              "Annotations.addMessage (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addError (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1100)",
+              "AnnotationLogger.onNonCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-logger.js:29:57)",
+              "/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:55",
+              "Array.forEach (<anonymous>)",
+              "AwsSolutionsChecks.applyRule (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:38)",
+              "AwsSolutionsChecks.checkNetworkDelivery (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:677:14)",
+              "AwsSolutionsChecks.visit (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:67:18)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2282)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "invokeAspects (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:1906)",
+              "synthesize (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:1450)",
+              "App.synth (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/stage.js:1:2263)",
+              "/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:172",
+              "Kernel._Kernel_ensureSync (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:920:24)",
+              "Kernel.invoke (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:102)",
+              "KernelHost.processRequest (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15471:36)",
+              "KernelHost.run (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15431:22)",
+              "Immediate._onImmediate (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15432:46)",
+              "process.processImmediate (node:internal/timers:505:21)"
+            ]
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/CloudWatchRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApiCloudWatchRole44EA47B0"
+          },
+          {
+            "type": "aws:cdk:error",
+            "data": "AwsSolutions-IAM4[Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs]: The IAM user, role, or group uses AWS managed policies.\n",
+            "trace": [
+              "Annotations.addMessage (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addError (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1100)",
+              "AnnotationLogger.onNonCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-logger.js:29:57)",
+              "/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:55",
+              "Array.forEach (<anonymous>)",
+              "AwsSolutionsChecks.applyRule (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:38)",
+              "AwsSolutionsChecks.checkSecurityCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:970:14)",
+              "AwsSolutionsChecks.visit (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:71:18)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2282)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "invokeAspects (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:1906)",
+              "synthesize (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:1450)",
+              "App.synth (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/stage.js:1:2263)",
+              "/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:172",
+              "Kernel._Kernel_ensureSync (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:920:24)",
+              "Kernel.invoke (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:102)",
+              "KernelHost.processRequest (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15471:36)",
+              "KernelHost.run (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15431:22)",
+              "Immediate._onImmediate (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15432:46)",
+              "process.processImmediate (node:internal/timers:505:21)"
+            ]
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/Account": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApiAccount8D744E39"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/Deployment/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApiDeploymentD7E77208e6b79954f0432cebd64e7ae63069f7b5"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/DeploymentStage.prod/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApiDeploymentStageprod48FCCD80"
+          },
+          {
+            "type": "aws:cdk:error",
+            "data": "AwsSolutions-APIG1: The API does not have access logging enabled.\n",
+            "trace": [
+              "Annotations.addMessage (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addError (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1100)",
+              "AnnotationLogger.onNonCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-logger.js:29:57)",
+              "/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:55",
+              "Array.forEach (<anonymous>)",
+              "AwsSolutionsChecks.applyRule (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:38)",
+              "AwsSolutionsChecks.checkNetworkDelivery (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:669:14)",
+              "AwsSolutionsChecks.visit (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:67:18)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2282)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "invokeAspects (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:1906)",
+              "synthesize (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:1450)",
+              "App.synth (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/stage.js:1:2263)",
+              "/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:172",
+              "Kernel._Kernel_ensureSync (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:920:24)",
+              "Kernel.invoke (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:102)",
+              "KernelHost.processRequest (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15471:36)",
+              "KernelHost.run (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15431:22)",
+              "Immediate._onImmediate (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15432:46)",
+              "process.processImmediate (node:internal/timers:505:21)"
+            ]
+          },
+          {
+            "type": "aws:cdk:warning",
+            "data": "AwsSolutions-APIG3: The REST API stage is not associated with AWS WAFv2 web ACL.\n",
+            "trace": [
+              "Annotations.addMessage (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addWarning (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:931)",
+              "AnnotationLogger.onNonCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-logger.js:32:57)",
+              "/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:55",
+              "Array.forEach (<anonymous>)",
+              "AwsSolutionsChecks.applyRule (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:38)",
+              "AwsSolutionsChecks.checkNetworkDelivery (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:685:14)",
+              "AwsSolutionsChecks.visit (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:67:18)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2282)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "invokeAspects (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:1906)",
+              "synthesize (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:1450)",
+              "App.synth (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/stage.js:1:2263)",
+              "/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:172",
+              "Kernel._Kernel_ensureSync (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:920:24)",
+              "Kernel.invoke (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:102)",
+              "KernelHost.processRequest (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15471:36)",
+              "KernelHost.run (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15431:22)",
+              "Immediate._onImmediate (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15432:46)",
+              "process.processImmediate (node:internal/timers:505:21)"
+            ]
+          },
+          {
+            "type": "aws:cdk:error",
+            "data": "AwsSolutions-APIG6: The REST API Stage does not have CloudWatch logging enabled for all methods.\n",
+            "trace": [
+              "Annotations.addMessage (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addError (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1100)",
+              "AnnotationLogger.onNonCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-logger.js:29:57)",
+              "/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:55",
+              "Array.forEach (<anonymous>)",
+              "AwsSolutionsChecks.applyRule (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:38)",
+              "AwsSolutionsChecks.checkNetworkDelivery (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:701:14)",
+              "AwsSolutionsChecks.visit (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:67:18)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2282)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "invokeAspects (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:1906)",
+              "synthesize (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:1450)",
+              "App.synth (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/stage.js:1:2263)",
+              "/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:172",
+              "Kernel._Kernel_ensureSync (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:920:24)",
+              "Kernel.invoke (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:102)",
+              "KernelHost.processRequest (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15471:36)",
+              "KernelHost.run (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15431:22)",
+              "Immediate._onImmediate (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15432:46)",
+              "process.processImmediate (node:internal/timers:505:21)"
+            ]
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/Endpoint": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApiEndpoint4301A24D"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/Default/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApiOPTIONS3E174436"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/Default/.well-known/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApiwellknown6FBE51C8"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/Default/.well-known/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApiwellknownOPTIONSCC58F860"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/Default/.well-known/openid-configuration/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApiwellknownopenidconfigurationF023F998"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/Default/.well-known/openid-configuration/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApiwellknownopenidconfigurationOPTIONS7CD9C199"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/Default/.well-known/openid-configuration/GET/ApiPermission.TokenVendingMachineStackTvmApiE91A4EFD.GET...well-known.openid-configuration": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApiwellknownopenidconfigurationGETApiPermissionTokenVendingMachineStackTvmApiE91A4EFDGETwellknownopenidconfiguration19B8076E"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/Default/.well-known/openid-configuration/GET/ApiPermission.Test.TokenVendingMachineStackTvmApiE91A4EFD.GET...well-known.openid-configuration": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApiwellknownopenidconfigurationGETApiPermissionTestTokenVendingMachineStackTvmApiE91A4EFDGETwellknownopenidconfigurationB90F1226"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/Default/.well-known/openid-configuration/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApiwellknownopenidconfigurationGET3147FE2F"
+          },
+          {
+            "type": "aws:cdk:error",
+            "data": "AwsSolutions-APIG4: The API does not implement authorization.\n",
+            "trace": [
+              "Annotations.addMessage (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addError (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1100)",
+              "AnnotationLogger.onNonCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-logger.js:29:57)",
+              "/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:55",
+              "Array.forEach (<anonymous>)",
+              "AwsSolutionsChecks.applyRule (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:38)",
+              "AwsSolutionsChecks.checkNetworkDelivery (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:693:14)",
+              "AwsSolutionsChecks.visit (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:67:18)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2282)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "invokeAspects (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:1906)",
+              "synthesize (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:1450)",
+              "App.synth (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/stage.js:1:2263)",
+              "/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:172",
+              "Kernel._Kernel_ensureSync (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:920:24)",
+              "Kernel.invoke (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:102)",
+              "KernelHost.processRequest (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15471:36)",
+              "KernelHost.run (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15431:22)",
+              "Immediate._onImmediate (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15432:46)",
+              "process.processImmediate (node:internal/timers:505:21)"
+            ]
+          },
+          {
+            "type": "aws:cdk:error",
+            "data": "AwsSolutions-COG4: The API GW method does not use a Cognito user pool authorizer.\n",
+            "trace": [
+              "Annotations.addMessage (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addError (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1100)",
+              "AnnotationLogger.onNonCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-logger.js:29:57)",
+              "/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:55",
+              "Array.forEach (<anonymous>)",
+              "AwsSolutionsChecks.applyRule (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:38)",
+              "AwsSolutionsChecks.checkSecurityCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:1012:14)",
+              "AwsSolutionsChecks.visit (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:71:18)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2282)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "invokeAspects (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:1906)",
+              "synthesize (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:1450)",
+              "App.synth (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/stage.js:1:2263)",
+              "/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:172",
+              "Kernel._Kernel_ensureSync (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:920:24)",
+              "Kernel.invoke (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:102)",
+              "KernelHost.processRequest (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15471:36)",
+              "KernelHost.run (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15431:22)",
+              "Immediate._onImmediate (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15432:46)",
+              "process.processImmediate (node:internal/timers:505:21)"
+            ]
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/Default/.well-known/jwks.json/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApiwellknownjwksjsonCFDE7718"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/Default/.well-known/jwks.json/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApiwellknownjwksjsonOPTIONS5B4E2346"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/Default/.well-known/jwks.json/GET/ApiPermission.TokenVendingMachineStackTvmApiE91A4EFD.GET...well-known.jwks.json": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApiwellknownjwksjsonGETApiPermissionTokenVendingMachineStackTvmApiE91A4EFDGETwellknownjwksjson0E212F42"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/Default/.well-known/jwks.json/GET/ApiPermission.Test.TokenVendingMachineStackTvmApiE91A4EFD.GET...well-known.jwks.json": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApiwellknownjwksjsonGETApiPermissionTestTokenVendingMachineStackTvmApiE91A4EFDGETwellknownjwksjsonA76FE248"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/Default/.well-known/jwks.json/GET/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApiwellknownjwksjsonGETFCE8BCE9"
+          },
+          {
+            "type": "aws:cdk:error",
+            "data": "AwsSolutions-APIG4: The API does not implement authorization.\n",
+            "trace": [
+              "Annotations.addMessage (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addError (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1100)",
+              "AnnotationLogger.onNonCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-logger.js:29:57)",
+              "/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:55",
+              "Array.forEach (<anonymous>)",
+              "AwsSolutionsChecks.applyRule (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:38)",
+              "AwsSolutionsChecks.checkNetworkDelivery (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:693:14)",
+              "AwsSolutionsChecks.visit (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:67:18)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2282)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "invokeAspects (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:1906)",
+              "synthesize (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:1450)",
+              "App.synth (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/stage.js:1:2263)",
+              "/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:172",
+              "Kernel._Kernel_ensureSync (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:920:24)",
+              "Kernel.invoke (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:102)",
+              "KernelHost.processRequest (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15471:36)",
+              "KernelHost.run (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15431:22)",
+              "Immediate._onImmediate (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15432:46)",
+              "process.processImmediate (node:internal/timers:505:21)"
+            ]
+          },
+          {
+            "type": "aws:cdk:error",
+            "data": "AwsSolutions-COG4: The API GW method does not use a Cognito user pool authorizer.\n",
+            "trace": [
+              "Annotations.addMessage (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addError (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1100)",
+              "AnnotationLogger.onNonCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-logger.js:29:57)",
+              "/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:55",
+              "Array.forEach (<anonymous>)",
+              "AwsSolutionsChecks.applyRule (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:38)",
+              "AwsSolutionsChecks.checkSecurityCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:1012:14)",
+              "AwsSolutionsChecks.visit (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:71:18)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2282)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "invokeAspects (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:1906)",
+              "synthesize (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:1450)",
+              "App.synth (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/stage.js:1:2263)",
+              "/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:172",
+              "Kernel._Kernel_ensureSync (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:920:24)",
+              "Kernel.invoke (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:102)",
+              "KernelHost.processRequest (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15471:36)",
+              "KernelHost.run (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15431:22)",
+              "Immediate._onImmediate (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15432:46)",
+              "process.processImmediate (node:internal/timers:505:21)"
+            ]
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/Default/token/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApitokenB3A67415"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/Default/token/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApitokenOPTIONSDDDB810C"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/Default/token/POST/ApiPermission.TokenVendingMachineStackTvmApiE91A4EFD.POST..token": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApitokenPOSTApiPermissionTokenVendingMachineStackTvmApiE91A4EFDPOSTtokenAA94A248"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/Default/token/POST/ApiPermission.Test.TokenVendingMachineStackTvmApiE91A4EFD.POST..token": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApitokenPOSTApiPermissionTestTokenVendingMachineStackTvmApiE91A4EFDPOSTtoken12411C1C"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApi/Default/token/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApitokenPOST674FEA62"
+          },
+          {
+            "type": "aws:cdk:error",
+            "data": "AwsSolutions-APIG4: The API does not implement authorization.\n",
+            "trace": [
+              "Annotations.addMessage (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addError (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1100)",
+              "AnnotationLogger.onNonCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-logger.js:29:57)",
+              "/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:55",
+              "Array.forEach (<anonymous>)",
+              "AwsSolutionsChecks.applyRule (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:38)",
+              "AwsSolutionsChecks.checkNetworkDelivery (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:693:14)",
+              "AwsSolutionsChecks.visit (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:67:18)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2282)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "invokeAspects (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:1906)",
+              "synthesize (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:1450)",
+              "App.synth (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/stage.js:1:2263)",
+              "/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:172",
+              "Kernel._Kernel_ensureSync (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:920:24)",
+              "Kernel.invoke (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:102)",
+              "KernelHost.processRequest (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15471:36)",
+              "KernelHost.run (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15431:22)",
+              "Immediate._onImmediate (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15432:46)",
+              "process.processImmediate (node:internal/timers:505:21)"
+            ]
+          },
+          {
+            "type": "aws:cdk:error",
+            "data": "AwsSolutions-COG4: The API GW method does not use a Cognito user pool authorizer.\n",
+            "trace": [
+              "Annotations.addMessage (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addError (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1100)",
+              "AnnotationLogger.onNonCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-logger.js:29:57)",
+              "/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:55",
+              "Array.forEach (<anonymous>)",
+              "AwsSolutionsChecks.applyRule (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:38)",
+              "AwsSolutionsChecks.checkSecurityCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:1012:14)",
+              "AwsSolutionsChecks.visit (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:71:18)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2282)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "invokeAspects (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:1906)",
+              "synthesize (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:1450)",
+              "App.synth (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/stage.js:1:2263)",
+              "/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:172",
+              "Kernel._Kernel_ensureSync (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:920:24)",
+              "Kernel.invoke (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:102)",
+              "KernelHost.processRequest (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15471:36)",
+              "KernelHost.run (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15431:22)",
+              "Immediate._onImmediate (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15432:46)",
+              "process.processImmediate (node:internal/timers:505:21)"
+            ]
+          }
+        ],
+        "/TokenVendingMachineStack/OpenIdConfigurationHandler/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OpenIdConfigurationHandler6BB639A3"
+          }
+        ],
+        "/TokenVendingMachineStack/OpenIdConfigurationHandler/InvokeFcyXBRX02EWa52GlF+ECQiCzDt0fdRUDi4mo4foC5aU=": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "OpenIdConfigurationHandlerInvokeFcyXBRX02EWa52GlFECQiCzDt0fdRUDi4mo4foC5aUB45D49ED"
+          }
+        ],
+        "/TokenVendingMachineStack/JwksEndpointHandler/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JwksEndpointHandlerF3BCFCB7"
+          }
+        ],
+        "/TokenVendingMachineStack/JwksEndpointHandler/InvokeFcyXBRX02EWa52GlF+ECQiCzDt0fdRUDi4mo4foC5aU=": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "JwksEndpointHandlerInvokeFcyXBRX02EWa52GlFECQiCzDt0fdRUDi4mo4foC5aUF9D6C14A"
+          }
+        ],
+        "/TokenVendingMachineStack/TokenVendingMachineHandler/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TokenVendingMachineHandlerE4E0C0AF"
+          }
+        ],
+        "/TokenVendingMachineStack/TokenVendingMachineHandler/InvokeFcyXBRX02EWa52GlF+ECQiCzDt0fdRUDi4mo4foC5aU=": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TokenVendingMachineHandlerInvokeFcyXBRX02EWa52GlFECQiCzDt0fdRUDi4mo4foC5aU635C840D"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmIamOidcProvider/Resource/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmIamOidcProviderBFFB1434"
+          }
+        ],
+        "/TokenVendingMachineStack/Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider/Role": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomAWSCDKOpenIdConnectProviderCustomResourceProviderRole517FED65"
+          }
+        ],
+        "/TokenVendingMachineStack/Custom::AWSCDKOpenIdConnectProviderCustomResourceProvider/Handler": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CustomAWSCDKOpenIdConnectProviderCustomResourceProviderHandlerF2C543E0"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmOidcProviderArn": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmOidcProviderArn"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmOidcAudience": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmOidcAudience"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmIssuerUrl": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmIssuerUrl"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmApiUrl": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmApiUrl"
+          }
+        ],
+        "/TokenVendingMachineStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/TokenVendingMachineStack/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/TokenVendingMachineStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/TokenVendingMachineStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "TokenVendingMachineStack"
+    },
+    "QBusinessStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "QBusinessStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "QBusinessStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "QBusinessStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/0b08635e8c61c681522810cd28cf3ba7d8d1ba26a30fce9ac5fdf78fce2ef2aa.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "QBusinessStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "QBusinessStack.assets"
+      ],
+      "metadata": {
+        "/QBusinessStack/QBusinessApp": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QBusinessApp"
+          }
+        ],
+        "/QBusinessStack/QBusinessIndex": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QBusinessIndex"
+          }
+        ],
+        "/QBusinessStack/QBusinessApplicationId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QBusinessApplicationId"
+          }
+        ],
+        "/QBusinessStack/QBusinessRetrieverId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QBusinessRetrieverId"
+          }
+        ],
+        "/QBusinessStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/QBusinessStack/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/QBusinessStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/QBusinessStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "QBusinessStack"
+    },
+    "SearchStack.assets": {
+      "type": "cdk:asset-manifest",
+      "properties": {
+        "file": "SearchStack.assets.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+      }
+    },
+    "SearchStack": {
+      "type": "aws:cloudformation:stack",
+      "environment": "aws://unknown-account/unknown-region",
+      "properties": {
+        "templateFile": "SearchStack.template.json",
+        "terminationProtection": false,
+        "validateOnSynth": false,
+        "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
+        "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/27d2d71a175f13c1d126b9bd326f726006ecae401c498f66705ee23132d14310.json",
+        "requiresBootstrapStackVersion": 6,
+        "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
+        "additionalDependencies": [
+          "SearchStack.assets"
+        ],
+        "lookupRole": {
+          "arn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-lookup-role-${AWS::AccountId}-${AWS::Region}",
+          "requiresBootstrapStackVersion": 8,
+          "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version"
+        }
+      },
+      "dependencies": [
+        "SearchStack.assets"
+      ],
+      "metadata": {
+        "/SearchStack/SearchWithTipRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SearchWithTipRole8D8BFAFA"
+          },
+          {
+            "type": "aws:cdk:error",
+            "data": "AwsSolutions-IAM5[Resource::*]: The IAM entity contains wildcard permissions and does not have a cdk-nag rule suppression with evidence for those permission.\n",
+            "trace": [
+              "Annotations.addMessage (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addError (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1100)",
+              "AnnotationLogger.onNonCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-logger.js:29:57)",
+              "/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:55",
+              "Array.forEach (<anonymous>)",
+              "AwsSolutionsChecks.applyRule (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:38)",
+              "AwsSolutionsChecks.checkSecurityCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:979:14)",
+              "AwsSolutionsChecks.visit (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:71:18)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2282)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "invokeAspects (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:1906)",
+              "synthesize (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:1450)",
+              "App.synth (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/stage.js:1:2263)",
+              "/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:172",
+              "Kernel._Kernel_ensureSync (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:920:24)",
+              "Kernel.invoke (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:102)",
+              "KernelHost.processRequest (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15471:36)",
+              "KernelHost.run (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15431:22)",
+              "Immediate._onImmediate (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15432:46)",
+              "process.processImmediate (node:internal/timers:505:21)"
+            ]
+          }
+        ],
+        "/SearchStack/SearchLambdaExecRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SearchLambdaExecRole2CFCBBDB"
+          },
+          {
+            "type": "aws:cdk:error",
+            "data": "AwsSolutions-IAM4[Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole]: The IAM user, role, or group uses AWS managed policies.\n",
+            "trace": [
+              "Annotations.addMessage (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addError (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1100)",
+              "AnnotationLogger.onNonCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-logger.js:29:57)",
+              "/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:55",
+              "Array.forEach (<anonymous>)",
+              "AwsSolutionsChecks.applyRule (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:38)",
+              "AwsSolutionsChecks.checkSecurityCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:970:14)",
+              "AwsSolutionsChecks.visit (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:71:18)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2282)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "invokeAspects (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:1906)",
+              "synthesize (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:1450)",
+              "App.synth (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/stage.js:1:2263)",
+              "/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:172",
+              "Kernel._Kernel_ensureSync (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:920:24)",
+              "Kernel.invoke (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:102)",
+              "KernelHost.processRequest (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15471:36)",
+              "KernelHost.run (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15431:22)",
+              "Immediate._onImmediate (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15432:46)",
+              "process.processImmediate (node:internal/timers:505:21)"
+            ]
+          }
+        ],
+        "/SearchStack/SearchHandler/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SearchHandler00CE2B50"
+          }
+        ],
+        "/SearchStack/SearchHandler/InvokeFcyXBRX02EWa52GlF+ECQiCzDt0fdRUDi4mo4foC5aU=": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SearchHandlerInvokeFcyXBRX02EWa52GlFECQiCzDt0fdRUDi4mo4foC5aU95E5AA61"
+          }
+        ],
+        "/SearchStack/SearchApi/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SearchApi2D039D25"
+          },
+          {
+            "type": "aws:cdk:error",
+            "data": "AwsSolutions-APIG2: The REST API does not have request validation enabled.\n",
+            "trace": [
+              "Annotations.addMessage (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addError (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1100)",
+              "AnnotationLogger.onNonCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-logger.js:29:57)",
+              "/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:55",
+              "Array.forEach (<anonymous>)",
+              "AwsSolutionsChecks.applyRule (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:38)",
+              "AwsSolutionsChecks.checkNetworkDelivery (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:677:14)",
+              "AwsSolutionsChecks.visit (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:67:18)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2282)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "invokeAspects (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:1906)",
+              "synthesize (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:1450)",
+              "App.synth (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/stage.js:1:2263)",
+              "/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:172",
+              "Kernel._Kernel_ensureSync (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:920:24)",
+              "Kernel.invoke (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:102)",
+              "KernelHost.processRequest (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15471:36)",
+              "KernelHost.run (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15431:22)",
+              "Immediate._onImmediate (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15432:46)",
+              "process.processImmediate (node:internal/timers:505:21)"
+            ]
+          }
+        ],
+        "/SearchStack/SearchApi/CloudWatchRole/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SearchApiCloudWatchRoleF2BBFCD8"
+          },
+          {
+            "type": "aws:cdk:error",
+            "data": "AwsSolutions-IAM4[Policy::arn:<AWS::Partition>:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs]: The IAM user, role, or group uses AWS managed policies.\n",
+            "trace": [
+              "Annotations.addMessage (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addError (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1100)",
+              "AnnotationLogger.onNonCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-logger.js:29:57)",
+              "/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:55",
+              "Array.forEach (<anonymous>)",
+              "AwsSolutionsChecks.applyRule (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:38)",
+              "AwsSolutionsChecks.checkSecurityCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:970:14)",
+              "AwsSolutionsChecks.visit (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:71:18)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2282)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "invokeAspects (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:1906)",
+              "synthesize (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:1450)",
+              "App.synth (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/stage.js:1:2263)",
+              "/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:172",
+              "Kernel._Kernel_ensureSync (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:920:24)",
+              "Kernel.invoke (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:102)",
+              "KernelHost.processRequest (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15471:36)",
+              "KernelHost.run (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15431:22)",
+              "Immediate._onImmediate (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15432:46)",
+              "process.processImmediate (node:internal/timers:505:21)"
+            ]
+          }
+        ],
+        "/SearchStack/SearchApi/Account": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SearchApiAccountB3C5A2C4"
+          }
+        ],
+        "/SearchStack/SearchApi/Deployment/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SearchApiDeploymentC304CB163732a7996a469e02870f7c9870020807"
+          }
+        ],
+        "/SearchStack/SearchApi/DeploymentStage.prod/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SearchApiDeploymentStageprodC464D5DA"
+          },
+          {
+            "type": "aws:cdk:error",
+            "data": "AwsSolutions-APIG1: The API does not have access logging enabled.\n",
+            "trace": [
+              "Annotations.addMessage (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addError (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1100)",
+              "AnnotationLogger.onNonCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-logger.js:29:57)",
+              "/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:55",
+              "Array.forEach (<anonymous>)",
+              "AwsSolutionsChecks.applyRule (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:38)",
+              "AwsSolutionsChecks.checkNetworkDelivery (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:669:14)",
+              "AwsSolutionsChecks.visit (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:67:18)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2282)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "invokeAspects (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:1906)",
+              "synthesize (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:1450)",
+              "App.synth (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/stage.js:1:2263)",
+              "/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:172",
+              "Kernel._Kernel_ensureSync (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:920:24)",
+              "Kernel.invoke (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:102)",
+              "KernelHost.processRequest (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15471:36)",
+              "KernelHost.run (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15431:22)",
+              "Immediate._onImmediate (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15432:46)",
+              "process.processImmediate (node:internal/timers:505:21)"
+            ]
+          },
+          {
+            "type": "aws:cdk:warning",
+            "data": "AwsSolutions-APIG3: The REST API stage is not associated with AWS WAFv2 web ACL.\n",
+            "trace": [
+              "Annotations.addMessage (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addWarning (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:931)",
+              "AnnotationLogger.onNonCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-logger.js:32:57)",
+              "/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:55",
+              "Array.forEach (<anonymous>)",
+              "AwsSolutionsChecks.applyRule (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:38)",
+              "AwsSolutionsChecks.checkNetworkDelivery (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:685:14)",
+              "AwsSolutionsChecks.visit (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:67:18)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2282)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "invokeAspects (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:1906)",
+              "synthesize (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:1450)",
+              "App.synth (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/stage.js:1:2263)",
+              "/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:172",
+              "Kernel._Kernel_ensureSync (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:920:24)",
+              "Kernel.invoke (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:102)",
+              "KernelHost.processRequest (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15471:36)",
+              "KernelHost.run (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15431:22)",
+              "Immediate._onImmediate (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15432:46)",
+              "process.processImmediate (node:internal/timers:505:21)"
+            ]
+          },
+          {
+            "type": "aws:cdk:error",
+            "data": "AwsSolutions-APIG6: The REST API Stage does not have CloudWatch logging enabled for all methods.\n",
+            "trace": [
+              "Annotations.addMessage (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addError (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1100)",
+              "AnnotationLogger.onNonCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-logger.js:29:57)",
+              "/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:55",
+              "Array.forEach (<anonymous>)",
+              "AwsSolutionsChecks.applyRule (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:38)",
+              "AwsSolutionsChecks.checkNetworkDelivery (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:701:14)",
+              "AwsSolutionsChecks.visit (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:67:18)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2282)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "invokeAspects (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:1906)",
+              "synthesize (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:1450)",
+              "App.synth (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/stage.js:1:2263)",
+              "/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:172",
+              "Kernel._Kernel_ensureSync (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:920:24)",
+              "Kernel.invoke (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:102)",
+              "KernelHost.processRequest (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15471:36)",
+              "KernelHost.run (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15431:22)",
+              "Immediate._onImmediate (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15432:46)",
+              "process.processImmediate (node:internal/timers:505:21)"
+            ]
+          }
+        ],
+        "/SearchStack/SearchApi/Endpoint": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SearchApiEndpoint99F140F7"
+          }
+        ],
+        "/SearchStack/SearchApi/Default/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SearchApiOPTIONS5AFF8B11"
+          }
+        ],
+        "/SearchStack/SearchApi/Default/search/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SearchApisearch6B016651"
+          }
+        ],
+        "/SearchStack/SearchApi/Default/search/OPTIONS/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SearchApisearchOPTIONSE6CB6306"
+          }
+        ],
+        "/SearchStack/SearchApi/Default/search/POST/ApiPermission.SearchStackSearchApi7DFC16E0.POST..search": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SearchApisearchPOSTApiPermissionSearchStackSearchApi7DFC16E0POSTsearch0263CFF4"
+          }
+        ],
+        "/SearchStack/SearchApi/Default/search/POST/ApiPermission.Test.SearchStackSearchApi7DFC16E0.POST..search": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SearchApisearchPOSTApiPermissionTestSearchStackSearchApi7DFC16E0POSTsearch86F34A29"
+          }
+        ],
+        "/SearchStack/SearchApi/Default/search/POST/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SearchApisearchPOST4BD91E80"
+          },
+          {
+            "type": "aws:cdk:error",
+            "data": "AwsSolutions-APIG4: The API does not implement authorization.\n",
+            "trace": [
+              "Annotations.addMessage (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addError (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1100)",
+              "AnnotationLogger.onNonCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-logger.js:29:57)",
+              "/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:55",
+              "Array.forEach (<anonymous>)",
+              "AwsSolutionsChecks.applyRule (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:38)",
+              "AwsSolutionsChecks.checkNetworkDelivery (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:693:14)",
+              "AwsSolutionsChecks.visit (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:67:18)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2282)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "invokeAspects (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:1906)",
+              "synthesize (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:1450)",
+              "App.synth (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/stage.js:1:2263)",
+              "/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:172",
+              "Kernel._Kernel_ensureSync (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:920:24)",
+              "Kernel.invoke (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:102)",
+              "KernelHost.processRequest (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15471:36)",
+              "KernelHost.run (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15431:22)",
+              "Immediate._onImmediate (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15432:46)",
+              "process.processImmediate (node:internal/timers:505:21)"
+            ]
+          },
+          {
+            "type": "aws:cdk:error",
+            "data": "AwsSolutions-COG4: The API GW method does not use a Cognito user pool authorizer.\n",
+            "trace": [
+              "Annotations.addMessage (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1608)",
+              "Annotations.addError (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/annotations.js:1:1100)",
+              "AnnotationLogger.onNonCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-logger.js:29:57)",
+              "/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:55",
+              "Array.forEach (<anonymous>)",
+              "AwsSolutionsChecks.applyRule (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/nag-pack.js:79:38)",
+              "AwsSolutionsChecks.checkSecurityCompliance (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:1012:14)",
+              "AwsSolutionsChecks.visit (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/cdk-nag/lib/packs/aws-solutions.js:71:18)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2282)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "recurse (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:2646)",
+              "invokeAspects (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:2:1906)",
+              "synthesize (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/private/synthesis.js:1:1450)",
+              "App.synth (/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-kernel-t7X2EL/node_modules/aws-cdk-lib/core/lib/stage.js:1:2263)",
+              "/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:172",
+              "Kernel._Kernel_ensureSync (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:920:24)",
+              "Kernel.invoke (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:294:102)",
+              "KernelHost.processRequest (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15471:36)",
+              "KernelHost.run (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15431:22)",
+              "Immediate._onImmediate (/private/var/folders/8c/06f7l07j39zbxqd7s057kyh00000gq/T/jsii-java-runtime17488502478971185484/lib/program.js:15432:46)",
+              "process.processImmediate (node:internal/timers:505:21)"
+            ]
+          }
+        ],
+        "/SearchStack/SearchApiUrl": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "SearchApiUrl"
+          }
+        ],
+        "/SearchStack/CDKMetadata/Default": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadata"
+          }
+        ],
+        "/SearchStack/CDKMetadata/Condition": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CDKMetadataAvailable"
+          }
+        ],
+        "/SearchStack/BootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "BootstrapVersion"
+          }
+        ],
+        "/SearchStack/CheckBootstrapVersion": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "CheckBootstrapVersion"
+          }
+        ]
+      },
+      "displayName": "SearchStack"
+    },
+    "Tree": {
+      "type": "cdk:tree",
+      "properties": {
+        "file": "tree.json"
+      }
+    }
+  }
+}

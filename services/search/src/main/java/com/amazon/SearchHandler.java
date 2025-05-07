@@ -162,7 +162,7 @@ public class SearchHandler implements RequestHandler<APIGatewayProxyRequestEvent
         );
         SdkHttpClient http = ApacheHttpClient.builder()
                 .connectionTimeout(Duration.ofSeconds(30))
-                .socketTimeout(Duration.ofSeconds(60))
+                .socketTimeout(Duration.ofSeconds(55))
                 .build();
 
         return QBusinessClient.builder()
@@ -170,12 +170,13 @@ public class SearchHandler implements RequestHandler<APIGatewayProxyRequestEvent
                 .httpClient(http)
                 .credentialsProvider(p)
                 .overrideConfiguration(ClientOverrideConfiguration.builder()
-                        .apiCallTimeout(Duration.ofSeconds(60))
+                        .apiCallTimeout(Duration.ofSeconds(55))
                         .build())
                 .build();
     }
 
     private String doSearch(QBusinessClient client, String q, String appId, String retId) throws Exception {
+        log.info("Starting Q Business API call with query: {}, appId: {}, retId: {}", q, appId, retId);
         SearchRelevantContentRequest req = SearchRelevantContentRequest.builder()
                 .applicationId(appId)
                 .queryText(q)
@@ -187,12 +188,20 @@ public class SearchHandler implements RequestHandler<APIGatewayProxyRequestEvent
                 .maxResults(5)
                 .build();
 
-        SearchRelevantContentResponse resp = client.searchRelevantContent(req);
-        if (resp.relevantContent() == null || resp.relevantContent().isEmpty()) {
-            return JSON.writeValueAsString(Map.of("results", "<none>"));
+        log.info("Sending SearchRelevantContent request to Q Business");
+        try {
+            SearchRelevantContentResponse resp = client.searchRelevantContent(req);
+            log.info("Received response from Q Business");
+            if (resp.relevantContent() == null || resp.relevantContent().isEmpty()) {
+                log.info("No relevant content found");
+                return JSON.writeValueAsString(Map.of("results", "<none>"));
+            }
+            Map<String, Object> result = buildResultMap(resp);
+            return JSON.writeValueAsString(result);
+        } catch (Exception e) {
+            log.error("Error calling Q Business API: {}", e.getMessage(), e);
+            throw e;
         }
-        Map<String, Object> result = buildResultMap(resp);
-        return JSON.writeValueAsString(result);
     }
 
     private Map<String,Object> buildResultMap(SearchRelevantContentResponse resp) {

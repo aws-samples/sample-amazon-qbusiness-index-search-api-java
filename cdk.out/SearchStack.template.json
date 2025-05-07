@@ -1,0 +1,1093 @@
+{
+ "Resources": {
+  "SearchWithTipRoleCondD71D0E28": {
+   "Type": "Custom::AWSCDKCfnJson",
+   "Properties": {
+    "ServiceToken": {
+     "Fn::GetAtt": [
+      "AWSCDKCfnUtilsProviderCustomResourceProviderHandlerCF82AA57",
+      "Arn"
+     ]
+    },
+    "Value": {
+     "Fn::Join": [
+      "",
+      [
+       "{\"",
+       {
+        "Fn::Select": [
+         1,
+         {
+          "Fn::Split": [
+           "://",
+           {
+            "Fn::Join": [
+             "",
+             [
+              "https://",
+              {
+               "Fn::ImportValue": "TokenVendingMachineStack:ExportsOutputRefTvmApi9CC896B2287C1435"
+              },
+              ".execute-api.",
+              {
+               "Ref": "AWS::Region"
+              },
+              ".",
+              {
+               "Ref": "AWS::URLSuffix"
+              },
+              "/",
+              {
+               "Fn::ImportValue": "TokenVendingMachineStack:ExportsOutputRefTvmApiDeploymentStageprod48FCCD805009B9E8"
+              }
+             ]
+            ]
+           }
+          ]
+         }
+        ]
+       },
+       ":aud\":\"qbusiness-audience\"}"
+      ]
+     ]
+    }
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/SearchWithTipRoleCond/Resource/Default"
+   }
+  },
+  "AWSCDKCfnUtilsProviderCustomResourceProviderRoleFE0EE867": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Version": "2012-10-17",
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ]
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Sub": "arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/AWSCDKCfnUtilsProviderCustomResourceProvider/Role"
+   }
+  },
+  "AWSCDKCfnUtilsProviderCustomResourceProviderHandlerCF82AA57": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "70dc346d78f37c98f818c01173252d7441864d42268efd4ee44769cbd6f31d24.zip"
+    },
+    "Timeout": 900,
+    "MemorySize": 128,
+    "Handler": "__entrypoint__.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "AWSCDKCfnUtilsProviderCustomResourceProviderRoleFE0EE867",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs18.x"
+   },
+   "DependsOn": [
+    "AWSCDKCfnUtilsProviderCustomResourceProviderRoleFE0EE867"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/AWSCDKCfnUtilsProviderCustomResourceProvider/Handler",
+    "aws:asset:path": "asset.70dc346d78f37c98f818c01173252d7441864d42268efd4ee44769cbd6f31d24",
+    "aws:asset:property": "Code"
+   }
+  },
+  "SearchWithTipRole8D8BFAFA": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "sts:AssumeRole",
+        "sts:SetContext"
+       ],
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "qbusiness.amazonaws.com"
+       }
+      },
+      {
+       "Condition": {
+        "StringEquals": {
+         "Fn::GetAtt": [
+          "SearchWithTipRoleCondD71D0E28",
+          "Value"
+         ]
+        }
+       },
+       "Principal": {
+        "Federated": {
+         "Fn::ImportValue": "OidcProviderStack:ExportsOutputRefTvmIamOidcProviderBFFB14340A3C0CA5"
+        }
+       },
+       "Action": [
+        "sts:AssumeRoleWithWebIdentity",
+        "sts:TagSession"
+       ],
+       "Effect": "Allow"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "Policies": [
+     {
+      "PolicyDocument": {
+       "Statement": [
+        {
+         "Action": "qbusiness:SearchRelevantContent",
+         "Effect": "Allow",
+         "Resource": {
+          "Fn::Join": [
+           "",
+           [
+            "arn:aws:qbusiness:",
+            {
+             "Ref": "AWS::Region"
+            },
+            ":",
+            {
+             "Ref": "AWS::AccountId"
+            },
+            ":application/",
+            {
+             "Fn::ImportValue": "QBusinessStack:ExportsOutputFnGetAttQBusinessAppApplicationId58AC7172"
+            }
+           ]
+          ]
+         },
+         "Sid": "AllowQBusinessSearch"
+        }
+       ],
+       "Version": "2012-10-17"
+      },
+      "PolicyName": "SearchWithTipInlinePolicy"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/SearchWithTipRole/Resource"
+   }
+  },
+  "SearchLambdaExecRole2CFCBBDB": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/SearchLambdaExecRole/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Lambda log group requires ':*' suffix",
+       "id": "AwsSolutions-IAM5"
+      }
+     ]
+    }
+   }
+  },
+  "SearchLambdaExecRoleDefaultPolicy4A4C64C5": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          {
+           "Fn::GetAtt": [
+            "SearchHandlerLogs853F3C45",
+            "Arn"
+           ]
+          },
+          ":*"
+         ]
+        ]
+       },
+       "Sid": "AllowLambdaLogs"
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "SearchLambdaExecRoleDefaultPolicy4A4C64C5",
+    "Roles": [
+     {
+      "Ref": "SearchLambdaExecRole2CFCBBDB"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/SearchLambdaExecRole/DefaultPolicy/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Lambda log group requires ':*' suffix",
+       "id": "AwsSolutions-IAM5"
+      }
+     ]
+    }
+   }
+  },
+  "SearchHandlerLogs853F3C45": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/aws/lambda/SearchHandler",
+    "RetentionInDays": 30
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/SearchHandlerLogs/Resource"
+   }
+  },
+  "SearchHandler00CE2B50": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+     },
+     "S3Key": "ff9fdba5d7eff922ba44665023a767108f49dadf7377cf07c6ed68534a90b97c.jar"
+    },
+    "Environment": {
+     "Variables": {
+      "TOKEN_ENDPOINT": {
+       "Fn::Join": [
+        "",
+        [
+         "https://",
+         {
+          "Fn::ImportValue": "TokenVendingMachineStack:ExportsOutputRefTvmApi9CC896B2287C1435"
+         },
+         ".execute-api.",
+         {
+          "Ref": "AWS::Region"
+         },
+         ".",
+         {
+          "Ref": "AWS::URLSuffix"
+         },
+         "/",
+         {
+          "Fn::ImportValue": "TokenVendingMachineStack:ExportsOutputRefTvmApiDeploymentStageprod48FCCD805009B9E8"
+         },
+         "/token"
+        ]
+       ]
+      },
+      "ROLE_ARN": {
+       "Fn::GetAtt": [
+        "SearchWithTipRole8D8BFAFA",
+        "Arn"
+       ]
+      },
+      "QBUS_RETRIEVER_ID": {
+       "Fn::ImportValue": "QBusinessStack:ExportsOutputFnGetAttQBusinessIndexIndexId2AE7C306"
+      },
+      "QBUS_APP_ID": {
+       "Fn::ImportValue": "QBusinessStack:ExportsOutputFnGetAttQBusinessAppApplicationId58AC7172"
+      }
+     }
+    },
+    "FunctionName": "SearchHandler",
+    "Handler": "com.amazon.SearchHandler::handleRequest",
+    "Role": {
+     "Fn::GetAtt": [
+      "SearchLambdaExecRole2CFCBBDB",
+      "Arn"
+     ]
+    },
+    "Runtime": "java21",
+    "Timeout": 60
+   },
+   "DependsOn": [
+    "SearchLambdaExecRoleDefaultPolicy4A4C64C5",
+    "SearchLambdaExecRole2CFCBBDB"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/SearchHandler/Resource",
+    "aws:asset:path": "asset.ff9fdba5d7eff922ba44665023a767108f49dadf7377cf07c6ed68534a90b97c.jar",
+    "aws:asset:is-bundled": false,
+    "aws:asset:property": "Code"
+   }
+  },
+  "SearchApiAccessLogsEE491AD6": {
+   "Type": "AWS::Logs::LogGroup",
+   "Properties": {
+    "LogGroupName": "/aws/apigateway/SearchRelevantContentApi-access-logs",
+    "RetentionInDays": 30
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/SearchApiAccessLogs/Resource"
+   }
+  },
+  "SearchApi2D039D25": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Name": "SearchRelevantContentApi"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/SearchApi/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "API Gateway needs AWS-managed log push policy",
+       "id": "AwsSolutions-IAM4"
+      }
+     ]
+    }
+   }
+  },
+  "SearchApiCloudWatchRoleF2BBFCD8": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "apigateway.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/SearchApi/CloudWatchRole/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "API Gateway needs AWS-managed log push policy",
+       "id": "AwsSolutions-IAM4"
+      }
+     ]
+    }
+   }
+  },
+  "SearchApiAccountB3C5A2C4": {
+   "Type": "AWS::ApiGateway::Account",
+   "Properties": {
+    "CloudWatchRoleArn": {
+     "Fn::GetAtt": [
+      "SearchApiCloudWatchRoleF2BBFCD8",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "SearchApi2D039D25"
+   ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/SearchApi/Account",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "API Gateway needs AWS-managed log push policy",
+       "id": "AwsSolutions-IAM4"
+      }
+     ]
+    }
+   }
+  },
+  "SearchApiOPTIONS5AFF8B11": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "SearchApi2D039D25",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "SearchApi2D039D25"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/SearchApi/Default/OPTIONS/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "API Gateway needs AWS-managed log push policy",
+       "id": "AwsSolutions-IAM4"
+      }
+     ]
+    }
+   }
+  },
+  "SearchApisearch6B016651": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "SearchApi2D039D25",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "search",
+    "RestApiId": {
+     "Ref": "SearchApi2D039D25"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/SearchApi/Default/search/Resource"
+   }
+  },
+  "SearchApisearchOPTIONSE6CB6306": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "SearchApisearch6B016651"
+    },
+    "RestApiId": {
+     "Ref": "SearchApi2D039D25"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/SearchApi/Default/search/OPTIONS/Resource"
+   }
+  },
+  "SearchApisearchPOSTApiPermissionSearchStackSearchApi7DFC16E0POSTsearch0263CFF4": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "SearchHandler00CE2B50",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:",
+       {
+        "Ref": "AWS::Region"
+       },
+       ":",
+       {
+        "Ref": "AWS::AccountId"
+       },
+       ":",
+       {
+        "Ref": "SearchApi2D039D25"
+       },
+       "/*/POST/search"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/SearchApi/Default/search/POST/ApiPermission.SearchStackSearchApi7DFC16E0.POST..search"
+   }
+  },
+  "SearchApisearchPOST4BD91E80": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:",
+        {
+         "Ref": "AWS::Region"
+        },
+        ":lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "SearchHandler00CE2B50",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "RequestValidatorId": {
+     "Ref": "SearchApiValidator8B9D3779"
+    },
+    "ResourceId": {
+     "Ref": "SearchApisearch6B016651"
+    },
+    "RestApiId": {
+     "Ref": "SearchApi2D039D25"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/SearchApi/Default/search/POST/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "OAuth token used, not API Gateway auth",
+       "id": "AwsSolutions-APIG4"
+      },
+      {
+       "reason": "Custom token verification, not Cognito",
+       "id": "AwsSolutions-COG4"
+      }
+     ]
+    }
+   }
+  },
+  "SearchApiValidator8B9D3779": {
+   "Type": "AWS::ApiGateway::RequestValidator",
+   "Properties": {
+    "Name": "body-and-params-validator",
+    "RestApiId": {
+     "Ref": "SearchApi2D039D25"
+    },
+    "ValidateRequestBody": true,
+    "ValidateRequestParameters": true
+   },
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/SearchApiValidator/Resource"
+   }
+  },
+  "SearchApiDeployment8CEF72913316340d4011ddb4f6737596f2a25c88": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "RestApiId": {
+     "Ref": "SearchApi2D039D25"
+    }
+   },
+   "DependsOn": [
+    "SearchApiOPTIONS5AFF8B11",
+    "SearchApisearchOPTIONSE6CB6306",
+    "SearchApisearchPOST4BD91E80"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/SearchApiDeployment/Resource"
+   }
+  },
+  "SearchApiStageD75ACE9D": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "AccessLogSetting": {
+     "DestinationArn": {
+      "Fn::GetAtt": [
+       "SearchApiAccessLogsEE491AD6",
+       "Arn"
+      ]
+     },
+     "Format": "$context.identity.sourceIp $context.identity.caller $context.identity.user [$context.requestTime] \"$context.httpMethod $context.resourcePath $context.protocol\" $context.status $context.responseLength $context.requestId"
+    },
+    "DeploymentId": {
+     "Ref": "SearchApiDeployment8CEF72913316340d4011ddb4f6737596f2a25c88"
+    },
+    "MethodSettings": [
+     {
+      "DataTraceEnabled": true,
+      "HttpMethod": "*",
+      "LoggingLevel": "INFO",
+      "ResourcePath": "/*"
+     }
+    ],
+    "RestApiId": {
+     "Ref": "SearchApi2D039D25"
+    },
+    "StageName": "prod"
+   },
+   "DependsOn": [
+    "SearchApiAccountB3C5A2C4"
+   ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/SearchApiStage/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "WAF attached via CfnWebACLAssociation",
+       "id": "AwsSolutions-APIG3"
+      }
+     ]
+    }
+   }
+  },
+  "SearchApiWafAcl": {
+   "Type": "AWS::WAFv2::WebACL",
+   "Properties": {
+    "DefaultAction": {
+     "Allow": {}
+    },
+    "Name": "SearchApiWafAcl",
+    "Rules": [
+     {
+      "Action": {
+       "Block": {}
+      },
+      "Name": "RateLimitRule",
+      "Priority": 1,
+      "Statement": {
+       "RateBasedStatement": {
+        "AggregateKeyType": "IP",
+        "Limit": 1000
+       }
+      },
+      "VisibilityConfig": {
+       "CloudWatchMetricsEnabled": true,
+       "MetricName": "RateLimitRule",
+       "SampledRequestsEnabled": true
+      }
+     }
+    ],
+    "Scope": "REGIONAL",
+    "VisibilityConfig": {
+     "CloudWatchMetricsEnabled": true,
+     "MetricName": "SearchApiWafAcl",
+     "SampledRequestsEnabled": true
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/SearchApiWafAcl"
+   }
+  },
+  "SearchApiWafAssociation": {
+   "Type": "AWS::WAFv2::WebACLAssociation",
+   "Properties": {
+    "ResourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":apigateway:",
+       {
+        "Ref": "AWS::Region"
+       },
+       "::/restapis/",
+       {
+        "Ref": "SearchApi2D039D25"
+       },
+       "/stages/",
+       {
+        "Ref": "SearchApiStageD75ACE9D"
+       }
+      ]
+     ]
+    },
+    "WebACLArn": {
+     "Fn::GetAtt": [
+      "SearchApiWafAcl",
+      "Arn"
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/SearchApiWafAssociation"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/21Qy27CMBD8lt6NC+ELQqpWQlRFqdQe0eIs6ZbEm/oBQlH+vbYDLVQ97cyOPZ5xJmfzmZzewdFOVLWfNLSV/asDtRfFTi8ta1F467gt0bI3CuP6F99Ia8MHqtAswKLIrUUXjGrStQjum56glX3JzWgR55obUqdIRzSIhmsr+xXXT4Z9F5ULDhq02wpk/+i1chSD7fQ1XqNpydrABmHnG4gBrEw5ApcLr/boUjboqAaHRziFQGhd3tG51gXmSrHXTlyqpWvP6D64ivIZ/fsnJX75YPQGDVXg2Izin90Ddg2fWgxPBPmKxR9LfgkM4gi7Qyb7sHjHbV6sxA8KxVgRxPbDcBPlxbvOJ+OCdUXphFjCAe6zuZzK7O7TEk1M6EctynKc3xjgJgYJAgAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "SearchStack/CDKMetadata/Default"
+   },
+   "Condition": "CDKMetadataAvailable"
+  }
+ },
+ "Outputs": {
+  "SearchApiUrl": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "SearchApi2D039D25"
+      },
+      ".execute-api.",
+      {
+       "Ref": "AWS::Region"
+      },
+      "/prod/search"
+     ]
+    ]
+   },
+   "Export": {
+    "Name": "SearchApiUrl"
+   }
+  }
+ },
+ "Conditions": {
+  "CDKMetadataAvailable": {
+   "Fn::Or": [
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "af-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-northeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ap-southeast-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "ca-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "cn-northwest-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-north-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "eu-west-3"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "il-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-central-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "me-south-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "sa-east-1"
+       ]
+      }
+     ]
+    },
+    {
+     "Fn::Or": [
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-east-2"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-1"
+       ]
+      },
+      {
+       "Fn::Equals": [
+        {
+         "Ref": "AWS::Region"
+        },
+        "us-west-2"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

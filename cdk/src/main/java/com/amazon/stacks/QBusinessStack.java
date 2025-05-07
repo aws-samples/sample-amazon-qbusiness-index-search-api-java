@@ -19,7 +19,7 @@ import io.github.cdklabs.cdknag.NagSuppressions;
 public class QBusinessStack extends Stack {
     private final CfnResource application;
     private final CfnResource index;
-    
+
     public QBusinessStack(final Construct scope, final String id, final OpenIdConnectProvider oidcProvider) {
         this(scope, id, oidcProvider, StackProps.builder().build());
     }
@@ -29,17 +29,21 @@ public class QBusinessStack extends Stack {
 
         // (1) Create the Q Business application using generic CfnResource
         String oidcArn = oidcProvider.getOpenIdConnectProviderArn();
-        
+
         this.application = CfnResource.Builder.create(this, "QBusinessApp")
                 .type("AWS::QBusiness::Application")
                 .properties(Map.of(
                     "DisplayName", "MyApp",
-                    "IdentityType", "AWS_IAM_IDP_OIDC", 
+                    "IdentityType", "AWS_IAM_IDP_OIDC",
                     "IamIdentityProviderArn", oidcArn,
-                    "ClientIdsForOidc", List.of("qbusiness-audience")
+                    "ClientIdsForOIDC", List.of("qbusiness-audience"),
+                    "AutoSubscriptionConfiguration", Map.of(
+                        "AutoSubscribe",            "ENABLED",
+                        "DefaultSubscriptionType",  "Q_BUSINESS"
+                        )
                 ))
                 .build();
-                
+
         // (2) Create the Retriever (Index) against that app
         this.index = CfnResource.Builder.create(this, "QBusinessIndex")
                 .type("AWS::QBusiness::Index")
@@ -63,12 +67,12 @@ public class QBusinessStack extends Stack {
                 .description("The Amazon Q Business Retriever (Index) ID")
                 .build());
     }
-    
+
     // Getter methods for cross-stack references
     public String getApplicationId() {
         return this.application.getAtt("ApplicationId").toString();
     }
-    
+
     public String getRetrieverId() {
         return this.index.getAtt("IndexId").toString();
     }
