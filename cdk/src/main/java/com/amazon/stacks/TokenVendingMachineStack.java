@@ -86,10 +86,24 @@ public class TokenVendingMachineStack extends Stack {
                 .targetKey(signingKey)
                 .build();
 
-        // 2) Create a basic Lambda execution role with just the Lambda service principal
+        // 2) Create a Lambda execution role with the AWSLambdaBasicExecutionRole managed policy
         Role lambdaRole = Role.Builder.create(this, "TvmLambdaExecRole")
                 .assumedBy(new ServicePrincipal("lambda.amazonaws.com"))
+                // Give the standard AWSLambdaBasicExecutionRole for log writes
+                .managedPolicies(List.of(
+                    ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole")
+                ))
                 .build();
+                
+        // Suppress the nag for using AWS-managed policy
+        NagSuppressions.addResourceSuppressions(
+            lambdaRole,
+            List.of(NagPackSuppression.builder()
+                .id("AwsSolutions-IAM4")
+                .reason("Standard AWSLambdaBasicExecutionRole is required for Lambda to write logs")
+                .build()),
+            true
+        );
 
         // Grant KMS permissions using the key.grant() method instead of wildcard policies
         // This properly scopes permissions to the specific key
@@ -239,56 +253,7 @@ public class TokenVendingMachineStack extends Stack {
                 .timeout(Duration.seconds(10))
                 .build();
                 
-        // Create CloudWatch log groups using the actual function names
-        LogGroup openIdConfigLogGroup = LogGroup.Builder.create(this, "OpenIdConfigurationLogs")
-                .logGroupName("/aws/lambda/" + openIdConfigurationHandler.getFunctionName())
-                .retention(RetentionDays.ONE_MONTH)
-                .build();
-                
-        LogGroup jwksEndpointLogGroup = LogGroup.Builder.create(this, "JwksEndpointLogs")
-                .logGroupName("/aws/lambda/" + jwksEndpointHandler.getFunctionName())
-                .retention(RetentionDays.ONE_MONTH)
-                .build();
-                
-        LogGroup tokenVendingMachineLogGroup = LogGroup.Builder.create(this, "TokenVendingMachineLogs")
-                .logGroupName("/aws/lambda/" + tokenVendingMachineHandler.getFunctionName())
-                .retention(RetentionDays.ONE_MONTH)
-                .build();
-                
-        // Create CloudWatch logs policy with specific log group ARNs (least privilege)
-        PolicyStatement lambdaLogsPolicy = PolicyStatement.Builder.create()
-                .sid("AllowLambdaLogs")
-                .effect(Effect.ALLOW)
-                .actions(List.of(
-                        "logs:CreateLogStream", 
-                        "logs:PutLogEvents"
-                ))
-                .resources(List.of(
-                        openIdConfigLogGroup.getLogGroupArn() + ":*",
-                        jwksEndpointLogGroup.getLogGroupArn() + ":*",
-                        tokenVendingMachineLogGroup.getLogGroupArn() + ":*"
-                )) // Scoped to specific Lambda log groups
-                .build();
-                
-        // Create policy document for CloudWatch logging
-        PolicyDocument cloudWatchLogsPolicy = PolicyDocument.Builder.create()
-                .statements(List.of(lambdaLogsPolicy))
-                .build();
-                
-        // Add the CloudWatch logs policy to the Lambda role
-        lambdaRole.addToPolicy(lambdaLogsPolicy);
-        
-        // Add suppressions for the ':*' suffix on log group ARNs
-        NagSuppressions.addResourceSuppressions(
-            lambdaRole, 
-            List.of(
-                NagPackSuppression.builder()
-                    .id("AwsSolutions-IAM5")
-                    .reason("LogGroup ARN needs a ':*' suffix to allow writing to all streams in that specific group.")
-                    .build()
-            ),
-            true  // Apply to child nodes
-        );
+        // Lambda logs are handled by the AWSLambdaBasicExecutionRole managed policy
 
         // 6) API Gateway integrations
         var wellKnown = api.getRoot().addResource(".well-known");
