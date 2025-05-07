@@ -62,3 +62,6 @@ application-*.properties
 Thumbs.db
 EOF
 **/.claude/settings.local.json
+
+# Security documents - For internal use only
+THREAT-MODEL.md

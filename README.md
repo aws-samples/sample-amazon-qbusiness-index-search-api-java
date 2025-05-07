@@ -1,37 +1,43 @@
-# amazon-qbusiness-index-search-api-java-sample
+# Amazon Q Business Index Search API Java Sample
 
-Build an Amazon Q Business Index search API with Java CDK Stack
+Build a secure Amazon Q Business Index search API with Java CDK Stack
 
-Sample implementation showing how to set up a Trusted Token Issuer with Lambda and API Gateway, registering an Amazon Q Business Application with OIDC IdP integration, and deploying a search microservice. The sample is fully deployable via AWS CDK.
+Sample implementation showing how to set up a Trusted Token Issuer with Lambda and API Gateway, registering an Amazon Q Business Application with OIDC IdP integration, and deploying a search microservice. The sample is fully deployable via AWS CDK and follows AWS security best practices.
 
 Using this sample, you will be able to:
-1. Stand up a Trusted Token Issuer (TVM) (Lambda + API Gateway + KMS)
+1. Stand up a secure Token Vending Machine (TVM) (Lambda + API Gateway + KMS asymmetric keys)
 2. Register an Amazon Q Business Application (OIDC IdP) + Index
 3. Deploy a Search microservice (Lambda + API Gateway) that fetches an OIDC token from TVM, calls STS to assume-role-with-web-identity, and invokes Q Business's SearchRelevantContent API
+4. Implement AWS security best practices with least privilege permissions and proper protection
 
 ## Repository Layout
 
 ```
-qbusiness-search-cdk-sample/
+amazon-qbusiness-index-search-api-java-sample/
 ├── cdk/                             AWS CDK Java app
 │   ├── pom.xml                      CDK project POM
-│   └── src/main/java/com/amazon/stacks/
-│       ├── TVMStack.java
-│       ├── QBusinessStack.java
-│       └── SearchStack.java
+│   ├── src/main/java/com/amazon/
+│   │   ├── policies/                IAM policy helper classes
+│   │   └── stacks/
+│   │       ├── QBusinessApp.java    CDK application entry point
+│   │       ├── QBusinessStack.java  Q Business configuration
+│   │       ├── TokenVendingMachineStack.java  TVM infrastructure
+│   │       └── SearchStack.java     Search infrastructure
 ├── services/
-│   ├── tvm/                         Token Vending Machine service
+│   ├── TokenVendingMachine/         Token Vending Machine service
 │   │   ├── pom.xml
 │   │   └── src/main/java/com/amazon/
 │   │       ├── OpenIdConfigurationHandler.java
 │   │       ├── JwksEndpointHandler.java
 │   │       ├── TokenVendingMachineHandler.java
-│   │       └── UserInfoHandler.java
+│   │       └── KeyManager.java
 │   └── search/                      Search microservice
 │       ├── pom.xml
 │       └── src/main/java/com/amazon/
 │           └── SearchHandler.java
-└── README.md                        you're here!
+├── cdk.json                         CDK application configuration
+├── README.md                        you're here!
+└── THREAT-MODEL.md                  Security threat model
 ```
 
 ## Architecture
@@ -68,55 +74,75 @@ All handlers use the same KMS CMK for RSA signing
 
 ## CDK Deployment Steps
 
-1. Bootstrap CDK:
+1. Build all projects:
 ```bash
-cd cdk
+# Build the project from the root directory
 mvn clean package
+```
+
+2. Bootstrap CDK (first-time only):
+```bash
 cdk bootstrap
 ```
 
-2. Deploy TVMStack:
+3. Deploy the full stack or individual stacks:
+
+**Option 1: Deploy all stacks at once**
 ```bash
-cdk deploy TVMStack --outputs-file tvm-outputs.json
+# From the project root
+cdk deploy --all
+```
+
+**Option 2: Deploy stacks incrementally**
+
+a. Deploy Token Vending Machine Stack:
+```bash
+cdk deploy TokenVendingMachineStack --outputs-file tvm-outputs.json
 ```
 Outputs: TvmApiUrl, TvmIssuerUrl, TvmOidcProviderArn, TvmAudience
 
-3. Deploy QBusinessStack:
+b. Deploy QBusiness Stack:
 ```bash
 cdk deploy QBusinessStack --outputs-file qbus-outputs.json
 ```
 Inputs: from tvm-outputs.json  
 Outputs: QBusinessApplicationId, QBusinessRetrieverId, QBusinessRoleArn
 
-4. Deploy SearchStack:
+c. Deploy Search Stack:
 ```bash
 cdk deploy SearchStack
 ```
 Inputs: from both tvm-outputs.json & qbus-outputs.json  
 Outputs: SearchApiUrl
 
+The `cdk.json` file configures the CDK CLI to use QBusinessApp.java as the entry point, which includes all three stacks.
+
 ## Test End-to-End
 
 1. Get an OIDC token from TVM:
 ```bash
-TVM_API=$(jq -r .TvmApiUrl tvm-outputs.json)
+TVM_API=$(jq -r '.TokenVendingMachineStack.TvmApiUrl' tvm-outputs.json)
 TOKEN=$(curl -s -X POST $TVM_API/token -H "Content-Type: application/json" -d '{"email":"you@example.com"}' | jq -r .id_token)
 ```
 
 2. Call the Search API:
 ```bash
-APP_ID=$(jq -r .QBusinessApplicationId qbus-outputs.json)
-RET_ID=$(jq -r .QBusinessRetrieverId qbus-outputs.json)
-SEARCH_API=$(cdk output SearchApiUrl)
+APP_ID=$(jq -r '.QBusinessStack.QBusinessApplicationId' qbus-outputs.json)
+RET_ID=$(jq -r '.QBusinessStack.QBusinessRetrieverId' qbus-outputs.json)
+SEARCH_API=$(cdk output -o SearchStack SearchApiUrl)
 curl -s -X POST $SEARCH_API -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"email":"you@example.com","query":"quarterly","applicationId":"'"$APP_ID"'","retrieverId":"'"$RET_ID"'"}'
 ```
 
 ## Cleanup
 
 ```bash
+# Option 1: Remove all stacks at once
+cdk destroy --all
+
+# Option 2: Remove stacks individually
 cdk destroy SearchStack
 cdk destroy QBusinessStack
-cdk destroy TVMStack
+cdk destroy TokenVendingMachineStack
 ```
 
 ## License
