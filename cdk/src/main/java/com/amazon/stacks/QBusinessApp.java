@@ -14,15 +14,18 @@ public class QBusinessApp {
         // Apply AWS Solutions security checks to all constructs in the app
         Aspects.of(app).add(new AwsSolutionsChecks());
 
-        // Create the Token Vending Machine stack first (since others depend on it)
+        // Create the Token Vending Machine stack first
         TokenVendingMachineStack tvmStack = new TokenVendingMachineStack(app, "TokenVendingMachineStack");
         
-        // Create the QBusiness stack with a reference to the OIDC provider from the TVM stack
-        QBusinessStack qbusStack = new QBusinessStack(app, "QBusinessStack", tvmStack.getOidcProvider());
+        // Create the OIDC Provider stack (depends on TVM stack outputs)
+        OidcProviderStack oidcStack = new OidcProviderStack(app, "OidcProviderStack");
         
-        // Create the Search stack last with references from both upstream stacks
+        // Create the QBusiness stack with a reference to the OIDC provider
+        QBusinessStack qbusStack = new QBusinessStack(app, "QBusinessStack", oidcStack.getOidcProvider());
+        
+        // Create the Search stack last with references from other stacks
         SearchStack searchStack = new SearchStack(app, "SearchStack", 
-                tvmStack.getOidcProvider(),
+                oidcStack.getOidcProvider(),
                 tvmStack.getApi().getUrl(),
                 tvmStack.getAudience(),
                 qbusStack.getApplicationId(),

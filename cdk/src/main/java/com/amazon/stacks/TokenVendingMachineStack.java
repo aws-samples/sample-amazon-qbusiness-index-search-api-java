@@ -12,8 +12,6 @@ import io.github.cdklabs.cdknag.AwsSolutionsChecks;
 import io.github.cdklabs.cdknag.NagSuppressions;
 import io.github.cdklabs.cdknag.NagPackSuppression;
 
-import software.amazon.awscdk.services.iam.OpenIdConnectProvider;
-import software.amazon.awscdk.services.iam.IOpenIdConnectProvider;
 import software.amazon.awscdk.services.apigateway.RestApi;
 import software.amazon.awscdk.CfnOutput;
 import software.amazon.awscdk.CfnOutputProps;
@@ -54,7 +52,6 @@ import java.util.Map;
 
 public class TokenVendingMachineStack extends Stack {
     // Private fields for L2 cross-stack references
-    private final IOpenIdConnectProvider oidcProvider;
     private final RestApi api;
     private final String audience = "qbusiness-audience";
     
@@ -370,25 +367,10 @@ public class TokenVendingMachineStack extends Stack {
 
         // strip trailing slash if present
         String issuer = issuerUrl.replaceAll("/+$", "");
-
-        // thumbprint of the TVM’s TLS cert
-        List<String> thumbprints = List.of("9e99a48a9960b14926bb7f3b02e22da0afd8f4f");
-
-        this.oidcProvider = OpenIdConnectProvider.Builder.create(this, "TvmIamOidcProvider")
-                .url(issuer)                             // e.g. https://abc123.execute-api.us-east-1.amazonaws.com/prod
-                .clientIds(List.of(this.audience))// must match the “aud” in your TVM tokens
-                .thumbprints(thumbprints)
-                .build();
-
-        // export its ARN & audience for downstream stacks
-        new CfnOutput(this, "TvmOidcProviderArn", CfnOutputProps.builder()
-                .value(this.oidcProvider.getOpenIdConnectProviderArn())
-                .description("IAM OIDC Provider ARN for the TVM")
-                .exportName("TvmOidcProviderArn")
-                .build());
-
+        
+        // Export audience for downstream stacks
         new CfnOutput(this, "TvmOidcAudience", CfnOutputProps.builder()
-                .value("qbusiness-audience")
+                .value(this.audience)
                 .description("OIDC client ID (audience) for QBusiness")
                 .exportName("TvmAudience")
                 .build());
@@ -407,10 +389,6 @@ public class TokenVendingMachineStack extends Stack {
     }
 
     // Getter methods for cross-stack references
-    public IOpenIdConnectProvider getOidcProvider() {
-        return this.oidcProvider;
-    }
-    
     public RestApi getApi() {
         return this.api;
     }
