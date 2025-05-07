@@ -14,22 +14,25 @@ public class QBusinessApp {
         // Apply AWS Solutions security checks to all constructs in the app
         Aspects.of(app).add(new AwsSolutionsChecks());
 
-        // Create the Token Vending Machine stack first
-        TokenVendingMachineStack tvmStack = new TokenVendingMachineStack(app, "TokenVendingMachineStack");
+        // 1) TVM API → outputs TvmIssuerUrl & TvmAudience
+        TokenVendingMachineStack tvm = new TokenVendingMachineStack(app, "TokenVendingMachineStack");
         
-        // Create the OIDC Provider stack (depends on TVM stack outputs)
-        OidcProviderStack oidcStack = new OidcProviderStack(app, "OidcProviderStack");
+        // 2) Build OIDC provider from those exports
+        OidcProviderStack oidc = new OidcProviderStack(app, "OidcProviderStack");
+        oidc.addDependency(tvm);
         
-        // Create the QBusiness stack with a reference to the OIDC provider
-        QBusinessStack qbusStack = new QBusinessStack(app, "QBusinessStack", oidcStack.getOidcProvider());
+        // 3) QBusiness consumes that provider
+        QBusinessStack qbus = new QBusinessStack(app, "QBusinessStack", oidc.getProvider());
+        qbus.addDependency(oidc);
         
-        // Create the Search stack last with references from other stacks
-        SearchStack searchStack = new SearchStack(app, "SearchStack", 
-                oidcStack.getOidcProvider(),
-                tvmStack.getApi().getUrl(),
-                tvmStack.getAudience(),
-                qbusStack.getApplicationId(),
-                qbusStack.getRetrieverId());
+        // 4) Search consumes both TVM and QBusiness outputs
+        SearchStack search = new SearchStack(app, "SearchStack",
+                oidc.getProvider(),
+                tvm.getApi().getUrl(),
+                tvm.getAudience(),
+                qbus.getApplicationId(),
+                qbus.getRetrieverId());
+        search.addDependency(qbus);
         
         app.synth();
     }

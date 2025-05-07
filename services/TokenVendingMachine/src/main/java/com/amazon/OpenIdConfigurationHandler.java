@@ -17,13 +17,22 @@ public class OpenIdConfigurationHandler implements RequestHandler<APIGatewayProx
 
     private static final ObjectMapper JSON = new ObjectMapper();
 
-    // Configuration (should be environment variables in production)
-    private static final String ISSUER_URL = System.getenv("ISSUER_URL");
-
     @Override
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent request, Context context) {
         try {
-            Map<String, Object> openIdConfig = createOpenIdConfiguration();
+            // 1) Get the stage from the request context
+            String stage = request.getRequestContext().getStage();  // e.g. "prod"
+            
+            // 2) Read Host and scheme from headers
+            Map<String,String> headers = request.getHeaders();
+            String host = headers.get("Host");                      // e.g. "abc123.execute-api.us-east-1.amazonaws.com"
+            String proto = headers.getOrDefault("X-Forwarded-Proto", "https");
+            
+            // 3) Build the issuer URL
+            String issuerUrl = proto + "://" + host + "/" + stage;
+            context.getLogger().log("Inferred issuer URL: " + issuerUrl);
+            
+            Map<String, Object> openIdConfig = createOpenIdConfiguration(issuerUrl);
 
             // --- DEBUG LOGGING ---
             try {
@@ -43,18 +52,19 @@ public class OpenIdConfigurationHandler implements RequestHandler<APIGatewayProx
 
     /**
      * Create an OpenID Configuration response.
+     * @param issuerUrl The inferred issuer URL from the request context
      */
-    private Map<String, Object> createOpenIdConfiguration() {
+    private Map<String, Object> createOpenIdConfiguration(String issuerUrl) {
         Map<String, Object> config = new HashMap<>();
 
         // Required fields for OpenID Configuration
-        config.put("issuer", ISSUER_URL);
-        config.put("jwks_uri", ISSUER_URL + "/.well-known/jwks.json");
+        config.put("issuer", issuerUrl);
+        config.put("jwks_uri", issuerUrl + "/.well-known/jwks.json");
 
         // Additional required fields
-        config.put("token_endpoint", ISSUER_URL + "/token");
-        config.put("authorization_endpoint", ISSUER_URL + "/authorize");
-        config.put("userinfo_endpoint", ISSUER_URL + "/userinfo");
+        config.put("token_endpoint", issuerUrl + "/token");
+        config.put("authorization_endpoint", issuerUrl + "/authorize");
+        config.put("userinfo_endpoint", issuerUrl + "/userinfo");
 
         // Response types - what your TVM supports
         config.put("response_types_supported", new String[]{"id_token", "token"});

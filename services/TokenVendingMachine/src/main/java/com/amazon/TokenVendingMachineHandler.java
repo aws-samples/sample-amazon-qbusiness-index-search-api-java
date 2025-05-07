@@ -21,8 +21,7 @@ public class TokenVendingMachineHandler implements RequestHandler<APIGatewayProx
 
     private static final ObjectMapper JSON = new ObjectMapper();
 
-    // Configuration (move into ENV vars in prod)
-    private static final String ISSUER_URL  = System.getenv("ISSUER_URL");
+    // Configuration from environment variables
     private static final String AUDIENCE    = System.getenv("AUDIENCE");
     private static final int    TOKEN_EXPIRATION_MINUTES = 60;
 
@@ -52,6 +51,18 @@ public class TokenVendingMachineHandler implements RequestHandler<APIGatewayProx
     }
 
     private APIGatewayProxyResponseEvent handleToken(APIGatewayProxyRequestEvent req, Context ctx) throws Exception {
+        // 1) Get the stage from the request context
+        String stage = req.getRequestContext().getStage();  // e.g. "prod"
+        
+        // 2) Read Host and scheme from headers
+        Map<String,String> headers = req.getHeaders();
+        String host = headers.get("Host");                  // e.g. "abc123.execute-api.us-east-1.amazonaws.com"
+        String proto = headers.getOrDefault("X-Forwarded-Proto", "https");
+        
+        // 3) Build the issuer URL
+        String issuerUrl = proto + "://" + host + "/" + stage;
+        ctx.getLogger().log("Inferred issuer URL: " + issuerUrl);
+        
         // parse incoming body
         @SuppressWarnings("unchecked")
         Map<String,String> body = JSON.readValue(req.getBody(), Map.class);
@@ -69,7 +80,7 @@ public class TokenVendingMachineHandler implements RequestHandler<APIGatewayProx
         JwtBuilder b = Jwts.builder()
                 .setId(jti)
                 .setSubject(sub)
-                .setIssuer(ISSUER_URL)
+                .setIssuer(issuerUrl)
                 .setAudience(AUDIENCE)
                 .setIssuedAt(Date.from(now))
                 .setExpiration(Date.from(exp))

@@ -12,7 +12,7 @@ import software.amazon.awscdk.Stack;
 import software.amazon.awscdk.StackProps;
 import software.constructs.Construct;
 import software.amazon.awscdk.CfnResource;
-import software.amazon.awscdk.services.iam.IOpenIdConnectProvider;
+import software.amazon.awscdk.services.iam.OpenIdConnectProvider;
 import io.github.cdklabs.cdknag.AwsSolutionsChecks;
 import io.github.cdklabs.cdknag.NagSuppressions;
 
@@ -20,11 +20,11 @@ public class QBusinessStack extends Stack {
     private final CfnResource application;
     private final CfnResource index;
     
-    public QBusinessStack(final Construct scope, final String id, final IOpenIdConnectProvider oidcProvider) {
+    public QBusinessStack(final Construct scope, final String id, final OpenIdConnectProvider oidcProvider) {
         this(scope, id, oidcProvider, StackProps.builder().build());
     }
 
-    public QBusinessStack(final Construct scope, final String id, final IOpenIdConnectProvider oidcProvider, final StackProps props) {
+    public QBusinessStack(final Construct scope, final String id, final OpenIdConnectProvider oidcProvider, final StackProps props) {
         super(scope, id, props);
 
         // (1) Create the Q Business application using generic CfnResource

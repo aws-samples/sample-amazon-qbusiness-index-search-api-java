@@ -1,17 +1,13 @@
 package com.amazon.stacks;
 
-import software.amazon.awscdk.App;
-import software.amazon.awscdk.Aspects;
 import software.amazon.awscdk.CfnOutput;
 import software.amazon.awscdk.CfnOutputProps;
 import software.amazon.awscdk.Fn;
 import software.amazon.awscdk.Stack;
 import software.amazon.awscdk.StackProps;
 import software.constructs.Construct;
-import io.github.cdklabs.cdknag.AwsSolutionsChecks;
 
 import software.amazon.awscdk.services.iam.OpenIdConnectProvider;
-import software.amazon.awscdk.services.iam.IOpenIdConnectProvider;
 
 import java.util.List;
 
@@ -20,7 +16,7 @@ import java.util.List;
  * This breaks the circular dependency by separating the OIDC provider from the TVM stack.
  */
 public class OidcProviderStack extends Stack {
-    private final IOpenIdConnectProvider oidcProvider;
+    private final OpenIdConnectProvider oidcProvider;
 
     public OidcProviderStack(final Construct scope, final String id) {
         this(scope, id, null);
@@ -29,30 +25,29 @@ public class OidcProviderStack extends Stack {
     public OidcProviderStack(final Construct scope, final String id, final StackProps props) {
         super(scope, id, props);
 
-        // Import values from TokenVendingMachineStack
-        String issuerUrl = Fn.importValue("TvmIssuerUrl");
+        // 1) Import exactly the export names from TVM stack
+        String issuer = Fn.importValue("TvmIssuerUrl");
         String audience = Fn.importValue("TvmAudience");
 
-        // Thumbprint of the TVM's TLS cert
         List<String> thumbprints = List.of("9e99a48a9960b14926bb7f3b02e22da0afd8f4f");
 
-        // Create the OIDC provider
+        // 2) Create the OIDC provider
         this.oidcProvider = OpenIdConnectProvider.Builder.create(this, "TvmIamOidcProvider")
-                .url(issuerUrl)
+                .url(issuer)
                 .clientIds(List.of(audience))
                 .thumbprints(thumbprints)
                 .build();
 
-        // Export the OIDC provider ARN for downstream stacks
-        new CfnOutput(this, "OidcProviderArn", CfnOutputProps.builder()
+        // 3) Re-export its ARN for downstream stacks
+        new CfnOutput(this, "TvmOidcProviderArn", CfnOutputProps.builder()
                 .value(this.oidcProvider.getOpenIdConnectProviderArn())
                 .description("IAM OIDC Provider ARN")
-                .exportName("OidcProviderArn")
+                .exportName("TvmOidcProviderArn")
                 .build());
     }
 
     // Getter for the OIDC provider
-    public IOpenIdConnectProvider getOidcProvider() {
+    public OpenIdConnectProvider getProvider() {
         return this.oidcProvider;
     }
 }

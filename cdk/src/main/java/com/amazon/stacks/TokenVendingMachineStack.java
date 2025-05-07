@@ -213,7 +213,6 @@ public class TokenVendingMachineStack extends Stack {
                 .handler("com.amazon.OpenIdConfigurationHandler::handleRequest")
                 .code(Code.fromAsset(tvmJar))
                 .role(lambdaRole)
-                .environment(Map.of("ISSUER_URL", issuerUrl))
                 .timeout(Duration.seconds(10))
                 .build();
 
@@ -234,7 +233,6 @@ public class TokenVendingMachineStack extends Stack {
                 .code(Code.fromAsset(tvmJar))
                 .role(lambdaRole)
                 .environment(Map.of(
-                        "ISSUER_URL", issuerUrl,
                         "AUDIENCE",   "qbusiness-audience",
                         "KEY_ID",     signingKey.getKeyId()
                 ))
@@ -366,23 +364,23 @@ public class TokenVendingMachineStack extends Stack {
         tokenVendingMachineHandler.grantInvoke(new ServicePrincipal("apigateway.amazonaws.com"));
 
         // strip trailing slash if present
-        String issuer = issuerUrl.replaceAll("/+$", "");
+        String issuer = this.api.getUrl().replaceAll("/+$", "");
         
-        // Export audience for downstream stacks
-        new CfnOutput(this, "TvmOidcAudience", CfnOutputProps.builder()
-                .value(this.audience)
-                .description("OIDC client ID (audience) for QBusiness")
-                .exportName("TvmAudience")
-                .build());
-                
+        // Export issuer URL and audience for downstream stacks
         new CfnOutput(this, "TvmIssuerUrl", CfnOutputProps.builder()
                 .value(issuer)
                 .description("OIDC Issuer URL for QBusiness")
                 .exportName("TvmIssuerUrl")
                 .build());
                 
+        new CfnOutput(this, "TvmAudience", CfnOutputProps.builder()
+                .value(this.audience)
+                .description("OIDC client ID (audience) for QBusiness")
+                .exportName("TvmAudience")
+                .build());
+                
         new CfnOutput(this, "TvmApiUrl", CfnOutputProps.builder()
-                .value(api.getUrl())
+                .value(this.api.getUrl())
                 .description("API Gateway URL for the TVM")
                 .exportName("TvmApiUrl")
                 .build());

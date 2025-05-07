@@ -9,7 +9,7 @@ import software.amazon.awscdk.StackProps;
 import software.amazon.awscdk.CfnOutput;
 import software.amazon.awscdk.CfnOutputProps;
 import software.constructs.Construct;
-import software.amazon.awscdk.services.iam.IOpenIdConnectProvider;
+import software.amazon.awscdk.services.iam.OpenIdConnectProvider;
 import io.github.cdklabs.cdknag.AwsSolutionsChecks;
 import io.github.cdklabs.cdknag.NagSuppressions;
 import io.github.cdklabs.cdknag.NagPackSuppression;
@@ -46,12 +46,12 @@ import java.util.List;
 import java.util.Map;
 
 public class SearchStack extends Stack {
-    public SearchStack(final Construct scope, final String id, final IOpenIdConnectProvider oidcProvider, 
+    public SearchStack(final Construct scope, final String id, final OpenIdConnectProvider oidcProvider, 
                      final String tvmApiUrl, final String tvmAudience, final String applicationId, final String retrieverId) {
         this(scope, id, oidcProvider, tvmApiUrl, tvmAudience, applicationId, retrieverId, null);
     }
 
-    public SearchStack(final Construct scope, final String id, final IOpenIdConnectProvider oidcProvider,
+    public SearchStack(final Construct scope, final String id, final OpenIdConnectProvider oidcProvider,
                      final String tvmApiUrl, final String tvmAudience, final String applicationId, final String retrieverId,
                      final StackProps props) {
         super(scope, id, props);
