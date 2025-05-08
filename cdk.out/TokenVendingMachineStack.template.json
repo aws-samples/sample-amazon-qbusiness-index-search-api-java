@@ -1375,7 +1375,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "a4fb3659493c2557a836f6a9f13dd7c85f42a19e016961a9a9cbfe93825de2f4.jar"
+     "S3Key": "43fcdbec56c5a1e09921056a79a6b4cd28609ea12de36618a6861a0b8a90b43a.jar"
     },
     "Handler": "com.amazon.OpenIdConfigurationHandler::handleRequest",
     "Role": {
@@ -1393,7 +1393,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "TokenVendingMachineStack/OpenIdConfigurationHandler/Resource",
-    "aws:asset:path": "asset.a4fb3659493c2557a836f6a9f13dd7c85f42a19e016961a9a9cbfe93825de2f4.jar",
+    "aws:asset:path": "asset.43fcdbec56c5a1e09921056a79a6b4cd28609ea12de36618a6861a0b8a90b43a.jar",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1421,7 +1421,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "a4fb3659493c2557a836f6a9f13dd7c85f42a19e016961a9a9cbfe93825de2f4.jar"
+     "S3Key": "43fcdbec56c5a1e09921056a79a6b4cd28609ea12de36618a6861a0b8a90b43a.jar"
     },
     "Environment": {
      "Variables": {
@@ -1496,7 +1496,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "TokenVendingMachineStack/JwksEndpointHandler/Resource",
-    "aws:asset:path": "asset.a4fb3659493c2557a836f6a9f13dd7c85f42a19e016961a9a9cbfe93825de2f4.jar",
+    "aws:asset:path": "asset.43fcdbec56c5a1e09921056a79a6b4cd28609ea12de36618a6861a0b8a90b43a.jar",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1524,7 +1524,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "a4fb3659493c2557a836f6a9f13dd7c85f42a19e016961a9a9cbfe93825de2f4.jar"
+     "S3Key": "43fcdbec56c5a1e09921056a79a6b4cd28609ea12de36618a6861a0b8a90b43a.jar"
     },
     "Environment": {
      "Variables": {
@@ -1600,7 +1600,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "TokenVendingMachineStack/TokenVendingMachineHandler/Resource",
-    "aws:asset:path": "asset.a4fb3659493c2557a836f6a9f13dd7c85f42a19e016961a9a9cbfe93825de2f4.jar",
+    "aws:asset:path": "asset.43fcdbec56c5a1e09921056a79a6b4cd28609ea12de36618a6861a0b8a90b43a.jar",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }

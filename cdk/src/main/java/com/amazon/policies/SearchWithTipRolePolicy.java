@@ -15,6 +15,8 @@ import software.amazon.awscdk.services.iam.IRole;
 import software.amazon.awscdk.services.iam.FederatedPrincipal;
 import software.amazon.awscdk.services.iam.CfnRole;
 import software.amazon.awscdk.services.iam.Effect;
+import io.github.cdklabs.cdknag.NagSuppressions;
+import io.github.cdklabs.cdknag.NagPackSuppression;
 
 public class SearchWithTipRolePolicy {
 
@@ -58,6 +60,25 @@ public class SearchWithTipRolePolicy {
                                 .effect(Effect.ALLOW)
                                 .actions(List.of("qbusiness:SearchRelevantContent"))
                                 .resources(List.of(qbusinessAppArn))
+                                .build(),
+                        // Allow creating subscription claims - required with auto-subscribe enabled
+                        // Note: AWS User Subscriptions does not support resource-level permissions
+                        // so we must use "*" but apply strict conditions
+                        PolicyStatement.Builder.create()
+                                .sid("AllowUserSubscriptionClaim")
+                                .effect(Effect.ALLOW)
+                                .actions(List.of("user-subscriptions:CreateClaim"))
+                                .resources(List.of("*"))
+                                .conditions(Map.of(
+                                    // Only allow creating claims for self
+                                    "Bool", Map.of(
+                                        "user-subscriptions:CreateForSelf", "true"
+                                    ),
+                                    // Only allow claims when called via Q Business
+                                    "StringEquals", Map.of(
+                                        "aws:CalledViaLast", "qbusiness.amazonaws.com"
+                                    )
+                                ))
                                 .build()
                 ))
                 .build();
@@ -108,6 +129,15 @@ public class SearchWithTipRolePolicy {
         // Get the underlying CfnRole resource and override the trust policy
         var cfnRole = (CfnRole) role.getNode().getDefaultChild();
         cfnRole.setAssumeRolePolicyDocument(trustPolicy);
+        
+        // Add suppressions for the wildcard resource in user-subscriptions:CreateClaim permission
+        // This is required as the AWS User Subscriptions service does not support resource-level permissions
+        NagSuppressions.addResourceSuppressions(role, 
+            List.of(NagPackSuppression.builder()
+                .id("AwsSolutions-IAM5")
+                .reason("AWS User Subscriptions service requires '*' resource for CreateClaim; mitigated with strict conditions")
+                .build()), 
+            true);
         
         return role;
     }

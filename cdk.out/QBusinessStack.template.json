@@ -3,6 +3,10 @@
   "QBusinessApp": {
    "Type": "AWS::QBusiness::Application",
    "Properties": {
+    "AutoSubscriptionConfiguration": {
+     "AutoSubscribe": "ENABLED",
+     "DefaultSubscriptionType": "Q_BUSINESS"
+    },
     "IamIdentityProviderArn": {
      "Fn::ImportValue": "OidcProviderStack:ExportsOutputRefTvmIamOidcProviderBFFB14340A3C0CA5"
     },
@@ -10,11 +14,7 @@
     "IdentityType": "AWS_IAM_IDP_OIDC",
     "ClientIdsForOIDC": [
      "qbusiness-audience"
-    ],
-    "AutoSubscriptionConfiguration": {
-     "AutoSubscribe": "ENABLED",
-     "DefaultSubscriptionType": "Q_BUSINESS"
-    }
+    ]
    },
    "Metadata": {
     "aws:cdk:path": "QBusinessStack/QBusinessApp"
@@ -23,13 +23,13 @@
   "QBusinessIndex": {
    "Type": "AWS::QBusiness::Index",
    "Properties": {
+    "DisplayName": "MyIndex",
     "ApplicationId": {
      "Fn::GetAtt": [
       "QBusinessApp",
       "ApplicationId"
      ]
-    },
-    "DisplayName": "MyIndex"
+    }
    },
    "Metadata": {
     "aws:cdk:path": "QBusinessStack/QBusinessIndex"
@@ -38,6 +38,13 @@
   "QBusinessRetriever": {
    "Type": "AWS::QBusiness::Retriever",
    "Properties": {
+    "Type": "NATIVE_INDEX",
+    "ApplicationId": {
+     "Fn::GetAtt": [
+      "QBusinessApp",
+      "ApplicationId"
+     ]
+    },
     "DisplayName": "MyRetriever",
     "Configuration": {
      "NativeIndexConfiguration": {
@@ -48,13 +55,6 @@
        ]
       }
      }
-    },
-    "Type": "NATIVE_INDEX",
-    "ApplicationId": {
-     "Fn::GetAtt": [
-      "QBusinessApp",
-      "ApplicationId"
-     ]
     }
    },
    "DependsOn": [

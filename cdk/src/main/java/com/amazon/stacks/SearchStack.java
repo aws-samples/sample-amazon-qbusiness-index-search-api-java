@@ -153,6 +153,7 @@ public class SearchStack extends Stack {
         Method searchMethod = searchResource.addMethod("POST",
                 new LambdaIntegration(searchFn, LambdaIntegrationOptions.builder()
                         .allowTestInvoke(false)
+                        .timeout(Duration.seconds(29))  // Set to maximum allowed 29 seconds
                         .build()),
                 MethodOptions.builder().requestValidator(validator).build()
         );

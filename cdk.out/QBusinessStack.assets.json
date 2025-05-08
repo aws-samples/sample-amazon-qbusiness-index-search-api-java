@@ -1,7 +1,7 @@
 {
   "version": "36.0.0",
   "files": {
-    "a61b423449d9b9d8b8b7f86636fe7920477832f406c1ee9564abce5feb0cfbaa": {
+    "4217d0adeb10060a3e46aa2ec5113c602781cb8ee52e9844542a9e253a23bd90": {
       "source": {
         "path": "QBusinessStack.template.json",
         "packaging": "file"
@@ -9,7 +9,7 @@
       "destinations": {
         "current_account-current_region": {
           "bucketName": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}",
-          "objectKey": "a61b423449d9b9d8b8b7f86636fe7920477832f406c1ee9564abce5feb0cfbaa.json",
+          "objectKey": "4217d0adeb10060a3e46aa2ec5113c602781cb8ee52e9844542a9e253a23bd90.json",
           "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-file-publishing-role-${AWS::AccountId}-${AWS::Region}"
         }
       }

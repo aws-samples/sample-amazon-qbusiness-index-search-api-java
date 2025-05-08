@@ -118,16 +118,24 @@
     "AssumeRolePolicyDocument": {
      "Statement": [
       {
+       "Principal": {
+        "Service": "qbusiness.amazonaws.com"
+       },
        "Action": [
         "sts:AssumeRole",
         "sts:SetContext"
        ],
-       "Effect": "Allow",
-       "Principal": {
-        "Service": "qbusiness.amazonaws.com"
-       }
+       "Effect": "Allow"
       },
       {
+       "Condition": {
+        "StringEquals": {
+         "Fn::GetAtt": [
+          "SearchWithTipRoleCondD71D0E28",
+          "Value"
+         ]
+        }
+       },
        "Principal": {
         "Federated": {
          "Fn::ImportValue": "OidcProviderStack:ExportsOutputRefTvmIamOidcProviderBFFB14340A3C0CA5"
@@ -137,15 +145,7 @@
         "sts:AssumeRoleWithWebIdentity",
         "sts:TagSession"
        ],
-       "Effect": "Allow",
-       "Condition": {
-        "StringEquals": {
-         "Fn::GetAtt": [
-          "SearchWithTipRoleCondD71D0E28",
-          "Value"
-         ]
-        }
-       }
+       "Effect": "Allow"
       }
      ],
      "Version": "2012-10-17"
@@ -177,6 +177,20 @@
           ]
          },
          "Sid": "AllowQBusinessSearch"
+        },
+        {
+         "Action": "user-subscriptions:CreateClaim",
+         "Condition": {
+          "Bool": {
+           "user-subscriptions:CreateForSelf": "true"
+          },
+          "StringEquals": {
+           "aws:CalledViaLast": "qbusiness.amazonaws.com"
+          }
+         },
+         "Effect": "Allow",
+         "Resource": "*",
+         "Sid": "AllowUserSubscriptionClaim"
         }
        ],
        "Version": "2012-10-17"
@@ -186,7 +200,15 @@
     ]
    },
    "Metadata": {
-    "aws:cdk:path": "SearchStack/SearchWithTipRole/Resource"
+    "aws:cdk:path": "SearchStack/SearchWithTipRole/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "AWS User Subscriptions service requires '*' resource for CreateClaim; mitigated with strict conditions",
+       "id": "AwsSolutions-IAM5"
+      }
+     ]
+    }
    }
   },
   "SearchLambdaExecRole2CFCBBDB": {
@@ -285,22 +307,10 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "5787f781494baa9d6587ef37ab8b72704a960f4332e6c554b8c9a71aed326ad7.jar"
+     "S3Key": "9f300be6e2ff77fd164b1e234e1b2e870409a3e8426d5082b68c38d074eee601.jar"
     },
     "Environment": {
      "Variables": {
-      "ROLE_ARN": {
-       "Fn::GetAtt": [
-        "SearchWithTipRole8D8BFAFA",
-        "Arn"
-       ]
-      },
-      "QBUS_RETRIEVER_ID": {
-       "Fn::ImportValue": "QBusinessStack:ExportsOutputFnGetAttQBusinessRetrieverRetrieverId078CF2C9"
-      },
-      "QBUS_APP_ID": {
-       "Fn::ImportValue": "QBusinessStack:ExportsOutputFnGetAttQBusinessAppApplicationId58AC7172"
-      },
       "TOKEN_ENDPOINT": {
        "Fn::Join": [
         "",
@@ -324,6 +334,18 @@
          "/token"
         ]
        ]
+      },
+      "ROLE_ARN": {
+       "Fn::GetAtt": [
+        "SearchWithTipRole8D8BFAFA",
+        "Arn"
+       ]
+      },
+      "QBUS_RETRIEVER_ID": {
+       "Fn::ImportValue": "QBusinessStack:ExportsOutputFnGetAttQBusinessRetrieverRetrieverId078CF2C9"
+      },
+      "QBUS_APP_ID": {
+       "Fn::ImportValue": "QBusinessStack:ExportsOutputFnGetAttQBusinessAppApplicationId58AC7172"
       }
      }
     },
@@ -344,7 +366,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "SearchStack/SearchHandler/Resource",
-    "aws:asset:path": "asset.5787f781494baa9d6587ef37ab8b72704a960f4332e6c554b8c9a71aed326ad7.jar",
+    "aws:asset:path": "asset.9f300be6e2ff77fd164b1e234e1b2e870409a3e8426d5082b68c38d074eee601.jar",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -611,6 +633,7 @@
     "HttpMethod": "POST",
     "Integration": {
      "IntegrationHttpMethod": "POST",
+     "TimeoutInMillis": 29000,
      "Type": "AWS_PROXY",
      "Uri": {
       "Fn::Join": [

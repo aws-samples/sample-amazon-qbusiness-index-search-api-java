@@ -119,6 +119,10 @@ The `cdk.json` file configures the CDK CLI to use QBusinessApp.java as the entry
 
 ## Test End-to-End
 
+### Option 1: If You Deployed Stacks Incrementally
+
+If you deployed the stacks incrementally and saved outputs to files:
+
 1. Get an OIDC token from TVM:
 ```bash
 TVM_API=$(jq -r '.TokenVendingMachineStack.TvmApiUrl' tvm-outputs.json)
@@ -132,6 +136,37 @@ RET_ID=$(jq -r '.QBusinessStack.QBusinessRetrieverId' qbus-outputs.json)
 SEARCH_API=$(cdk output -o SearchStack SearchApiUrl)
 curl -s -X POST $SEARCH_API -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"email":"you@example.com","query":"quarterly","applicationId":"'"$APP_ID"'","retrieverId":"'"$RET_ID"'"}'
 ```
+
+### Option 2: If You Deployed All Stacks at Once
+
+If you deployed all stacks at once, you'll need to retrieve the stack outputs directly:
+
+1. Get necessary endpoints and IDs:
+```bash
+# Get necessary endpoints and IDs
+TVM_API=$(aws cloudformation describe-stacks --stack-name TokenVendingMachineStack --query "Stacks[0].Outputs[?OutputKey=='TvmApiUrl'].OutputValue" --output text)
+APP_ID=$(aws cloudformation describe-stacks --stack-name QBusinessStack --query "Stacks[0].Outputs[?OutputKey=='QBusinessApplicationId'].OutputValue" --output text)
+RET_ID=$(aws cloudformation describe-stacks --stack-name QBusinessStack --query "Stacks[0].Outputs[?OutputKey=='QBusinessRetrieverId'].OutputValue" --output text)
+SEARCH_API=$(aws cloudformation describe-stacks --stack-name SearchStack --query "Stacks[0].Outputs[?OutputKey=='SearchApiUrl'].OutputValue" --output text)
+
+# Alternatively, you can use cdk output commands:
+# TVM_API=$(cdk output -o TokenVendingMachineStack TvmApiUrl)
+# APP_ID=$(cdk output -o QBusinessStack QBusinessApplicationId)
+# RET_ID=$(cdk output -o QBusinessStack QBusinessRetrieverId)
+# SEARCH_API=$(cdk output -o SearchStack SearchApiUrl)
+```
+
+2. Get a token:
+```bash
+TOKEN=$(curl -s -X POST $TVM_API/token -H "Content-Type: application/json" -d '{"email":"you@example.com"}' | jq -r .id_token)
+```
+
+3. Call the search API:
+```bash
+curl -s -X POST $SEARCH_API -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"email":"you@example.com","query":"quarterly","applicationId":"'"$APP_ID"'","retrieverId":"'"$RET_ID"'"}'
+```
+
+> **Note:** If you encounter timeouts with the API Gateway, this is normal. The Lambda function may still be executing and completing successfully in the backend. Check the CloudWatch logs for the SearchHandler Lambda function to confirm that the search was processed correctly.
 
 ## Cleanup
 
