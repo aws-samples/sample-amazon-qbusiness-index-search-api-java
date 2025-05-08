@@ -8,7 +8,6 @@ Using this sample, you will be able to:
 1. Stand up a secure Token Vending Machine (TVM) (Lambda + API Gateway + KMS asymmetric keys)
 2. Register an Amazon Q Business Application (OIDC IdP) + Index
 3. Deploy a Search microservice (Lambda + API Gateway) that fetches an OIDC token from TVM, calls STS to assume-role-with-web-identity, and invokes Q Business's SearchRelevantContent API
-4. Implement AWS security best practices with least privilege permissions and proper protection
 
 ## Repository Layout
 
