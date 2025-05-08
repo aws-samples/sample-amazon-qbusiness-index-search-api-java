@@ -141,19 +141,24 @@ curl -s -X POST $SEARCH_API -H "Authorization: Bearer $TOKEN" -H "Content-Type: 
 
 If you deployed all stacks at once, you'll need to retrieve the stack outputs directly:
 
-1. Get necessary endpoints and IDs:
+1. Get necessary endpoints and IDs using CloudFormation:
+
 ```bash
-# Get necessary endpoints and IDs
+# Get endpoints and IDs using CloudFormation
 TVM_API=$(aws cloudformation describe-stacks --stack-name TokenVendingMachineStack --query "Stacks[0].Outputs[?OutputKey=='TvmApiUrl'].OutputValue" --output text)
 APP_ID=$(aws cloudformation describe-stacks --stack-name QBusinessStack --query "Stacks[0].Outputs[?OutputKey=='QBusinessApplicationId'].OutputValue" --output text)
 RET_ID=$(aws cloudformation describe-stacks --stack-name QBusinessStack --query "Stacks[0].Outputs[?OutputKey=='QBusinessRetrieverId'].OutputValue" --output text)
 SEARCH_API=$(aws cloudformation describe-stacks --stack-name SearchStack --query "Stacks[0].Outputs[?OutputKey=='SearchApiUrl'].OutputValue" --output text)
+```
 
-# Alternatively, you can use cdk output commands:
-# TVM_API=$(cdk output -o TokenVendingMachineStack TvmApiUrl)
-# APP_ID=$(cdk output -o QBusinessStack QBusinessApplicationId)
-# RET_ID=$(cdk output -o QBusinessStack QBusinessRetrieverId)
-# SEARCH_API=$(cdk output -o SearchStack SearchApiUrl)
+Alternatively, you can use CDK output commands:
+
+```bash
+# Get endpoints and IDs using CDK
+TVM_API=$(cdk output -o TokenVendingMachineStack TvmApiUrl)
+APP_ID=$(cdk output -o QBusinessStack QBusinessApplicationId)
+RET_ID=$(cdk output -o QBusinessStack QBusinessRetrieverId)
+SEARCH_API=$(cdk output -o SearchStack SearchApiUrl)
 ```
 
 2. Get a token:
