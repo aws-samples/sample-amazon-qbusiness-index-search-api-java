@@ -3,9 +3,6 @@ package com.amazon.stacks;
 import java.util.List;
 import java.util.Map;
 
-import software.amazon.awscdk.Fn;
-import software.amazon.awscdk.App;
-import software.amazon.awscdk.Aspects;
 import software.amazon.awscdk.CfnOutput;
 import software.amazon.awscdk.CfnOutputProps;
 import software.amazon.awscdk.Stack;
@@ -13,8 +10,6 @@ import software.amazon.awscdk.StackProps;
 import software.constructs.Construct;
 import software.amazon.awscdk.CfnResource;
 import software.amazon.awscdk.services.iam.OpenIdConnectProvider;
-import io.github.cdklabs.cdknag.AwsSolutionsChecks;
-import io.github.cdklabs.cdknag.NagSuppressions;
 
 public class QBusinessStack extends Stack {
     private final CfnResource application;

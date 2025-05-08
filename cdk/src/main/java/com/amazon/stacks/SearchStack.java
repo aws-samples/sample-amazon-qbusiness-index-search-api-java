@@ -1,8 +1,7 @@
 package com.amazon.stacks;
 
 import com.amazon.policies.SearchWithTipRolePolicy;
-import software.amazon.awscdk.App;
-import software.amazon.awscdk.Aspects;
+
 import software.amazon.awscdk.CfnOutput;
 import software.amazon.awscdk.CfnOutputProps;
 import software.amazon.awscdk.Duration;
@@ -35,7 +34,6 @@ import software.amazon.awscdk.services.apigateway.Deployment;
 import software.amazon.awscdk.services.apigateway.Stage;
 import software.amazon.awscdk.services.wafv2.CfnWebACL;
 import software.amazon.awscdk.services.wafv2.CfnWebACLAssociation;
-import io.github.cdklabs.cdknag.AwsSolutionsChecks;
 import io.github.cdklabs.cdknag.NagSuppressions;
 import io.github.cdklabs.cdknag.NagPackSuppression;
 

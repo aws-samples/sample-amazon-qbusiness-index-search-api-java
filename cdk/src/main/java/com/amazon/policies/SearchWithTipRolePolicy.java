@@ -1,7 +1,6 @@
 package com.amazon.policies;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +10,6 @@ import software.amazon.awscdk.Stack;
 import software.amazon.awscdk.services.iam.PolicyDocument;
 import software.amazon.awscdk.services.iam.PolicyStatement;
 import software.amazon.awscdk.services.iam.Role;
-import software.amazon.awscdk.services.iam.IRole;
 import software.amazon.awscdk.services.iam.FederatedPrincipal;
 import software.amazon.awscdk.services.iam.CfnRole;
 import software.amazon.awscdk.services.iam.Effect;
