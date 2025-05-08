@@ -37,7 +37,9 @@ public class OidcProviderStack extends Stack {
                 // Amazon Root CA 2
                 "146f82d739f8743252a613787ee538729a59373e",
                 // Amazon Trust Services Root
-                "b3f5e77f65955f6e8878eca038736e33c2fffa8c"
+                "b3f5e77f65955f6e8878eca038736e33c2fffa8c",
+                // Starfield Services Root Certificate Authority - G2
+                "9e99a48a9960b14926bb7f3b02e22da2b0ab7280"
         );
 
         // 3) Create the OIDC provider
