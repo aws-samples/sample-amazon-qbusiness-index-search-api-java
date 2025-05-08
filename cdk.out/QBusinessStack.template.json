@@ -3,10 +3,6 @@
   "QBusinessApp": {
    "Type": "AWS::QBusiness::Application",
    "Properties": {
-    "AutoSubscriptionConfiguration": {
-     "AutoSubscribe": "ENABLED",
-     "DefaultSubscriptionType": "Q_BUSINESS"
-    },
     "IamIdentityProviderArn": {
      "Fn::ImportValue": "OidcProviderStack:ExportsOutputRefTvmIamOidcProviderBFFB14340A3C0CA5"
     },
@@ -14,7 +10,11 @@
     "IdentityType": "AWS_IAM_IDP_OIDC",
     "ClientIdsForOIDC": [
      "qbusiness-audience"
-    ]
+    ],
+    "AutoSubscriptionConfiguration": {
+     "AutoSubscribe": "ENABLED",
+     "DefaultSubscriptionType": "Q_BUSINESS"
+    }
    },
    "Metadata": {
     "aws:cdk:path": "QBusinessStack/QBusinessApp"
@@ -33,6 +33,35 @@
    },
    "Metadata": {
     "aws:cdk:path": "QBusinessStack/QBusinessIndex"
+   }
+  },
+  "QBusinessRetriever": {
+   "Type": "AWS::QBusiness::Retriever",
+   "Properties": {
+    "DisplayName": "MyRetriever",
+    "Configuration": {
+     "NativeIndexConfiguration": {
+      "IndexId": {
+       "Fn::GetAtt": [
+        "QBusinessIndex",
+        "IndexId"
+       ]
+      }
+     }
+    },
+    "Type": "NATIVE_INDEX",
+    "ApplicationId": {
+     "Fn::GetAtt": [
+      "QBusinessApp",
+      "ApplicationId"
+     ]
+    }
+   },
+   "DependsOn": [
+    "QBusinessIndex"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "QBusinessStack/QBusinessRetriever"
    }
   },
   "CDKMetadata": {
@@ -59,12 +88,24 @@
     "Name": "QBusinessApplicationId"
    }
   },
-  "QBusinessRetrieverId": {
-   "Description": "The Amazon Q Business Retriever (Index) ID",
+  "QBusinessIndexId": {
+   "Description": "The Amazon Q Business Index ID",
    "Value": {
     "Fn::GetAtt": [
      "QBusinessIndex",
      "IndexId"
+    ]
+   },
+   "Export": {
+    "Name": "QBusinessIndexId"
+   }
+  },
+  "QBusinessRetrieverId": {
+   "Description": "The Amazon Q Business Retriever ID",
+   "Value": {
+    "Fn::GetAtt": [
+     "QBusinessRetriever",
+     "RetrieverId"
     ]
    },
    "Export": {
@@ -82,15 +123,15 @@
     "Name": "QBusinessStack:ExportsOutputFnGetAttQBusinessAppApplicationId58AC7172"
    }
   },
-  "ExportsOutputFnGetAttQBusinessIndexIndexId2AE7C306": {
+  "ExportsOutputFnGetAttQBusinessRetrieverRetrieverId078CF2C9": {
    "Value": {
     "Fn::GetAtt": [
-     "QBusinessIndex",
-     "IndexId"
+     "QBusinessRetriever",
+     "RetrieverId"
     ]
    },
    "Export": {
-    "Name": "QBusinessStack:ExportsOutputFnGetAttQBusinessIndexIndexId2AE7C306"
+    "Name": "QBusinessStack:ExportsOutputFnGetAttQBusinessRetrieverRetrieverId078CF2C9"
    }
   }
  },

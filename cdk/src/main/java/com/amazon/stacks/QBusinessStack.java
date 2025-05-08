@@ -19,6 +19,7 @@ import io.github.cdklabs.cdknag.NagSuppressions;
 public class QBusinessStack extends Stack {
     private final CfnResource application;
     private final CfnResource index;
+    private final CfnResource retriever;
 
     public QBusinessStack(final Construct scope, final String id, final OpenIdConnectProvider oidcProvider) {
         this(scope, id, oidcProvider, StackProps.builder().build());
@@ -44,7 +45,7 @@ public class QBusinessStack extends Stack {
                 ))
                 .build();
 
-        // (2) Create the Retriever (Index) against that app
+        // (2) Create the Index against that app
         this.index = CfnResource.Builder.create(this, "QBusinessIndex")
                 .type("AWS::QBusiness::Index")
                 .properties(Map.of(
@@ -52,19 +53,44 @@ public class QBusinessStack extends Stack {
                     "DisplayName", "MyIndex"
                 ))
                 .build();
+        
+        // (3) Create a Retriever connected to the Index
+        this.retriever = CfnResource.Builder.create(this, "QBusinessRetriever")
+                .type("AWS::QBusiness::Retriever")
+                .properties(Map.of(
+                    "ApplicationId", this.application.getAtt("ApplicationId").toString(),
+                    "DisplayName", "MyRetriever",
+                    "Type", "NATIVE_INDEX",
+                    "Configuration", Map.of(
+                        "NativeIndexConfiguration", Map.of(
+                            "IndexId", this.index.getAtt("IndexId").toString()
+                        )
+                    )
+                ))
+                .build();
 
-        // (3) Export the Application ID
+        // Add dependency to ensure index is created before retriever
+        this.retriever.addDependency(this.index);
+
+        // (4) Export the Application ID
         new CfnOutput(this, "QBusinessApplicationId", CfnOutputProps.builder()
                 .exportName("QBusinessApplicationId")
                 .value(this.application.getAtt("ApplicationId").toString())
                 .description("The Amazon Q Business Application ID")
                 .build());
 
-        // (4) Export the Retriever (Index) ID
+        // (5) Export the Index ID
+        new CfnOutput(this, "QBusinessIndexId", CfnOutputProps.builder()
+                .exportName("QBusinessIndexId")
+                .value(this.index.getAtt("IndexId").toString())
+                .description("The Amazon Q Business Index ID")
+                .build());
+                
+        // (6) Export the Retriever ID
         new CfnOutput(this, "QBusinessRetrieverId", CfnOutputProps.builder()
                 .exportName("QBusinessRetrieverId")
-                .value(this.index.getAtt("IndexId").toString())
-                .description("The Amazon Q Business Retriever (Index) ID")
+                .value(this.retriever.getAtt("RetrieverId").toString())
+                .description("The Amazon Q Business Retriever ID")
                 .build());
     }
 
@@ -73,7 +99,11 @@ public class QBusinessStack extends Stack {
         return this.application.getAtt("ApplicationId").toString();
     }
 
-    public String getRetrieverId() {
+    public String getIndexId() {
         return this.index.getAtt("IndexId").toString();
+    }
+    
+    public String getRetrieverId() {
+        return this.retriever.getAtt("RetrieverId").toString();
     }
 }

@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/85d64f2aac2581b52013765adbb47878501cd651ca41833a26467fe6423e07f7.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/4fcad5855cc0dd3a2ddae6f34b5e728ff078ebd42b096bdcde6448cc0d30c650.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -463,7 +463,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/03786bdcfcdee5b751b2a1a03696b90c3363f13755c1a1c1f008dc6a38d9c6b6.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/a61b423449d9b9d8b8b7f86636fe7920477832f406c1ee9564abce5feb0cfbaa.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -492,10 +492,22 @@
             "data": "QBusinessIndex"
           }
         ],
+        "/QBusinessStack/QBusinessRetriever": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QBusinessRetriever"
+          }
+        ],
         "/QBusinessStack/QBusinessApplicationId": [
           {
             "type": "aws:cdk:logicalId",
             "data": "QBusinessApplicationId"
+          }
+        ],
+        "/QBusinessStack/QBusinessIndexId": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "QBusinessIndexId"
           }
         ],
         "/QBusinessStack/QBusinessRetrieverId": [
@@ -522,10 +534,10 @@
             "data": "ExportsOutputFnGetAttQBusinessAppApplicationId58AC7172"
           }
         ],
-        "/QBusinessStack/Exports/Output{\"Fn::GetAtt\":[\"QBusinessIndex\",\"IndexId\"]}": [
+        "/QBusinessStack/Exports/Output{\"Fn::GetAtt\":[\"QBusinessRetriever\",\"RetrieverId\"]}": [
           {
             "type": "aws:cdk:logicalId",
-            "data": "ExportsOutputFnGetAttQBusinessIndexIndexId2AE7C306"
+            "data": "ExportsOutputFnGetAttQBusinessRetrieverRetrieverId078CF2C9"
           }
         ],
         "/QBusinessStack/BootstrapVersion": [
@@ -560,7 +572,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/9ec8ac879d1efa701a8c5bd61620d70282ec4f5c9550c43ab6c38fb8ee7976fb.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/e6cb36b6c7f4b9e249e63a523c89ab61d127eeeedfc22a58457ba3c1c96f7a26.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [

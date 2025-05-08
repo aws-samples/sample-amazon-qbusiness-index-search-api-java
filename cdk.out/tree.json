@@ -1732,7 +1732,7 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "6672efaf4fb5e13c1acae42551eb24225589e38466992a1d1e01a421159ade93.jar"
+                      "s3Key": "a4fb3659493c2557a836f6a9f13dd7c85f42a19e016961a9a9cbfe93825de2f4.jar"
                     },
                     "handler": "com.amazon.OpenIdConfigurationHandler::handleRequest",
                     "role": {
@@ -1817,7 +1817,7 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "6672efaf4fb5e13c1acae42551eb24225589e38466992a1d1e01a421159ade93.jar"
+                      "s3Key": "a4fb3659493c2557a836f6a9f13dd7c85f42a19e016961a9a9cbfe93825de2f4.jar"
                     },
                     "environment": {
                       "variables": {
@@ -1959,7 +1959,7 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "6672efaf4fb5e13c1acae42551eb24225589e38466992a1d1e01a421159ade93.jar"
+                      "s3Key": "a4fb3659493c2557a836f6a9f13dd7c85f42a19e016961a9a9cbfe93825de2f4.jar"
                     },
                     "environment": {
                       "variables": {
@@ -2320,9 +2320,25 @@
               "version": "2.131.0"
             }
           },
+          "QBusinessRetriever": {
+            "id": "QBusinessRetriever",
+            "path": "QBusinessStack/QBusinessRetriever",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnResource",
+              "version": "2.131.0"
+            }
+          },
           "QBusinessApplicationId": {
             "id": "QBusinessApplicationId",
             "path": "QBusinessStack/QBusinessApplicationId",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.131.0"
+            }
+          },
+          "QBusinessIndexId": {
+            "id": "QBusinessIndexId",
+            "path": "QBusinessStack/QBusinessIndexId",
             "constructInfo": {
               "fqn": "aws-cdk-lib.CfnOutput",
               "version": "2.131.0"
@@ -2374,9 +2390,9 @@
                   "version": "2.131.0"
                 }
               },
-              "Output{\"Fn::GetAtt\":[\"QBusinessIndex\",\"IndexId\"]}": {
-                "id": "Output{\"Fn::GetAtt\":[\"QBusinessIndex\",\"IndexId\"]}",
-                "path": "QBusinessStack/Exports/Output{\"Fn::GetAtt\":[\"QBusinessIndex\",\"IndexId\"]}",
+              "Output{\"Fn::GetAtt\":[\"QBusinessRetriever\",\"RetrieverId\"]}": {
+                "id": "Output{\"Fn::GetAtt\":[\"QBusinessRetriever\",\"RetrieverId\"]}",
+                "path": "QBusinessStack/Exports/Output{\"Fn::GetAtt\":[\"QBusinessRetriever\",\"RetrieverId\"]}",
                 "constructInfo": {
                   "fqn": "aws-cdk-lib.CfnOutput",
                   "version": "2.131.0"
@@ -2507,14 +2523,6 @@
                           }
                         },
                         {
-                          "Condition": {
-                            "StringEquals": {
-                              "Fn::GetAtt": [
-                                "SearchWithTipRoleCondD71D0E28",
-                                "Value"
-                              ]
-                            }
-                          },
                           "Principal": {
                             "Federated": {
                               "Fn::ImportValue": "OidcProviderStack:ExportsOutputRefTvmIamOidcProviderBFFB14340A3C0CA5"
@@ -2524,7 +2532,15 @@
                             "sts:AssumeRoleWithWebIdentity",
                             "sts:TagSession"
                           ],
-                          "Effect": "Allow"
+                          "Effect": "Allow",
+                          "Condition": {
+                            "StringEquals": {
+                              "Fn::GetAtt": [
+                                "SearchWithTipRoleCondD71D0E28",
+                                "Value"
+                              ]
+                            }
+                          }
                         }
                       ],
                       "Version": "2012-10-17"
@@ -2740,10 +2756,22 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "ff9fdba5d7eff922ba44665023a767108f49dadf7377cf07c6ed68534a90b97c.jar"
+                      "s3Key": "5787f781494baa9d6587ef37ab8b72704a960f4332e6c554b8c9a71aed326ad7.jar"
                     },
                     "environment": {
                       "variables": {
+                        "ROLE_ARN": {
+                          "Fn::GetAtt": [
+                            "SearchWithTipRole8D8BFAFA",
+                            "Arn"
+                          ]
+                        },
+                        "QBUS_RETRIEVER_ID": {
+                          "Fn::ImportValue": "QBusinessStack:ExportsOutputFnGetAttQBusinessRetrieverRetrieverId078CF2C9"
+                        },
+                        "QBUS_APP_ID": {
+                          "Fn::ImportValue": "QBusinessStack:ExportsOutputFnGetAttQBusinessAppApplicationId58AC7172"
+                        },
                         "TOKEN_ENDPOINT": {
                           "Fn::Join": [
                             "",
@@ -2767,18 +2795,6 @@
                               "/token"
                             ]
                           ]
-                        },
-                        "ROLE_ARN": {
-                          "Fn::GetAtt": [
-                            "SearchWithTipRole8D8BFAFA",
-                            "Arn"
-                          ]
-                        },
-                        "QBUS_RETRIEVER_ID": {
-                          "Fn::ImportValue": "QBusinessStack:ExportsOutputFnGetAttQBusinessIndexIndexId2AE7C306"
-                        },
-                        "QBUS_APP_ID": {
-                          "Fn::ImportValue": "QBusinessStack:ExportsOutputFnGetAttQBusinessAppApplicationId58AC7172"
                         }
                       }
                     },
