@@ -109,6 +109,7 @@ public class SearchStack extends Stack {
                 .code(Code.fromAsset("services/search/target/search-1.0.0.jar"))
                 .role(lambdaExecRole)
                 .timeout(Duration.seconds(60))
+                .memorySize(512)
                 .environment(Map.of(
                         "TOKEN_ENDPOINT", tokenEndpoint,
                         "ROLE_ARN", roleArn,

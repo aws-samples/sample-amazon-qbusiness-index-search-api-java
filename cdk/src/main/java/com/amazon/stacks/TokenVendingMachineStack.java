@@ -207,6 +207,7 @@ public class TokenVendingMachineStack extends Stack {
                 .code(Code.fromAsset(tvmJar))
                 .role(lambdaRole)
                 .timeout(Duration.seconds(10))
+                .memorySize(512)
                 .build();
         Function jwksEndpointHandler = Function.Builder.create(this, "JwksEndpointHandler")
                 .runtime(Runtime.JAVA_21)
@@ -217,6 +218,7 @@ public class TokenVendingMachineStack extends Stack {
                         "KEY_SECRET_NAME", keySecret.getSecretName()
                 ))
                 .timeout(Duration.seconds(10))
+                .memorySize(512)
                 .build();
         keySecret.grantRead(jwksEndpointHandler);
         Function tokenVendingMachineHandler = Function.Builder.create(this, "TokenVendingMachineHandler")
@@ -229,6 +231,7 @@ public class TokenVendingMachineStack extends Stack {
                         "KEY_SECRET_NAME", keySecret.getSecretName()
                 ))
                 .timeout(Duration.seconds(10))
+                .memorySize(512)
                 .build();
         keySecret.grantRead(tokenVendingMachineHandler);
 
