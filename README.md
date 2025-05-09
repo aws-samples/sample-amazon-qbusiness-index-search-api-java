@@ -84,90 +84,109 @@ mvn clean package
 cdk bootstrap
 ```
 
-3. Deploy the full stack or individual stacks:
-
-**Option 1: Deploy all stacks at once**
+3. Deploy the full stack:
 ```bash
 # From the project root
-cdk deploy --all
+cdk deploy --all --outputs-file stack-outputs.json
 ```
 
-**Option 2: Deploy stacks incrementally**
+This will deploy all stacks in the correct order and save the outputs for use in testing. The `cdk.json` file configures the CDK CLI to use QBusinessApp.java as the entry point, which includes all stacks.
 
-a. Deploy Token Vending Machine Stack:
+## Email Allowlist Configuration
+
+This implementation includes an email allowlist security feature. The TVM will only issue tokens to email addresses that exist in the DynamoDB allowlist table. To add emails to the allowlist:
+
+1. After deploying the TokenVendingMachineStack, get the table name:
 ```bash
-cdk deploy TokenVendingMachineStack --outputs-file tvm-outputs.json
+TABLE_NAME=$(aws cloudformation describe-stacks --stack-name TokenVendingMachineStack --query "Stacks[0].Outputs[?OutputKey=='TvmEmailAllowlistTable'].OutputValue" --output text)
 ```
-Outputs: TvmApiUrl, TvmIssuerUrl, TvmOidcProviderArn, TvmAudience
 
-b. Deploy QBusiness Stack:
+2. Add authorized emails to the table:
 ```bash
-cdk deploy QBusinessStack --outputs-file qbus-outputs.json
+aws dynamodb put-item \
+  --table-name $TABLE_NAME \
+  --item '{"email": {"S": "user@example.com"}, "added_at": {"S": "'$(date -Iseconds)'"}, "active": {"BOOL": true}}'
 ```
-Inputs: from tvm-outputs.json  
-Outputs: QBusinessApplicationId, QBusinessRetrieverId, QBusinessRoleArn
 
-c. Deploy Search Stack:
+3. Verify the email was added:
 ```bash
-cdk deploy SearchStack
+aws dynamodb get-item \
+  --table-name $TABLE_NAME \
+  --key '{"email": {"S": "user@example.com"}}'
 ```
-Inputs: from both tvm-outputs.json & qbus-outputs.json  
-Outputs: SearchApiUrl
 
-The `cdk.json` file configures the CDK CLI to use QBusinessApp.java as the entry point, which includes all three stacks.
+You must add email addresses to this table before they can request tokens from the TVM.
+
+## Upload Test Data to Q Business Index
+
+To ensure search results are returned, you need to upload test data to your Q Business index:
+
+1. Get the Q Business application and retriever IDs:
+```bash
+APP_ID=$(jq -r '.QBusinessStack.QBusinessApplicationId' stack-outputs.json)
+RET_ID=$(jq -r '.QBusinessStack.QBusinessRetrieverId' stack-outputs.json)
+```
+
+2. Upload the test data using the AWS CLI:
+```bash
+# Get a token to authenticate with AWS services
+TOKEN=$(aws sts get-session-token --query 'Credentials.[AccessKeyId,SecretAccessKey,SessionToken]' --output text | xargs -n1)
+ACCESS_KEY=$(echo "$TOKEN" | sed -n 1p)
+SECRET_KEY=$(echo "$TOKEN" | sed -n 2p)
+SESSION_TOKEN=$(echo "$TOKEN" | sed -n 3p)
+
+# Upload the documents to Q Business
+aws qbusiness batch-put-document \
+  --application-id $APP_ID \
+  --index-id $RET_ID \
+  --documents file://data/test-data.json \
+  --aws-access-key-id $ACCESS_KEY \
+  --aws-secret-access-key $SECRET_KEY \
+  --aws-session-token $SESSION_TOKEN
+```
+
+3. Check the document upload status:
+```bash
+aws qbusiness list-documents \
+  --application-id $APP_ID \
+  --index-id $RET_ID \
+  --aws-access-key-id $ACCESS_KEY \
+  --aws-secret-access-key $SECRET_KEY \
+  --aws-session-token $SESSION_TOKEN
+```
+
+This will populate your Q Business index with sample documents that will be returned when searching for terms like "quarterly", "report", "marketing", etc.
 
 ## Test End-to-End
 
-### Option 1: If You Deployed Stacks Incrementally
+After deploying the stacks and configuring the email allowlist, you can test the end-to-end functionality:
 
-If you deployed the stacks incrementally and saved outputs to files:
-
-1. Get an OIDC token from TVM:
+1. Get necessary endpoints and IDs from the outputs file:
 ```bash
-TVM_API=$(jq -r '.TokenVendingMachineStack.TvmApiUrl' tvm-outputs.json)
-TOKEN=$(curl -s -X POST $TVM_API/token -H "Content-Type: application/json" -d '{"email":"you@example.com"}' | jq -r .id_token)
+TVM_API=$(jq -r '.TokenVendingMachineStack.TvmApiUrl' stack-outputs.json)
+TABLE_NAME=$(jq -r '.TokenVendingMachineStack.TvmEmailAllowlistTable' stack-outputs.json)
+APP_ID=$(jq -r '.QBusinessStack.QBusinessApplicationId' stack-outputs.json)
+RET_ID=$(jq -r '.QBusinessStack.QBusinessRetrieverId' stack-outputs.json)
+SEARCH_API=$(jq -r '.SearchStack.SearchApiUrl' stack-outputs.json)
 ```
 
-2. Call the Search API:
+2. Ensure your test email is in the allowlist:
 ```bash
-APP_ID=$(jq -r '.QBusinessStack.QBusinessApplicationId' qbus-outputs.json)
-RET_ID=$(jq -r '.QBusinessStack.QBusinessRetrieverId' qbus-outputs.json)
-SEARCH_API=$(cdk output -o SearchStack SearchApiUrl)
-curl -s -X POST $SEARCH_API -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"email":"you@example.com","query":"quarterly","applicationId":"'"$APP_ID"'","retrieverId":"'"$RET_ID"'"}'
+aws dynamodb put-item \
+  --table-name $TABLE_NAME \
+  --item '{"email": {"S": "you@example.com"}, "added_at": {"S": "'$(date -Iseconds)'"}, "active": {"BOOL": true}}'
 ```
 
-### Option 2: If You Deployed All Stacks at Once
-
-If you deployed all stacks at once, you'll need to retrieve the stack outputs directly:
-
-1. Get necessary endpoints and IDs using CloudFormation:
-
-```bash
-# Get endpoints and IDs using CloudFormation
-TVM_API=$(aws cloudformation describe-stacks --stack-name TokenVendingMachineStack --query "Stacks[0].Outputs[?OutputKey=='TvmApiUrl'].OutputValue" --output text)
-APP_ID=$(aws cloudformation describe-stacks --stack-name QBusinessStack --query "Stacks[0].Outputs[?OutputKey=='QBusinessApplicationId'].OutputValue" --output text)
-RET_ID=$(aws cloudformation describe-stacks --stack-name QBusinessStack --query "Stacks[0].Outputs[?OutputKey=='QBusinessRetrieverId'].OutputValue" --output text)
-SEARCH_API=$(aws cloudformation describe-stacks --stack-name SearchStack --query "Stacks[0].Outputs[?OutputKey=='SearchApiUrl'].OutputValue" --output text)
-```
-
-Alternatively, you can use CDK output commands:
-
-```bash
-# Get endpoints and IDs using CDK
-TVM_API=$(cdk output -o TokenVendingMachineStack TvmApiUrl)
-APP_ID=$(cdk output -o QBusinessStack QBusinessApplicationId)
-RET_ID=$(cdk output -o QBusinessStack QBusinessRetrieverId)
-SEARCH_API=$(cdk output -o SearchStack SearchApiUrl)
-```
-
-2. Get a token:
+3. Get a token from the TVM:
 ```bash
 TOKEN=$(curl -s -X POST $TVM_API/token -H "Content-Type: application/json" -d '{"email":"you@example.com"}' | jq -r .id_token)
 ```
 
-3. Call the search API:
+4. Call the search API:
 ```bash
-curl -s -X POST $SEARCH_API -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"email":"you@example.com","query":"quarterly","applicationId":"'"$APP_ID"'","retrieverId":"'"$RET_ID"'"}'
+curl -s -X POST $SEARCH_API -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"you@example.com","query":"quarterly","applicationId":"'"$APP_ID"'","retrieverId":"'"$RET_ID"'"}'
 ```
 
 > **Note:** If you encounter timeouts with the API Gateway, this is normal. The Lambda function may still be executing and completing successfully in the backend. Check the CloudWatch logs for the SearchHandler Lambda function to confirm that the search was processed correctly.

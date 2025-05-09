@@ -11,7 +11,7 @@ import software.amazon.awscdk.services.iam.Effect;
 public final class TokenVendingMachineHandlerPolicy {
     private TokenVendingMachineHandlerPolicy() {}
 
-    public static PolicyDocument create(Construct scope) {
+    public static PolicyDocument create(Construct scope, String dynamoDbTableArn) {
         // We'll get the key ARN passed from the stack
         // The specific key ARN will be granted separately using key.grant() in the stack
         // This is a placeholder policy that will be scoped by the grant
@@ -22,8 +22,19 @@ public final class TokenVendingMachineHandlerPolicy {
                 .effect(Effect.ALLOW)
                 .build();
 
+        // DynamoDB permissions for email allowlist
+        PolicyStatement dynamoDbRead = PolicyStatement.Builder.create()
+                .sid("AllowDynamoDbRead")
+                .actions(List.of(
+                        "dynamodb:GetItem",
+                        "dynamodb:Query"
+                ))
+                .resources(List.of(dynamoDbTableArn))
+                .effect(Effect.ALLOW)
+                .build();
+
         return PolicyDocument.Builder.create()
-                .statements(List.of(kmsSign))
+                .statements(List.of(kmsSign, dynamoDbRead))
                 .build();
     }
 }

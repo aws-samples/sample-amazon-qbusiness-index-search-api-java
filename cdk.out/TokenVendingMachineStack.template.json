@@ -96,6 +96,38 @@
     "aws:cdk:path": "TokenVendingMachineStack/TvmSigningKeyAlias/Resource"
    }
   },
+  "TvmEmailAllowlist09565F7C": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "email",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "email",
+      "KeyType": "HASH"
+     }
+    ],
+    "TableName": "TvmEmailAllowlist"
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "TokenVendingMachineStack/TvmEmailAllowlist/Resource",
+    "cdk_nag": {
+     "rules_to_suppress": [
+      {
+       "reason": "Point-in-time recovery not needed for this simple allowlist",
+       "id": "AwsSolutions-DDB3"
+      }
+     ]
+    }
+   }
+  },
   "TvmLambdaExecRoleC50FF80B": {
    "Type": "AWS::IAM::Role",
    "Properties": {
@@ -124,6 +156,36 @@
        ]
       ]
      }
+    ],
+    "Policies": [
+     {
+      "PolicyDocument": {
+       "Statement": [
+        {
+         "Action": "kms:Sign",
+         "Effect": "Allow",
+         "Resource": "*",
+         "Sid": "AllowKmsSign"
+        },
+        {
+         "Action": [
+          "dynamodb:GetItem",
+          "dynamodb:Query"
+         ],
+         "Effect": "Allow",
+         "Resource": {
+          "Fn::GetAtt": [
+           "TvmEmailAllowlist09565F7C",
+           "Arn"
+          ]
+         },
+         "Sid": "AllowDynamoDbRead"
+        }
+       ],
+       "Version": "2012-10-17"
+      },
+      "PolicyName": "TvmHandlerPolicy"
+     }
     ]
    },
    "Metadata": {
@@ -133,6 +195,10 @@
       {
        "reason": "AWSLambdaBasicExecutionRole is required for Lambda logging",
        "id": "AwsSolutions-IAM4"
+      },
+      {
+       "reason": "KMS permissions are scoped by key.grant() call to avoid circular dependencies",
+       "id": "AwsSolutions-IAM5"
       }
      ]
     }
@@ -1375,9 +1441,10 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "43fcdbec56c5a1e09921056a79a6b4cd28609ea12de36618a6861a0b8a90b43a.jar"
+     "S3Key": "50777a6e103e635d8689223ad264dae1cf742d1326efeb97462a41ddfd85d7ef.jar"
     },
     "Handler": "com.amazon.OpenIdConfigurationHandler::handleRequest",
+    "MemorySize": 512,
     "Role": {
      "Fn::GetAtt": [
       "TvmLambdaExecRoleC50FF80B",
@@ -1393,7 +1460,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "TokenVendingMachineStack/OpenIdConfigurationHandler/Resource",
-    "aws:asset:path": "asset.43fcdbec56c5a1e09921056a79a6b4cd28609ea12de36618a6861a0b8a90b43a.jar",
+    "aws:asset:path": "asset.50777a6e103e635d8689223ad264dae1cf742d1326efeb97462a41ddfd85d7ef.jar",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1421,7 +1488,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "43fcdbec56c5a1e09921056a79a6b4cd28609ea12de36618a6861a0b8a90b43a.jar"
+     "S3Key": "50777a6e103e635d8689223ad264dae1cf742d1326efeb97462a41ddfd85d7ef.jar"
     },
     "Environment": {
      "Variables": {
@@ -1481,6 +1548,7 @@
      }
     },
     "Handler": "com.amazon.JwksEndpointHandler::handleRequest",
+    "MemorySize": 512,
     "Role": {
      "Fn::GetAtt": [
       "TvmLambdaExecRoleC50FF80B",
@@ -1496,7 +1564,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "TokenVendingMachineStack/JwksEndpointHandler/Resource",
-    "aws:asset:path": "asset.43fcdbec56c5a1e09921056a79a6b4cd28609ea12de36618a6861a0b8a90b43a.jar",
+    "aws:asset:path": "asset.50777a6e103e635d8689223ad264dae1cf742d1326efeb97462a41ddfd85d7ef.jar",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1524,10 +1592,14 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "43fcdbec56c5a1e09921056a79a6b4cd28609ea12de36618a6861a0b8a90b43a.jar"
+     "S3Key": "50777a6e103e635d8689223ad264dae1cf742d1326efeb97462a41ddfd85d7ef.jar"
     },
     "Environment": {
      "Variables": {
+      "TABLE_NAME": {
+       "Ref": "TvmEmailAllowlist09565F7C"
+      },
+      "AUDIENCE": "qbusiness-audience",
       "KEY_SECRET_NAME": {
        "Fn::Join": [
         "-",
@@ -1580,11 +1652,11 @@
          }
         ]
        ]
-      },
-      "AUDIENCE": "qbusiness-audience"
+      }
      }
     },
     "Handler": "com.amazon.TokenVendingMachineHandler::handleRequest",
+    "MemorySize": 512,
     "Role": {
      "Fn::GetAtt": [
       "TvmLambdaExecRoleC50FF80B",
@@ -1600,7 +1672,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "TokenVendingMachineStack/TokenVendingMachineHandler/Resource",
-    "aws:asset:path": "asset.43fcdbec56c5a1e09921056a79a6b4cd28609ea12de36618a6861a0b8a90b43a.jar",
+    "aws:asset:path": "asset.50777a6e103e635d8689223ad264dae1cf742d1326efeb97462a41ddfd85d7ef.jar",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }
@@ -1624,7 +1696,7 @@
   "CDKMetadata": {
    "Type": "AWS::CDK::Metadata",
    "Properties": {
-    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WQ3W7CMAyFn4X7kEF5gsK0SRvTEJO2S2RS03ltki4/IFT13eeksI0rf7bjHB8Xcr6Yy9kETn6qqmba0l72bwFUI7i06xvtZf+MZ7E6mBTKlsCnJMMgPCqHwWswUKPj0ZynByMNgkDLfmtbTMUcN7YllX8caRCtrVlmbetHZ2OXOlcexAkOx0L2XPvAfblai18qvbeKIJA1g4COagh4gjOroQ9lR1nwD0ulbDRB3GPX2rNGk9f8l7HtOm85Ao/a6BQuwaN4wfBpq9S80LV7ERl5i9+RBd+hpQqCdWPztsZuQe8ryJY26DR5zw7EQzQqWUkzV+b7LnbgPV9YlilwLpdRNRjSVsPNFq8xdDGI/C45IFPfLMe8sqai8eMnOMJdsZAzWUy+PNHU8W1Io9yO8QctV8WqGQIAAA=="
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/1WQ3U7DMAyFn2X3WRjdE3RDIMEQ00BwObmpV0LzU5pkU1X13XGSDdiVP9txfI4Lfru85YsZnNxc1O1cyYqPrx5Ey6i0H1vt+PiEA1sfTAylkuBikmBiDkWP3mkw0GBPoymPDzJNrB4MaFvTt29QKYytBBOToPm4s7mW4tYqKdKuTBNTtiEBG9s89DZ0sXPhiZ3gcCz4SLUPrMr1hv1S6ZwVEry0ZmLQyQY8nmCgbeh82cm08A9LIWwwnt1hp+yg0SQD/zI6SJNUZqBRG3qBK3DIntF/2jo2z3Tpnpdk3uF3oIXvoGQN3va5eV0jt6CrGpKlLfZaOkcO2H0wIlqJMxemyy/34BzdnpcxUM5XQbToo6rpSsVL8F3wLL2LDqRprsQRr62pZf74EY5wUyz5ghezLyflvKfbSI18l+MPUsayzjMCAAA="
    },
    "Metadata": {
     "aws:cdk:path": "TokenVendingMachineStack/CDKMetadata/Default"
@@ -1720,6 +1792,14 @@
    },
    "Export": {
     "Name": "TvmApiUrl"
+   }
+  },
+  "TvmEmailAllowlistTable": {
+   "Value": {
+    "Ref": "TvmEmailAllowlist09565F7C"
+   },
+   "Export": {
+    "Name": "TvmEmailAllowlistTable"
    }
   },
   "ExportsOutputRefTvmApi9CC896B2287C1435": {

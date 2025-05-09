@@ -18,7 +18,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/1e495366c722902e46e8b00410f195c2446ec2773a4092b6f32e9e2865f6eeb9.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/9372ad7f5dada7885c974c13e571dafc6c8d498acfbcb411725b608cbb74b7cd.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -50,6 +50,20 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "TvmSigningKeyAliasC867900D"
+          }
+        ],
+        "/TokenVendingMachineStack/TvmEmailAllowlist": [
+          {
+            "type": "aws:cdk:hasPhysicalName",
+            "data": {
+              "Ref": "TvmEmailAllowlist09565F7C"
+            }
+          }
+        ],
+        "/TokenVendingMachineStack/TvmEmailAllowlist/Resource": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmEmailAllowlist09565F7C"
           }
         ],
         "/TokenVendingMachineStack/TvmLambdaExecRole/Resource": [
@@ -316,6 +330,12 @@
             "data": "TvmApiUrl"
           }
         ],
+        "/TokenVendingMachineStack/TvmEmailAllowlistTable": [
+          {
+            "type": "aws:cdk:logicalId",
+            "data": "TvmEmailAllowlistTable"
+          }
+        ],
         "/TokenVendingMachineStack/CDKMetadata/Default": [
           {
             "type": "aws:cdk:logicalId",
@@ -463,7 +483,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/4217d0adeb10060a3e46aa2ec5113c602781cb8ee52e9844542a9e253a23bd90.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/0e1aa931f636085bc81618896566cd54c5083803357ecf616d202bfae0bb9fd3.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -572,7 +592,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/f5362bee68040a4b1e71ef974bc6671c9ae9c0c8babb53c1c3eba6ee4c37924f.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/6f6c7ab4092b877699c759f968df82a32242ab5138920b92e0c84b23ba7f500e.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [

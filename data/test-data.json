@@ -1,0 +1,72 @@
+[
+  {
+    "id": "doc1",
+    "title": "Quarterly Sales Report Q1",
+    "content": "In Q1 we saw a 15% increase in revenue driven by our new product line and expanded markets.",
+    "date": "2025-01-31",
+    "category": "report"
+  },
+  {
+    "id": "doc2",
+    "title": "Quarterly Sales Report Q2",
+    "content": "The Q2 numbers show steady growth with an 8% uptick in subscriptions and a successful marketing campaign.",
+    "date": "2025-04-30",
+    "category": "report"
+  },
+  {
+    "id": "doc3",
+    "title": "Employee Handbook",
+    "content": "This handbook outlines company policies, benefits, and procedures for all new employees.",
+    "date": "2023-11-15",
+    "category": "manual"
+  },
+  {
+    "id": "doc4",
+    "title": "Product Spec: Model X",
+    "content": "Model X features include a 7-inch display, 12-hour battery life, and IP68 water resistance.",
+    "date": "2025-03-12",
+    "category": "specification"
+  },
+  {
+    "id": "doc5",
+    "title": "Marketing Plan 2025",
+    "content": "Our marketing strategy for 2025 focuses on digital channels, influencer partnerships, and targeted ads.",
+    "date": "2025-05-01",
+    "category": "plan"
+  },
+  {
+    "id": "doc6",
+    "title": "Customer Feedback Summary Q1",
+    "content": "Summary of customer feedback highlights product strengths, areas for improvement, and feature requests.",
+    "date": "2025-02-15",
+    "category": "analysis"
+  },
+  {
+    "id": "doc7",
+    "title": "Internal Memo: Office Relocation",
+    "content": "We will be relocating our HQ to the downtown campus starting June 1. Details on parking and access follow.",
+    "date": "2025-06-01",
+    "category": "memo"
+  },
+  {
+    "id": "doc8",
+    "title": "Annual Financial Summary 2024",
+    "content": "The fiscal year 2024 ended with a net profit of $2.3M and a gross margin of 45%.",
+    "date": "2024-12-31",
+    "category": "summary"
+  },
+  {
+    "id": "doc9",
+    "title": "Training Guide: Onboarding",
+    "content": "This guide helps new hires get up to speed on tools, processes, and team structures.",
+    "date": "2024-10-10",
+    "category": "guide"
+  },
+  {
+    "id": "doc10",
+    "title": "Press Release: New Partnership",
+    "content": "We are excited to announce a strategic partnership with Acme Corp to co-develop new AI features.",
+    "date": "2025-03-20",
+    "category": "press-release"
+  }
+]

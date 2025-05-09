@@ -129,6 +129,51 @@
               "version": "2.131.0"
             }
           },
+          "TvmEmailAllowlist": {
+            "id": "TvmEmailAllowlist",
+            "path": "TokenVendingMachineStack/TvmEmailAllowlist",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "TokenVendingMachineStack/TvmEmailAllowlist/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::DynamoDB::Table",
+                  "aws:cdk:cloudformation:props": {
+                    "attributeDefinitions": [
+                      {
+                        "attributeName": "email",
+                        "attributeType": "S"
+                      }
+                    ],
+                    "billingMode": "PAY_PER_REQUEST",
+                    "keySchema": [
+                      {
+                        "attributeName": "email",
+                        "keyType": "HASH"
+                      }
+                    ],
+                    "tableName": "TvmEmailAllowlist"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_dynamodb.CfnTable",
+                  "version": "2.131.0"
+                }
+              },
+              "ScalingRole": {
+                "id": "ScalingRole",
+                "path": "TokenVendingMachineStack/TvmEmailAllowlist/ScalingRole",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.131.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_dynamodb.Table",
+              "version": "2.131.0"
+            }
+          },
           "TvmLambdaExecRole": {
             "id": "TvmLambdaExecRole",
             "path": "TokenVendingMachineStack/TvmLambdaExecRole",
@@ -171,6 +216,36 @@
                             ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
                           ]
                         ]
+                      }
+                    ],
+                    "policies": [
+                      {
+                        "policyName": "TvmHandlerPolicy",
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "kms:Sign",
+                              "Effect": "Allow",
+                              "Resource": "*",
+                              "Sid": "AllowKmsSign"
+                            },
+                            {
+                              "Action": [
+                                "dynamodb:GetItem",
+                                "dynamodb:Query"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": {
+                                "Fn::GetAtt": [
+                                  "TvmEmailAllowlist09565F7C",
+                                  "Arn"
+                                ]
+                              },
+                              "Sid": "AllowDynamoDbRead"
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        }
                       }
                     ]
                   }
@@ -1732,9 +1807,10 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "43fcdbec56c5a1e09921056a79a6b4cd28609ea12de36618a6861a0b8a90b43a.jar"
+                      "s3Key": "50777a6e103e635d8689223ad264dae1cf742d1326efeb97462a41ddfd85d7ef.jar"
                     },
                     "handler": "com.amazon.OpenIdConfigurationHandler::handleRequest",
+                    "memorySize": 512,
                     "role": {
                       "Fn::GetAtt": [
                         "TvmLambdaExecRoleC50FF80B",
@@ -1817,7 +1893,7 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "43fcdbec56c5a1e09921056a79a6b4cd28609ea12de36618a6861a0b8a90b43a.jar"
+                      "s3Key": "50777a6e103e635d8689223ad264dae1cf742d1326efeb97462a41ddfd85d7ef.jar"
                     },
                     "environment": {
                       "variables": {
@@ -1877,6 +1953,7 @@
                       }
                     },
                     "handler": "com.amazon.JwksEndpointHandler::handleRequest",
+                    "memorySize": 512,
                     "role": {
                       "Fn::GetAtt": [
                         "TvmLambdaExecRoleC50FF80B",
@@ -1959,10 +2036,14 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "43fcdbec56c5a1e09921056a79a6b4cd28609ea12de36618a6861a0b8a90b43a.jar"
+                      "s3Key": "50777a6e103e635d8689223ad264dae1cf742d1326efeb97462a41ddfd85d7ef.jar"
                     },
                     "environment": {
                       "variables": {
+                        "TABLE_NAME": {
+                          "Ref": "TvmEmailAllowlist09565F7C"
+                        },
+                        "AUDIENCE": "qbusiness-audience",
                         "KEY_SECRET_NAME": {
                           "Fn::Join": [
                             "-",
@@ -2015,11 +2096,11 @@
                               }
                             ]
                           ]
-                        },
-                        "AUDIENCE": "qbusiness-audience"
+                        }
                       }
                     },
                     "handler": "com.amazon.TokenVendingMachineHandler::handleRequest",
+                    "memorySize": 512,
                     "role": {
                       "Fn::GetAtt": [
                         "TvmLambdaExecRoleC50FF80B",
@@ -2081,6 +2162,14 @@
           "TvmApiUrl": {
             "id": "TvmApiUrl",
             "path": "TokenVendingMachineStack/TvmApiUrl",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.131.0"
+            }
+          },
+          "TvmEmailAllowlistTable": {
+            "id": "TvmEmailAllowlistTable",
+            "path": "TokenVendingMachineStack/TvmEmailAllowlistTable",
             "constructInfo": {
               "fqn": "aws-cdk-lib.CfnOutput",
               "version": "2.131.0"
@@ -2516,13 +2605,22 @@
                           "Principal": {
                             "Service": "qbusiness.amazonaws.com"
                           },
+                          "Effect": "Allow",
                           "Action": [
                             "sts:AssumeRole",
                             "sts:SetContext"
-                          ],
-                          "Effect": "Allow"
+                          ]
                         },
                         {
+                          "Action": [
+                            "sts:AssumeRoleWithWebIdentity",
+                            "sts:TagSession"
+                          ],
+                          "Principal": {
+                            "Federated": {
+                              "Fn::ImportValue": "OidcProviderStack:ExportsOutputRefTvmIamOidcProviderBFFB14340A3C0CA5"
+                            }
+                          },
                           "Condition": {
                             "StringEquals": {
                               "Fn::GetAtt": [
@@ -2531,15 +2629,6 @@
                               ]
                             }
                           },
-                          "Principal": {
-                            "Federated": {
-                              "Fn::ImportValue": "OidcProviderStack:ExportsOutputRefTvmIamOidcProviderBFFB14340A3C0CA5"
-                            }
-                          },
-                          "Action": [
-                            "sts:AssumeRoleWithWebIdentity",
-                            "sts:TagSession"
-                          ],
                           "Effect": "Allow"
                         }
                       ],
@@ -2770,10 +2859,19 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "9f300be6e2ff77fd164b1e234e1b2e870409a3e8426d5082b68c38d074eee601.jar"
+                      "s3Key": "5a120ea2836797dc87cbbf0a3f0322ea0f266da982edab17359c6d46f2269964.jar"
                     },
                     "environment": {
                       "variables": {
+                        "QBUS_RETRIEVER_ID": {
+                          "Fn::ImportValue": "QBusinessStack:ExportsOutputFnGetAttQBusinessRetrieverRetrieverId078CF2C9"
+                        },
+                        "ROLE_ARN": {
+                          "Fn::GetAtt": [
+                            "SearchWithTipRole8D8BFAFA",
+                            "Arn"
+                          ]
+                        },
                         "TOKEN_ENDPOINT": {
                           "Fn::Join": [
                             "",
@@ -2798,15 +2896,6 @@
                             ]
                           ]
                         },
-                        "ROLE_ARN": {
-                          "Fn::GetAtt": [
-                            "SearchWithTipRole8D8BFAFA",
-                            "Arn"
-                          ]
-                        },
-                        "QBUS_RETRIEVER_ID": {
-                          "Fn::ImportValue": "QBusinessStack:ExportsOutputFnGetAttQBusinessRetrieverRetrieverId078CF2C9"
-                        },
                         "QBUS_APP_ID": {
                           "Fn::ImportValue": "QBusinessStack:ExportsOutputFnGetAttQBusinessAppApplicationId58AC7172"
                         }
@@ -2814,6 +2903,7 @@
                     },
                     "functionName": "SearchHandler",
                     "handler": "com.amazon.SearchHandler::handleRequest",
+                    "memorySize": 512,
                     "role": {
                       "Fn::GetAtt": [
                         "SearchLambdaExecRole2CFCBBDB",

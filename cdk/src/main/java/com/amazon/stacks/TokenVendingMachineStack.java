@@ -41,6 +41,14 @@ import software.amazon.awscdk.services.lambda.Code;
 import software.amazon.awscdk.services.iam.Role;
 import software.amazon.awscdk.services.iam.ServicePrincipal;
 import software.amazon.awscdk.services.iam.ManagedPolicy;
+import software.amazon.awscdk.services.iam.PolicyStatement;
+import software.amazon.awscdk.services.iam.Effect;
+import software.amazon.awscdk.services.iam.PolicyDocument;
+import com.amazon.policies.TokenVendingMachineHandlerPolicy;
+import software.amazon.awscdk.services.dynamodb.Table;
+import software.amazon.awscdk.services.dynamodb.Attribute;
+import software.amazon.awscdk.services.dynamodb.AttributeType;
+import software.amazon.awscdk.services.dynamodb.BillingMode;
 
 import java.util.List;
 import java.util.Map;
@@ -88,19 +96,52 @@ public class TokenVendingMachineStack extends Stack {
                 .targetKey(signingKey)
                 .build();
 
-        // 3) Lambda execution role
+        // 3) DynamoDB table for email allowlist
+        Table emailAllowlistTable = Table.Builder.create(this, "TvmEmailAllowlist")
+                .partitionKey(Attribute.builder()
+                        .name("email")
+                        .type(AttributeType.STRING)
+                        .build())
+                .tableName("TvmEmailAllowlist")
+                .removalPolicy(RemovalPolicy.RETAIN)
+                .billingMode(BillingMode.PAY_PER_REQUEST)
+                .build();
+
+        NagSuppressions.addResourceSuppressions(emailAllowlistTable,
+                List.of(NagPackSuppression.builder()
+                        .id("AwsSolutions-DDB3")
+                        .reason("Point-in-time recovery not needed for this simple allowlist")
+                        .build()), true
+        );
+
+        // 4) Lambda execution role with proper policies
+        PolicyDocument policyDocument = TokenVendingMachineHandlerPolicy.create(
+                this, emailAllowlistTable.getTableArn());
+
         Role lambdaRole = Role.Builder.create(this, "TvmLambdaExecRole")
                 .assumedBy(new ServicePrincipal("lambda.amazonaws.com"))
                 .managedPolicies(List.of(
                         ManagedPolicy.fromAwsManagedPolicyName("service-role/AWSLambdaBasicExecutionRole")
                 ))
+                .inlinePolicies(Map.of(
+                        "TvmHandlerPolicy", policyDocument
+                ))
                 .build();
+
         NagSuppressions.addResourceSuppressions(lambdaRole,
-                List.of(NagPackSuppression.builder()
-                        .id("AwsSolutions-IAM4")
-                        .reason("AWSLambdaBasicExecutionRole is required for Lambda logging")
-                        .build()), true
+                List.of(
+                        NagPackSuppression.builder()
+                                .id("AwsSolutions-IAM4")
+                                .reason("AWSLambdaBasicExecutionRole is required for Lambda logging")
+                                .build(),
+                        NagPackSuppression.builder()
+                                .id("AwsSolutions-IAM5")
+                                .reason("KMS permissions are scoped by key.grant() call to avoid circular dependencies")
+                                .build()
+                ), true
         );
+
+        // Grant additional permissions
         signingKey.grant(lambdaRole, "kms:Sign", "kms:GetPublicKey", "kms:DescribeKey");
         keySecret.grantRead(lambdaRole);
 
@@ -223,7 +264,8 @@ public class TokenVendingMachineStack extends Stack {
                 .role(lambdaRole)
                 .environment(Map.of(
                         "AUDIENCE", audience,
-                        "KEY_SECRET_NAME", keySecret.getSecretName()
+                        "KEY_SECRET_NAME", keySecret.getSecretName(),
+                        "TABLE_NAME", emailAllowlistTable.getTableName()
                 ))
                 .timeout(Duration.seconds(10))
                 .memorySize(512)
@@ -280,6 +322,9 @@ public class TokenVendingMachineStack extends Stack {
         new CfnOutput(this, "TvmApiUrl", CfnOutputProps.builder()
                 .value(api.getUrl())
                 .exportName("TvmApiUrl").build());
+        new CfnOutput(this, "TvmEmailAllowlistTable", CfnOutputProps.builder()
+                .value(emailAllowlistTable.getTableName())
+                .exportName("TvmEmailAllowlistTable").build());
     }
 
     public RestApi getApi() { return api; }

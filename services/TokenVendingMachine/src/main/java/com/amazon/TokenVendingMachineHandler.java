@@ -5,6 +5,11 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyRequestEvent;
 import com.amazonaws.services.lambda.runtime.events.APIGatewayProxyResponseEvent;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
+import software.amazon.awssdk.services.dynamodb.model.GetItemRequest;
+import software.amazon.awssdk.services.dynamodb.model.GetItemResponse;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
@@ -18,6 +23,7 @@ import java.util.UUID;
 /**
  * Token Vending Machine (TVM) Lambda handler that issues JWT tokens
  * and serves a /userinfo endpoint for QBusiness, now signing via KMS.
+ * Includes email verification against an allowlist in DynamoDB.
  */
 public class TokenVendingMachineHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
 
@@ -25,12 +31,19 @@ public class TokenVendingMachineHandler implements RequestHandler<APIGatewayProx
     private static final String AUDIENCE = System.getenv("AUDIENCE");
     private static final int TOKEN_EXPIRATION_MINUTES = 60;
     private static final String USER_ATTRIBUTE_CLAIM = "email";
+    private static final String TABLE_NAME = System.getenv("TABLE_NAME");
 
     private final KeyManager keyManager;
+    private final DynamoDbClient dynamoDb;
 
     public TokenVendingMachineHandler() {
         this.keyManager = KeyManager.getInstance();
+        this.dynamoDb = DynamoDbClient.builder()
+                .region(Region.of(System.getenv("AWS_REGION")))
+                .build();
+
         System.out.println("[TVM] Initialized KeyManager with keyId=" + keyManager.getKeyId());
+        System.out.println("[TVM] Using allowlist table: " + TABLE_NAME);
     }
 
     @Override
@@ -66,6 +79,27 @@ public class TokenVendingMachineHandler implements RequestHandler<APIGatewayProx
         String email = body.get("email");
         if (email == null || email.isBlank()) {
             return error(400, "Missing email parameter");
+        }
+
+        // Verify email against allowlist
+        if (TABLE_NAME != null && !TABLE_NAME.isBlank()) {
+            try {
+                GetItemResponse response = dynamoDb.getItem(GetItemRequest.builder()
+                        .tableName(TABLE_NAME)
+                        .key(Map.of("email", AttributeValue.builder().s(email).build()))
+                        .build());
+
+                if (!response.hasItem() || response.item().isEmpty()) {
+                    ctx.getLogger().log("Email not found in allowlist: " + email);
+                    return error(403, "Email not authorized");
+                }
+
+                ctx.getLogger().log("Email verified against allowlist: " + email);
+            } catch (Exception e) {
+                ctx.getLogger().log("Error checking allowlist: " + e.getMessage());
+                // Fall through - if we can't check the allowlist, we'll log the error but not block the request
+                // This prevents an outage if DynamoDB is temporarily unavailable
+            }
         }
 
         // Build JWT header & payload
