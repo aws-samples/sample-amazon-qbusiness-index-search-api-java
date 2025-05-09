@@ -51,7 +51,7 @@ public class SearchHandler implements RequestHandler<APIGatewayProxyRequestEvent
     public APIGatewayProxyResponseEvent handleRequest(APIGatewayProxyRequestEvent event, Context ctx) {
         try {
             logEnv();
-            ctx.getLogger().log("Input event → " + JSON.writeValueAsString(event));
+            log.debug("Input event → {}", JSON.writeValueAsString(event));
 
             // Parse the request body
             String body = event.getBody();
@@ -65,10 +65,10 @@ public class SearchHandler implements RequestHandler<APIGatewayProxyRequestEvent
 
             validate(email, application, retriever);
 
-            ctx.getLogger().log("Fetching STS creds for user: " + email);
-            Map<String,String> creds = getStsCreds(email, ctx);
+            log.debug("Fetching STS creds for user: {}", email);
+            Map<String,String> creds = getStsCreds(email);
 
-            ctx.getLogger().log("Building QBusinessClient with new creds");
+            log.debug("Building QBusinessClient with new creds");
             try (QBusinessClient q = createQClient(creds)) {
                 String result = doSearch(q, query, application, retriever);
                 return new APIGatewayProxyResponseEvent()
@@ -92,10 +92,8 @@ public class SearchHandler implements RequestHandler<APIGatewayProxyRequestEvent
     }
 
     private void logEnv() {
-        System.out.println("ENV → TOKEN_ENDPOINT=" + safe(TOKEN_ENDPOINT)
-                + ", ROLE_ARN=" + safe(ROLE_ARN)
-                + ", QBUS_APP_ID=" + safe(APP_ID)
-                + ", QBUS_RETRIEVER_ID=" + safe(RETRIEVER_ID));
+        log.debug("ENV → TOKEN_ENDPOINT={}, ROLE_ARN={}, QBUS_APP_ID={}, QBUS_RETRIEVER_ID={}",
+                safe(TOKEN_ENDPOINT), safe(ROLE_ARN), safe(APP_ID), safe(RETRIEVER_ID));
     }
     private String safe(String s) { return s==null?"<unset>":s; }
 
@@ -105,9 +103,9 @@ public class SearchHandler implements RequestHandler<APIGatewayProxyRequestEvent
         if (ret  ==null||ret .length()<36) throw new IllegalArgumentException("retrieverId invalid");
     }
 
-    private Map<String,String> getStsCreds(String email, Context ctx) throws Exception {
+    private Map<String,String> getStsCreds(String email) throws Exception {
         // 1) fetch id_token
-        String idToken = fetchIdToken(email, ctx);
+        String idToken = fetchIdToken(email);
 
         // 2) use AWS SDK STS client to AssumeRoleWithWebIdentity
         try (StsClient sts = StsClient.builder()
@@ -128,12 +126,12 @@ public class SearchHandler implements RequestHandler<APIGatewayProxyRequestEvent
         }
     }
 
-    private String fetchIdToken(String email, Context ctx) throws Exception {
+    private String fetchIdToken(String email) throws Exception {
         String url = TOKEN_ENDPOINT.startsWith("http")
                 ? TOKEN_ENDPOINT
                 : "https://" + TOKEN_ENDPOINT;
         String body = JSON.writeValueAsString(Map.of("email",email));
-        ctx.getLogger().log("TVM → POST " + url + "   body=" + body);
+        log.debug("TVM → POST {}   body={}", url, body);
         HttpRequest r = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .header("Content-Type","application/json")
@@ -152,13 +150,13 @@ public class SearchHandler implements RequestHandler<APIGatewayProxyRequestEvent
             String[] parts = tok.split("\\.");
             if (parts.length >= 2) {
                 String payload = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
-                ctx.getLogger().log("JWT payload: " + payload);
+                log.debug("JWT payload: {}", payload);
             }
         } catch (Exception e) {
-            ctx.getLogger().log("Failed to decode JWT: " + e.getMessage());
+            log.debug("Failed to decode JWT: {}", e.getMessage());
         }
 
-        ctx.getLogger().log("TVM returned id_token (first 20): " + tok.substring(0,20)+"...");
+        log.debug("TVM returned id_token (first 20): {}...", tok.substring(0,20));
         return tok;
     }
 

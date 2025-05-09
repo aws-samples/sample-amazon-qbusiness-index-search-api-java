@@ -65,3 +65,12 @@ EOF
 
 # Security documents - For internal use only
 THREAT-MODEL.md
+
+# CDK diagram source files at root level
+/diagram.dot
+/diagram.png
+
+# Keep assets directory for documentation
+!assets/
+!assets/images/
+!assets/images/*.png

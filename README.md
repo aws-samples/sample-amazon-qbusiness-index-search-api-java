@@ -10,7 +10,35 @@ Using this sample, you will be able to:
 3. Deploy a Search microservice (Lambda + API Gateway) that fetches an OIDC token from TVM, calls STS to assume-role-with-web-identity, and invokes Q Business's SearchRelevantContent API
 
 
-## Architecture
+## Project Organization
+
+```
+amazon-qbusiness-index-search-api-java-sample/
+├── assets/                           Documentation and resources
+│   ├── images/                       Architecture diagrams
+│   └── data/                         Sample data for testing
+├── cdk/                              AWS CDK Java app
+│   └── src/main/java/com/amazon/     CDK infrastructure code
+├── services/                         Lambda service implementations
+│   ├── TokenVendingMachine/          TVM service
+│   └── search/                       Search microservice
+```
+
+### Flow Sequence
+
+1. **Authentication Flow**
+   - Client sends email to TVM API Gateway (`POST /token`)
+   - TVM Lambda verifies email against DynamoDB allowlist
+   - If authorized, TVM Lambda uses KMS to sign a JWT token
+   - Client receives the JWT token
+
+2. **Search Flow**
+   - Client sends search request with JWT token to Search API (`POST /search`)
+   - Search Lambda validates the token and calls STS
+   - STS verifies the token with the OIDC Provider and issues temporary credentials
+   - Search Lambda assumes the IAM role with the temporary credentials
+   - Search Lambda calls Amazon Q Business SearchRelevantContent API
+   - Search results are returned to the client
 
 ### TVM:
 
@@ -33,6 +61,31 @@ All handlers use the same KMS CMK for RSA signing
 * SearchFn calls STS:AssumeRoleWithWebIdentity with the JWT from TVM
 * STS response authorizes a temporary role (SearchWithTipRole)
 * SearchFn calls qbusiness:SearchRelevantContent with temp credentials
+
+### Security Controls
+
+- Email allowlist verification in DynamoDB
+- KMS-based JWT token signing with asymmetric keys
+- Short-lived tokens (maximum 1 hour)
+- WAF protection for API endpoints
+- IAM role with minimal permissions
+- Temporary credentials for Q Business access
+
+### Regenerating the Architecture Diagram
+
+The architecture diagram is generated using [cdk-dia](https://github.com/pistazie/cdk-dia), a tool that creates diagrams from CDK infrastructure code. To regenerate the diagram after making changes:
+
+```bash
+# Install cdk-dia if not already installed
+npm install -g cdk-dia
+
+# Generate the diagram from the project root
+cdk-dia
+
+# Move the generated files to the assets folder
+mv diagram.png assets/images/architecture.png
+mv diagram.dot assets/images/architecture.dot
+```
 
 ## Prerequisites
 
@@ -110,7 +163,7 @@ SESSION_TOKEN=$(echo "$TOKEN" | sed -n 3p)
 aws qbusiness batch-put-document \
   --application-id $APP_ID \
   --index-id $RET_ID \
-  --documents file://data/test-data.json \
+  --documents file://assets/data/test-data.json \
   --aws-access-key-id $ACCESS_KEY \
   --aws-secret-access-key $SECRET_KEY \
   --aws-session-token $SESSION_TOKEN

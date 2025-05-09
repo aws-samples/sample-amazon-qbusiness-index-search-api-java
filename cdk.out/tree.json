@@ -2040,10 +2040,6 @@
                     },
                     "environment": {
                       "variables": {
-                        "TABLE_NAME": {
-                          "Ref": "TvmEmailAllowlist09565F7C"
-                        },
-                        "AUDIENCE": "qbusiness-audience",
                         "KEY_SECRET_NAME": {
                           "Fn::Join": [
                             "-",
@@ -2096,7 +2092,11 @@
                               }
                             ]
                           ]
-                        }
+                        },
+                        "TABLE_NAME": {
+                          "Ref": "TvmEmailAllowlist09565F7C"
+                        },
+                        "AUDIENCE": "qbusiness-audience"
                       }
                     },
                     "handler": "com.amazon.TokenVendingMachineHandler::handleRequest",
@@ -2602,14 +2602,14 @@
                     "assumeRolePolicyDocument": {
                       "Statement": [
                         {
-                          "Principal": {
-                            "Service": "qbusiness.amazonaws.com"
-                          },
-                          "Effect": "Allow",
                           "Action": [
                             "sts:AssumeRole",
                             "sts:SetContext"
-                          ]
+                          ],
+                          "Principal": {
+                            "Service": "qbusiness.amazonaws.com"
+                          },
+                          "Effect": "Allow"
                         },
                         {
                           "Action": [
@@ -2859,7 +2859,7 @@
                       "s3Bucket": {
                         "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
                       },
-                      "s3Key": "5a120ea2836797dc87cbbf0a3f0322ea0f266da982edab17359c6d46f2269964.jar"
+                      "s3Key": "8fd0b57658cc70858409ec1a566c9bc15e9422edcd89f44ac5afe1300645c4c6.jar"
                     },
                     "environment": {
                       "variables": {

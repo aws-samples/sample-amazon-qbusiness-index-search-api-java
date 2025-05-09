@@ -72,7 +72,7 @@ public class TokenVendingMachineStack extends Stack {
         NagSuppressions.addResourceSuppressions(signingKey, List.of(
                 NagPackSuppression.builder()
                         .id("AwsSolutions-KMS5")
-                        .reason("OIDC signing requires an asymmetric key (RSA); KMS asymmetric keys cannot auto-rotate.")
+                        .reason("OIDC signing requires an asymmetric RSA key for JWT verification. Per AWS documentation, asymmetric KMS keys do not support automatic rotation due to their mathematical properties. This is an accepted design limitation for OIDC providers.")
                         .build()
         ));
 
@@ -87,7 +87,7 @@ public class TokenVendingMachineStack extends Stack {
         NagSuppressions.addResourceSuppressions(keySecret,
                 List.of(NagPackSuppression.builder()
                         .id("AwsSolutions-SMG4")
-                        .reason("Rotation not needed for this ephemeral signing secret.")
+                        .reason("This secret only stores the KMS key ID for the signing key, not actual key material. The secret contains no sensitive cryptographic data requiring rotation as the KMS service handles all cryptographic operations securely.")
                         .build()), true
         );
 
@@ -110,7 +110,7 @@ public class TokenVendingMachineStack extends Stack {
         NagSuppressions.addResourceSuppressions(emailAllowlistTable,
                 List.of(NagPackSuppression.builder()
                         .id("AwsSolutions-DDB3")
-                        .reason("Point-in-time recovery not needed for this simple allowlist")
+                        .reason("Point-in-time recovery is not required for this allowlist table as it stores non-critical configuration data that can be recreated if needed. The table uses RETAIN removal policy to preserve data across deployments.")
                         .build()), true
         );
 
@@ -132,11 +132,11 @@ public class TokenVendingMachineStack extends Stack {
                 List.of(
                         NagPackSuppression.builder()
                                 .id("AwsSolutions-IAM4")
-                                .reason("AWSLambdaBasicExecutionRole is required for Lambda logging")
+                                .reason("AWSLambdaBasicExecutionRole is required for Lambda logging and contains the minimal permissions needed for CloudWatch logs. This managed policy is an AWS best practice for Lambda functions.")
                                 .build(),
                         NagPackSuppression.builder()
                                 .id("AwsSolutions-IAM5")
-                                .reason("KMS permissions are scoped by key.grant() call to avoid circular dependencies")
+                                .reason("The wildcard in the KMS policy is necessary to avoid circular dependencies when using key.grant() calls. The actual permissions are properly scoped at runtime to specific key ARNs through the DefaultPolicy and the principle of least privilege is maintained.")
                                 .build()
                 ), true
         );
@@ -213,7 +213,7 @@ public class TokenVendingMachineStack extends Stack {
         NagSuppressions.addResourceSuppressions(cfnStage,
                 List.of(NagPackSuppression.builder()
                         .id("AwsSolutions-APIG3")
-                        .reason("WAF is attached downstream via CfnWebACLAssociation.")
+                        .reason("The WAF protection is implemented but attached via CfnWebACLAssociation downstream which is not detected by this check. The WebACL implements rate limiting rules to protect against DoS attacks and excessive token requests.")
                         .build()), true
         );
 
@@ -290,20 +290,44 @@ public class TokenVendingMachineStack extends Stack {
 
         // suppress public endpoints findings
         NagSuppressions.addResourceSuppressions(openidConfigMethod, List.of(
-                NagPackSuppression.builder().id("AwsSolutions-APIG4").reason("OIDC Discovery endpoint must be public").build(),
-                NagPackSuppression.builder().id("AwsSolutions-COG4").reason("No Cognito auth on discovery").build()
+                NagPackSuppression.builder()
+                        .id("AwsSolutions-APIG4")
+                        .reason("The OIDC discovery endpoint must be publicly accessible without authorization as per OpenID Connect specification. This is required for OIDC client discovery and is protected by WAF rate limiting.")
+                        .build(),
+                NagPackSuppression.builder()
+                        .id("AwsSolutions-COG4")
+                        .reason("Cognito authorization cannot be used on OIDC discovery endpoints as it would break the OIDC protocol requirements for public metadata access.")
+                        .build()
         ));
         NagSuppressions.addResourceSuppressions(jwksMethod, List.of(
-                NagPackSuppression.builder().id("AwsSolutions-APIG4").reason("JWKS endpoint must be public").build(),
-                NagPackSuppression.builder().id("AwsSolutions-COG4").reason("No Cognito auth on JWKS").build()
+                NagPackSuppression.builder()
+                        .id("AwsSolutions-APIG4")
+                        .reason("The JWKS endpoint must be publicly accessible to provide JWT verification keys. This is a requirement of the OpenID Connect specification and is protected by WAF rate limiting.")
+                        .build(),
+                NagPackSuppression.builder()
+                        .id("AwsSolutions-COG4")
+                        .reason("Cognito authorization cannot be used on JWKS endpoints as this would prevent OIDC relying parties from validating JWT signatures as required by the protocol.")
+                        .build()
         ));
         NagSuppressions.addResourceSuppressions(tokenMethod, List.of(
-                NagPackSuppression.builder().id("AwsSolutions-APIG4").reason("Token endpoint must be public for OAuth2 clients").build(),
-                NagPackSuppression.builder().id("AwsSolutions-COG4").reason("No Cognito auth on token").build()
+                NagPackSuppression.builder()
+                        .id("AwsSolutions-APIG4")
+                        .reason("The token endpoint must be directly accessible to clients to enable the OIDC authorization flow. Email verification and DynamoDB allowlist provide authentication and authorization instead.")
+                        .build(),
+                NagPackSuppression.builder()
+                        .id("AwsSolutions-COG4")
+                        .reason("Cognito authorization is not applicable as this endpoint implements its own authentication via email verification against the DynamoDB allowlist.")
+                        .build()
         ));
         NagSuppressions.addResourceSuppressions(userinfoMethod, List.of(
-                NagPackSuppression.builder().id("AwsSolutions-APIG4").reason("UserInfo endpoint must be public").build(),
-                NagPackSuppression.builder().id("AwsSolutions-COG4").reason("No Cognito authorizer on UserInfo").build()
+                NagPackSuppression.builder()
+                        .id("AwsSolutions-APIG4")
+                        .reason("The UserInfo endpoint follows OIDC standards which require it to be accessible by any client with a valid token. Authorization is performed by validating the JWT token in the Authorization header.")
+                        .build(),
+                NagPackSuppression.builder()
+                        .id("AwsSolutions-COG4")
+                        .reason("Cognito authorization is not applicable as this endpoint implements its own token-based authentication by validating the JWT in the request.")
+                        .build()
         ));
 
         // 11) Grant invoke

@@ -118,14 +118,14 @@
     "AssumeRolePolicyDocument": {
      "Statement": [
       {
-       "Principal": {
-        "Service": "qbusiness.amazonaws.com"
-       },
-       "Effect": "Allow",
        "Action": [
         "sts:AssumeRole",
         "sts:SetContext"
-       ]
+       ],
+       "Principal": {
+        "Service": "qbusiness.amazonaws.com"
+       },
+       "Effect": "Allow"
       },
       {
        "Action": [
@@ -307,7 +307,7 @@
      "S3Bucket": {
       "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
      },
-     "S3Key": "5a120ea2836797dc87cbbf0a3f0322ea0f266da982edab17359c6d46f2269964.jar"
+     "S3Key": "8fd0b57658cc70858409ec1a566c9bc15e9422edcd89f44ac5afe1300645c4c6.jar"
     },
     "Environment": {
      "Variables": {
@@ -367,7 +367,7 @@
    ],
    "Metadata": {
     "aws:cdk:path": "SearchStack/SearchHandler/Resource",
-    "aws:asset:path": "asset.5a120ea2836797dc87cbbf0a3f0322ea0f266da982edab17359c6d46f2269964.jar",
+    "aws:asset:path": "asset.8fd0b57658cc70858409ec1a566c9bc15e9422edcd89f44ac5afe1300645c4c6.jar",
     "aws:asset:is-bundled": false,
     "aws:asset:property": "Code"
    }

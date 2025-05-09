@@ -41,7 +41,7 @@
     "cdk_nag": {
      "rules_to_suppress": [
       {
-       "reason": "OIDC signing requires an asymmetric key (RSA); KMS asymmetric keys cannot auto-rotate.",
+       "reason": "OIDC signing requires an asymmetric RSA key for JWT verification. Per AWS documentation, asymmetric KMS keys do not support automatic rotation due to their mathematical properties. This is an accepted design limitation for OIDC providers.",
        "id": "AwsSolutions-KMS5"
       }
      ]
@@ -74,7 +74,7 @@
     "cdk_nag": {
      "rules_to_suppress": [
       {
-       "reason": "Rotation not needed for this ephemeral signing secret.",
+       "reason": "This secret only stores the KMS key ID for the signing key, not actual key material. The secret contains no sensitive cryptographic data requiring rotation as the KMS service handles all cryptographic operations securely.",
        "id": "AwsSolutions-SMG4"
       }
      ]
@@ -121,7 +121,7 @@
     "cdk_nag": {
      "rules_to_suppress": [
       {
-       "reason": "Point-in-time recovery not needed for this simple allowlist",
+       "reason": "Point-in-time recovery is not required for this allowlist table as it stores non-critical configuration data that can be recreated if needed. The table uses RETAIN removal policy to preserve data across deployments.",
        "id": "AwsSolutions-DDB3"
       }
      ]
@@ -193,11 +193,11 @@
     "cdk_nag": {
      "rules_to_suppress": [
       {
-       "reason": "AWSLambdaBasicExecutionRole is required for Lambda logging",
+       "reason": "AWSLambdaBasicExecutionRole is required for Lambda logging and contains the minimal permissions needed for CloudWatch logs. This managed policy is an AWS best practice for Lambda functions.",
        "id": "AwsSolutions-IAM4"
       },
       {
-       "reason": "KMS permissions are scoped by key.grant() call to avoid circular dependencies",
+       "reason": "The wildcard in the KMS policy is necessary to avoid circular dependencies when using key.grant() calls. The actual permissions are properly scoped at runtime to specific key ARNs through the DefaultPolicy and the principle of least privilege is maintained.",
        "id": "AwsSolutions-IAM5"
       }
      ]
@@ -465,7 +465,7 @@
        "id": "AwsSolutions-IAM4"
       },
       {
-       "reason": "WAF is attached downstream via CfnWebACLAssociation.",
+       "reason": "The WAF protection is implemented but attached via CfnWebACLAssociation downstream which is not detected by this check. The WebACL implements rate limiting rules to protect against DoS attacks and excessive token requests.",
        "id": "AwsSolutions-APIG3"
       }
      ]
@@ -776,11 +776,11 @@
     "cdk_nag": {
      "rules_to_suppress": [
       {
-       "reason": "OIDC Discovery endpoint must be public",
+       "reason": "The OIDC discovery endpoint must be publicly accessible without authorization as per OpenID Connect specification. This is required for OIDC client discovery and is protected by WAF rate limiting.",
        "id": "AwsSolutions-APIG4"
       },
       {
-       "reason": "No Cognito auth on discovery",
+       "reason": "Cognito authorization cannot be used on OIDC discovery endpoints as it would break the OIDC protocol requirements for public metadata access.",
        "id": "AwsSolutions-COG4"
       }
      ]
@@ -976,11 +976,11 @@
     "cdk_nag": {
      "rules_to_suppress": [
       {
-       "reason": "JWKS endpoint must be public",
+       "reason": "The JWKS endpoint must be publicly accessible to provide JWT verification keys. This is a requirement of the OpenID Connect specification and is protected by WAF rate limiting.",
        "id": "AwsSolutions-APIG4"
       },
       {
-       "reason": "No Cognito auth on JWKS",
+       "reason": "Cognito authorization cannot be used on JWKS endpoints as this would prevent OIDC relying parties from validating JWT signatures as required by the protocol.",
        "id": "AwsSolutions-COG4"
       }
      ]
@@ -1179,11 +1179,11 @@
     "cdk_nag": {
      "rules_to_suppress": [
       {
-       "reason": "Token endpoint must be public for OAuth2 clients",
+       "reason": "The token endpoint must be directly accessible to clients to enable the OIDC authorization flow. Email verification and DynamoDB allowlist provide authentication and authorization instead.",
        "id": "AwsSolutions-APIG4"
       },
       {
-       "reason": "No Cognito auth on token",
+       "reason": "Cognito authorization is not applicable as this endpoint implements its own authentication via email verification against the DynamoDB allowlist.",
        "id": "AwsSolutions-COG4"
       }
      ]
@@ -1382,11 +1382,11 @@
     "cdk_nag": {
      "rules_to_suppress": [
       {
-       "reason": "UserInfo endpoint must be public",
+       "reason": "The UserInfo endpoint follows OIDC standards which require it to be accessible by any client with a valid token. Authorization is performed by validating the JWT token in the Authorization header.",
        "id": "AwsSolutions-APIG4"
       },
       {
-       "reason": "No Cognito authorizer on UserInfo",
+       "reason": "Cognito authorization is not applicable as this endpoint implements its own token-based authentication by validating the JWT in the request.",
        "id": "AwsSolutions-COG4"
       }
      ]
@@ -1596,10 +1596,6 @@
     },
     "Environment": {
      "Variables": {
-      "TABLE_NAME": {
-       "Ref": "TvmEmailAllowlist09565F7C"
-      },
-      "AUDIENCE": "qbusiness-audience",
       "KEY_SECRET_NAME": {
        "Fn::Join": [
         "-",
@@ -1652,7 +1648,11 @@
          }
         ]
        ]
-      }
+      },
+      "TABLE_NAME": {
+       "Ref": "TvmEmailAllowlist09565F7C"
+      },
+      "AUDIENCE": "qbusiness-audience"
      }
     },
     "Handler": "com.amazon.TokenVendingMachineHandler::handleRequest",
