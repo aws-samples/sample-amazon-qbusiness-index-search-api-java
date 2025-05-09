@@ -9,35 +9,6 @@ Using this sample, you will be able to:
 2. Register an Amazon Q Business Application (OIDC IdP) + Index
 3. Deploy a Search microservice (Lambda + API Gateway) that fetches an OIDC token from TVM, calls STS to assume-role-with-web-identity, and invokes Q Business's SearchRelevantContent API
 
-## Repository Layout
-
-```
-amazon-qbusiness-index-search-api-java-sample/
-├── cdk/                             AWS CDK Java app
-│   ├── pom.xml                      CDK project POM
-│   ├── src/main/java/com/amazon/
-│   │   ├── policies/                IAM policy helper classes
-│   │   └── stacks/
-│   │       ├── QBusinessApp.java    CDK application entry point
-│   │       ├── QBusinessStack.java  Q Business configuration
-│   │       ├── TokenVendingMachineStack.java  TVM infrastructure
-│   │       └── SearchStack.java     Search infrastructure
-├── services/
-│   ├── TokenVendingMachine/         Token Vending Machine service
-│   │   ├── pom.xml
-│   │   └── src/main/java/com/amazon/
-│   │       ├── OpenIdConfigurationHandler.java
-│   │       ├── JwksEndpointHandler.java
-│   │       ├── TokenVendingMachineHandler.java
-│   │       └── KeyManager.java
-│   └── search/                      Search microservice
-│       ├── pom.xml
-│       └── src/main/java/com/amazon/
-│           └── SearchHandler.java
-├── cdk.json                         CDK application configuration
-├── README.md                        you're here!
-└── THREAT-MODEL.md                  Security threat model
-```
 
 ## Architecture
 
@@ -94,7 +65,7 @@ This will deploy all stacks in the correct order and save the outputs for use in
 
 ## Email Allowlist Configuration
 
-This implementation includes an email allowlist security feature. The TVM will only issue tokens to email addresses that exist in the DynamoDB allowlist table. To add emails to the allowlist:
+The TVM will only issue tokens to email addresses that exist in the DynamoDB allowlist table. To add emails to the allowlist:
 
 1. After deploying the TokenVendingMachineStack, get the table name:
 ```bash
