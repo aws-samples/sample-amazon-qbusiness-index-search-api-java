@@ -1,4 +1,4 @@
-package.Amazon-qbusiness-index-search-api-java-sample = {
+package.Sample-amazon-qbusiness-index-search-api-java = {
     interfaces = (1.0);
 
     # Use NoOpBuild. See https://w.amazon.com/index.php/BrazilBuildSystem/NoOpBuild

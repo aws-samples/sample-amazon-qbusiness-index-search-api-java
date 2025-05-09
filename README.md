@@ -1,4 +1,4 @@
-# Amazon Q Business Index Search API Java Sample
+# Sample Amazon Q Business Index Search API Java
 
 Build a secure Amazon Q Business Index search API with Java CDK Stack
 
@@ -13,7 +13,7 @@ Using this sample, you will be able to:
 ## Project Organization
 
 ```
-amazon-qbusiness-index-search-api-java-sample/
+sample-amazon-qbusiness-index-search-api-java/
 ├── assets/                           Documentation and resources
 │   ├── images/                       Architecture diagrams
 │   └── data/                         Sample data for testing

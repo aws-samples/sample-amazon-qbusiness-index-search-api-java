@@ -6,7 +6,7 @@
 
     <parent>
         <groupId>com.amazon</groupId>
-        <artifactId>amazon-qbusiness-index-search-api-java-sample</artifactId>
+        <artifactId>sample-amazon-qbusiness-index-search-api-java</artifactId>
         <version>1.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
