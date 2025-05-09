@@ -77,6 +77,12 @@ public class SearchHandler implements RequestHandler<APIGatewayProxyRequestEvent
                         .withHeaders(Map.of("Content-Type", "application/json"));
             }
 
+        } catch (SecurityException e) {
+            // Handle authorization errors with 403 Forbidden
+            return new APIGatewayProxyResponseEvent()
+                    .withStatusCode(403)
+                    .withBody(onError(e))
+                    .withHeaders(Map.of("Content-Type", "application/json"));
         } catch (Exception e) {
             return new APIGatewayProxyResponseEvent()
                     .withStatusCode(500)
@@ -134,7 +140,11 @@ public class SearchHandler implements RequestHandler<APIGatewayProxyRequestEvent
                 .POST(HttpRequest.BodyPublishers.ofString(body))
                 .build();
         HttpResponse<String> resp = httpClient.send(r, HttpResponse.BodyHandlers.ofString());
-        if (resp.statusCode()!=200) throw new IOException("TVM failed: "+resp.body());
+        if (resp.statusCode() == 403) {
+            throw new SecurityException("Unauthorized: " + resp.body());
+        } else if (resp.statusCode() != 200) {
+            throw new IOException("TVM failed: " + resp.body());
+        }
         String tok = (String) JSON.readValue(resp.body(), Map.class).get("id_token");
 
         // Debug: Decode and examine the JWT token
