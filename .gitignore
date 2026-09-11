@@ -1,0 +1,11 @@
+# CDK synthesized output
+cdk.out/
+
+# Maven build output
+target/
+
+# IDE and OS files
+.idea/
+.vscode/
+*.iml
+.DS_Store
