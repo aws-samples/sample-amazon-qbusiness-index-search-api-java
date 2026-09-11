@@ -19,7 +19,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- Additional dependency versions -->
-    <jackson.version>2.15.2</jackson.version>
+    <jackson.version>2.18.9</jackson.version>
     <jjwt.version>0.11.5</jjwt.version>
   </properties>
 
