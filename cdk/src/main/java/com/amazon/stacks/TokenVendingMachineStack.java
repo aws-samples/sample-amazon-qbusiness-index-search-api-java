@@ -193,7 +193,9 @@ public class TokenVendingMachineStack extends Stack {
                         .accessLogDestination(new LogGroupLogDestination(apiAccessLogs))
                         .accessLogFormat(AccessLogFormat.clf())
                         .loggingLevel(MethodLoggingLevel.INFO)
-                        .dataTraceEnabled(true)
+                        // Keep data trace logging disabled: it would write full request/response
+                        // bodies (including vended tokens) to CloudWatch Logs.
+                        .dataTraceEnabled(false)
                         .build())
                 .defaultCorsPreflightOptions(CorsOptions.builder()
                         .allowOrigins(Cors.ALL_ORIGINS)

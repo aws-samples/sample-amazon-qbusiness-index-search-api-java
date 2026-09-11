@@ -180,7 +180,9 @@ public class SearchStack extends Stack {
                 .accessLogDestination(new LogGroupLogDestination(apiAccessLogs))
                 .accessLogFormat(AccessLogFormat.clf())
                 .loggingLevel(MethodLoggingLevel.INFO)
-                .dataTraceEnabled(true)
+                // Keep data trace logging disabled: it would write full request/response
+                // bodies (potentially sensitive data) to CloudWatch Logs.
+                .dataTraceEnabled(false)
                 .build();
         // Retain stage on destroy
         stage.applyRemovalPolicy(RemovalPolicy.RETAIN);
